@@ -171,9 +171,93 @@ public:
 
 };
 
+void ClearConsole() {
+
+    if (system( "cls" )) 
+        system( "clear" );
+
+}
+
+const int NUMBER_OF_MENU_ITEMS = 4;
+
+void PrintMenu() {
+
+    ClearConsole();
+
+    cout << "[7.3] LinkedList interface\n";
+    cout << "1. Add element\n";
+    cout << "2. Delete element\n";
+    cout << "3. Print list\n";
+    cout << "4. Exit\n";
+
+}
+
+void ValidateInput(int &Choice) {
+
+    while (true) {
+
+        cin >> Choice;
+
+        if (cin.fail()) {
+
+            ClearConsole();
+            cout << "Please, enter the number.\n";
+            cin.clear();
+            fflush(stdin);
+            getchar();
+            PrintMenu();
+            continue;
+            
+        }
+
+        if (Choice < 1 || Choice > NUMBER_OF_MENU_ITEMS) {
+
+            ClearConsole();
+            cout << "Please, enter the right number.\n";
+            cin.clear();
+            fflush(stdin);
+            getchar();
+            PrintMenu();
+            continue;
+
+        }
+
+        PrintMenu();
+        break;
+
+    }
+
+}
+
+void StartUserInterface(StudentsList List) {
+
+    bool IsWorking = true;
+
+    while (IsWorking) {
+
+        PrintMenu();
+
+        int Choice = 0;
+
+        ValidateInput(Choice);
+
+        switch(Choice) {
+
+            case 1:
+                AddElementOperation();
+                break;
+
+        }
+
+    }
+
+}
+
 int main() {
 
-    StudentsList List;
+    StartUserInterface();
+
+    //StudentsList List;
 
     /*Student me;
     me.Name = "Nikita";
