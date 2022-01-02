@@ -55,9 +55,9 @@ private:
 
     }
 
-    void PrintStudentInfo(Student StudentData) {
+    void PrintStudentInfo(Student StudentData, int Number) {
 
-        cout << StudentData.Surname << " " << StudentData.Name << " " << StudentData.Patronymic << endl;
+        cout << Number << ". " << StudentData.Surname << " " << StudentData.Name << " " << StudentData.Patronymic << endl;
 
     }
 
@@ -160,9 +160,11 @@ public:
 
         Node* Temp = Head;
 
+        cout << "Size is: " << Size << endl;
+
         for (int i = 0; i < Size; i++) {
 
-            PrintStudentInfo(Temp->Data);
+            PrintStudentInfo(Temp->Data, i + 1);
             Temp = Temp->Next;
 
         }
@@ -171,93 +173,212 @@ public:
 
 };
 
-void ClearConsole() {
+class UserInterface {
+private:
+    const int NUMBER_OF_MENU_ITEMS = 4;
+    bool IsWorking;
+    StudentsList* List;
 
-    if (system( "cls" )) 
-        system( "clear" );
+public:
 
-}
+private:
+    void ClearConsole() {
 
-const int NUMBER_OF_MENU_ITEMS = 4;
-
-void PrintMenu() {
-
-    ClearConsole();
-
-    cout << "[7.3] LinkedList interface\n";
-    cout << "1. Add element\n";
-    cout << "2. Delete element\n";
-    cout << "3. Print list\n";
-    cout << "4. Exit\n";
-
-}
-
-void ValidateInput(int &Choice) {
-
-    while (true) {
-
-        cin >> Choice;
-
-        if (cin.fail()) {
-
-            ClearConsole();
-            cout << "Please, enter the number.\n";
-            cin.clear();
-            fflush(stdin);
-            getchar();
-            PrintMenu();
-            continue;
-            
-        }
-
-        if (Choice < 1 || Choice > NUMBER_OF_MENU_ITEMS) {
-
-            ClearConsole();
-            cout << "Please, enter the right number.\n";
-            cin.clear();
-            fflush(stdin);
-            getchar();
-            PrintMenu();
-            continue;
-
-        }
-
-        PrintMenu();
-        break;
+        if (system( "cls" )) 
+            system( "clear" );
 
     }
 
-}
+    void WaitForInput() {
 
-void StartUserInterface(StudentsList List) {
+        system("read");
 
-    bool IsWorking = true;
+    }
 
-    while (IsWorking) {
+    void ValidateInput(int &Choice) {
 
-        PrintMenu();
+        while (true) {
 
-        int Choice = 0;
+            cin >> Choice;
 
-        ValidateInput(Choice);
+            if (cin.fail()) {
 
-        switch(Choice) {
+                ClearConsole();
+                cout << "Please, enter the number.\n";
+                cin.clear();
+                fflush(stdin);
+                getchar();
+                PrintMenu();
+                continue;
+                
+            }
 
-            case 1:
-                AddElementOperation();
-                break;
+            if (Choice < 1 || Choice > NUMBER_OF_MENU_ITEMS) {
+
+                ClearConsole();
+                cout << "Please, enter the right number.\n";
+                cin.clear();
+                fflush(stdin);
+                getchar();
+                PrintMenu();
+                continue;
+
+            }
+
+            PrintMenu();
+            break;
 
         }
 
     }
 
-}
+    void PrintMenu() {
+
+        ClearConsole();
+
+        cout << "[7.3] LinkedList interface\n";
+        cout << "1. Add element\n";
+        cout << "2. Delete element\n";
+        cout << "3. Print list\n";
+        cout << "4. Exit\n";
+
+    }
+
+    Student CreateStudent() {
+
+        Student NewStudent;
+
+        cout << "Enter name: ";
+        cin >> NewStudent.Name;
+
+        cout << "Enter surame: ";
+        cin >> NewStudent.Surname;
+
+        cout << "Enter patronymic: ";
+        cin >> NewStudent.Patronymic;
+
+        cout << "Enter birthdate(using spaces between numbers): ";
+        cin >> NewStudent.BirthDate.Day >> NewStudent.BirthDate.Month >> NewStudent.BirthDate.Year;
+
+        cout << "Enter course: ";
+        cin >> NewStudent.Course;
+
+        cout << "Enter progress: ";
+        cin >> NewStudent.Progress;
+
+        return NewStudent;
+
+    }
+
+    void AddElementOperation() {
+
+        ClearConsole();
+
+        List->Add(CreateStudent());
+
+    }
+
+    void DeleteElementOperation() {
+
+        ClearConsole();
+
+        int Index;
+
+        cout << "Enter index of the element: "; 
+        cin >> Index;
+
+        List->Remove(Index);
+
+    } 
+
+    void PrintOperation() {
+
+        ClearConsole();
+
+        List->Print();
+
+        cin.clear();
+        fflush(stdin);
+
+        cout << "Press ENTER to continue...";
+
+        getchar();
+        //WaitForInput();
+
+    }
+
+    void QuitOperation() {
+
+        IsWorking = false;
+
+    }
+
+public:
+
+    UserInterface() {
+
+        IsWorking = false;
+
+    }
+
+    void StartUserInterface() {
+
+        IsWorking = true;
+
+        while (IsWorking) {
+
+            PrintMenu();
+
+            int Choice = 0;
+
+            ValidateInput(Choice);
+
+            switch(Choice) {
+
+                case 1:
+                    AddElementOperation();
+                    break;
+
+                case 2:
+                    DeleteElementOperation();
+                    break;
+
+                case 3:
+                    PrintOperation();
+                    break;
+
+                case 4:
+                    QuitOperation();
+                    break;
+
+
+            }
+
+        }
+
+    }
+
+    bool GetCondition() {
+
+        return IsWorking;
+
+    }
+
+    void SetList(StudentsList* List) {
+
+        this->List = List;
+
+    }
+
+};
 
 int main() {
 
-    StartUserInterface();
+    StudentsList List;
+    UserInterface ui;
 
-    //StudentsList List;
+    ui.SetList(&List);
+    ui.StartUserInterface();
 
     /*Student me;
     me.Name = "Nikita";
