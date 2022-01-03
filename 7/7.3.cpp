@@ -1,5 +1,6 @@
 #include <iostream> 
 #include <string>
+#include <functional>
 
 using namespace std;
 
@@ -69,7 +70,14 @@ public:
 
     }
 
-    StudentsList(int Size) {
+    Student Get(int Index) {
+
+        Node* Temp = Head;
+
+        for (int i = 0; i < Index; i++)
+            Temp = Temp->Next;
+
+        return Temp->Data;
 
     }
 
@@ -175,9 +183,10 @@ public:
 
 class UserInterface {
 private:
-    const int NUMBER_OF_MENU_ITEMS = 4;
+    const int NUMBER_OF_MENU_ITEMS = 5;
     bool IsWorking;
     StudentsList* List;
+    function<void(StudentsList* List)> TaskFunction;
 
 public:
 
@@ -240,7 +249,8 @@ private:
         cout << "1. Add element\n";
         cout << "2. Delete element\n";
         cout << "3. Print list\n";
-        cout << "4. Exit\n";
+        cout << "4. Task\n";
+        cout << "5. Exit\n";
 
     }
 
@@ -256,6 +266,9 @@ private:
 
         cout << "Enter patronymic: ";
         cin >> NewStudent.Patronymic;
+
+        cin.clear();
+        fflush(stdin);
 
         cout << "Enter birthdate(using spaces between numbers): ";
         cin >> NewStudent.BirthDate.Day >> NewStudent.BirthDate.Month >> NewStudent.BirthDate.Year;
@@ -307,6 +320,21 @@ private:
 
     }
 
+    void TaskOperation() {
+
+        ClearConsole();
+
+        TaskFunction(List);
+
+        cout << "Press ENTER to continue...";
+
+        cin.clear();
+        fflush(stdin);
+
+        getchar();
+
+    }
+
     void QuitOperation() {
 
         IsWorking = false;
@@ -347,7 +375,11 @@ public:
                     PrintOperation();
                     break;
 
-                case 4:
+                case 4: 
+                    TaskOperation();
+                    break;
+
+                case 5:
                     QuitOperation();
                     break;
 
@@ -370,7 +402,58 @@ public:
 
     }
 
+    void SetTaskFunction(function<void(StudentsList* List)> Function) {
+
+        TaskFunction = Function;
+
+    }
+
 };
+
+bool DateComporator(Date First, Date Last) {
+
+    if (First.Year == Last.Year) {
+
+        if (First.Month == Last.Month) {
+            
+            return (First.Day < Last.Day);
+
+        } else {
+
+            return (First.Month < Last.Month);
+
+        }
+
+    } else {
+
+        return (First.Year < Last.Year);
+
+    }
+
+}
+
+void Task(StudentsList* List) {
+
+    Date GivenDate;
+    cout << "Enter birth date(using spaces between numbers): ";
+    cin >> GivenDate.Day >> GivenDate.Month >> GivenDate.Year;
+
+    StudentsList NewList;
+
+    for (int i = 0; i < List->Size; i++) {
+
+        Student Temp = List->Get(i);
+
+        if (DateComporator(Temp.BirthDate, GivenDate)) {
+            NewList.Add(Temp);
+            List->Remove(i);
+        }
+            
+    }
+
+    *List = NewList;
+
+}
 
 int main() {
 
@@ -378,6 +461,7 @@ int main() {
     UserInterface ui;
 
     ui.SetList(&List);
+    ui.SetTaskFunction(Task);
     ui.StartUserInterface();
 
     /*Student me;
