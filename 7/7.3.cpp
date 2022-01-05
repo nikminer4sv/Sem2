@@ -399,7 +399,6 @@ public:
     void SetList(StudentsList* List) {
 
         this->List = List;
-
     }
 
     void SetTaskFunction(function<void(StudentsList* List)> Function) {
@@ -410,10 +409,14 @@ public:
 
 };
 
+void Hello(int a) {
+    
+}
+
 bool DateComporator(Date First, Date Last) {
 
     if (First.Year == Last.Year) {
-
+        
         if (First.Month == Last.Month) {
             
             return (First.Day < Last.Day);
