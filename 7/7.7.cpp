@@ -21,6 +21,17 @@ private:
 public:
 
 private:
+    void PrintImplementation(Node* TempNode) {
+
+        cout << TempNode->Value << " ";
+
+        if (TempNode->Left != nullptr) 
+            PrintImplementation(TempNode->Left);
+
+        if (TempNode->Right != nullptr) 
+            PrintImplementation(TempNode->Right);
+
+    }
 
 public:
     BinarySearchTree() { Root = nullptr; }
@@ -74,19 +85,7 @@ public:
 
     }
 
-    void PrintImplementation(Node* TempNode) {
-
-        cout << TempNode->Value << " ";
-
-        if (TempNode->Left != nullptr) 
-            PrintImplementation(TempNode->Left);
-
-        if (TempNode->Right != nullptr) 
-            PrintImplementation(TempNode->Right);
-
-        
-
-    }
+    
 
     void Print() {
 
