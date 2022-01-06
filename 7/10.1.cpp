@@ -50,8 +50,29 @@ struct Assistant : Employer {
 
 };
 
+template<typename T>
+class Array {
+private:
+
+public:
+    T Test;
+
+private:
+
+public:
+    Array(T Object) {
+        Test = Object;
+    }
+
+};
+
 int main() {
 
     cout << "It works";
+    Student student;
+    student.Name = "GG";
+    Array ar(student);
+
+    cout << ar.Test.Name;
 
 }
