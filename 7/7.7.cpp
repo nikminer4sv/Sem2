@@ -85,28 +85,62 @@ public:
 
     }
 
-    
-
     void Print() {
 
-        PrintImplementation(Root);
+        if (Root != nullptr)
+            PrintImplementation(Root);
 
     }
 
     Node* GetRoot() { return Root; }
+
+    void Task() {
+
+        if (Root != nullptr) {
+
+            if (Root->Right == nullptr) {
+
+                Root = nullptr;
+
+            } else {
+
+                Node* Main = Root;
+                Node* First = Root->Right;
+
+                while (First->Right != nullptr) {
+                    Main = Main->Right;
+                    First = First->Right;
+                }
+
+                Main->Right = nullptr;
+
+            }
+
+        }
+
+    }
+
 };
+
+void print_tree(Node* top)
+{
+    if (top)
+    {   print_tree (top->Left); //обход левого поддерева
+         cout << top->Value<< "  ";
+         print_tree(top->Right);//обход правого поддерева
+    }
+}
 
 int main() {
 
     BinarySearchTree T;
 
-    T.Add(2);
-    T.Add(1);
-    T.Add(4);
-    T.Add(3);
+    T.Add(20);
+    T.Add(10);
     T.Add(5);
 
-    T.Print();
+    T.Task();
 
+    T.Print();
 
 }
