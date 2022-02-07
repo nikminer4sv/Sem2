@@ -174,4 +174,8 @@ void Print(string **WordRate, int Number)
     }
 
     cout << "\n\n";
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 80a54adb7657bd45a71fabeae19865a6e1a01b99
