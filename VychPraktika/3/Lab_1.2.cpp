@@ -1,52 +1,56 @@
 #include <iostream>
-#include <string>
-#include <vector>
 using namespace std;
 
 class SameWords
 {
 public:
 	SameWords();
-	SameWords(string Text);
+	SameWords(char* Text);
 	~SameWords();
 
-	void getSameWords() 
+	void printSameWords()
 	{
-		for (int i = 0; i < newText.size(); i++) cout << newText[i] << " ";
+		for (int i = 0; i < strlen(newText); i++) cout << newText[i];
 		cout << endl;
 	}
 
 private:
-	string Text;
-	vector<char> firstWord;
-	vector<char> nextWord;
+	char* Text;
+	char* firstWord;
+	char* nextWord;
+	char** DB;
 	bool unicalID = true;
 	bool firstQueue = true;
 
-	vector<string> newText;
-	
-	void addSameWord(vector<char>& Word)
+	int sizeDB = 0;
+
+	char newText[255];
+	int iteratorNewText = 0;
+
+	void addSameWord(char* Word)
 	{
-		string txt;
-		for (int i = 0; i < Word.size(); i++) txt += Word[i];
-		newText.push_back(txt);	
+		for (int i = 0; iteratorNewText < 255 && i < strlen(Word); iteratorNewText++, i++)
+		{
+			newText[iteratorNewText] = Word[i];
+		}
+		newText[iteratorNewText++] = ' ';
 	}
 
-	int findNumberIdenticalSymbol(vector<char> word, int startPosition)
+	int findNumberIdenticalSymbol(char* word, int startPosition)
 	{
 		int numberIdenticalSymbol = 0;
-		for (int i = 0; i < word.size(); i++)
+		for (int i = 0; i < strlen(word); i++)
 			if (word[startPosition] == word[i]) numberIdenticalSymbol++;
 
 		return numberIdenticalSymbol;
 	}
 
-	bool checkSameSymbols(vector<char> firstWord, vector<char> secondWord)
+	bool checkSameSymbols(char* firstWord, char* secondWord)
 	{
 		bool isIdentical = false;
-		for (int symbolPositionFirstWord = 0; symbolPositionFirstWord < firstWord.size(); )
+		for (int symbolPositionFirstWord = 0; symbolPositionFirstWord < strlen(firstWord); )
 		{
-			for (int symbolPositionSecondWord = 0; symbolPositionSecondWord < secondWord.size(); symbolPositionSecondWord++)
+			for (int symbolPositionSecondWord = 0; symbolPositionSecondWord < strlen(secondWord); symbolPositionSecondWord++)
 			{
 				if (firstWord[symbolPositionFirstWord] == secondWord[symbolPositionSecondWord])
 				{
@@ -59,28 +63,22 @@ private:
 					else return false;
 				}
 				else isIdentical = false;
-
 			}
 			if (!isIdentical) return false;
-
 		}
 		if (isIdentical) return true;
 	}
 
 	bool checkRepetitions()
 	{
-		if (!newText.empty() && !firstQueue) // checking for repetition of symbols
+		if (!firstQueue) // checking for repetition of symbols
 		{
-			string charToString;
-			for (int HELPME = 0; HELPME < firstWord.size(); HELPME++) charToString += firstWord[HELPME];
-		
-			for (int HELPME = 0; HELPME < newText.size(); HELPME++)
+			for (int HELPME = 0; HELPME < strlen(DB[HELPME]); HELPME++)
 			{
-				if (charToString.size() == newText[HELPME].size() /* need to check for identical symbols */)
+				if (strlen(firstWord) == strlen(DB[HELPME]) && checkSameSymbols(firstWord, DB[HELPME])) /* need to check for identical symbols */
 				{
 					return false;
 				}
-
 			}
 			unicalID = true;
 		}
@@ -88,71 +86,59 @@ private:
 	}
 
 
-	void findSameWords(string& Text)
+	void findSameWords(char* Text)
 	{
-		for (int i = 0; i < Text.size(); i++)
+		char* ptr;
+		char* pch = NULL;
+		const char* delimiter = " .,?():-";
+		sizeDB = 0;
+
+		ptr = strtok_s(Text, delimiter, &pch);
+
+		for (int i = 0; ptr != NULL; i++) //fill DB
 		{
-			if (Text[i] != ' ' && Text[i] != '\0' && Text[i] != '.' && Text[i] != ',' 
-				&& Text[i] != ':' && Text[i] != ';' && Text[i] != '!' && Text[i] != '?' 
-				&& Text[i] != '-' && Text[i] != '(' && Text[i] != ')')
+			DB[i] = new char[strlen(ptr)];
+			DB[i][strlen(ptr)] = '\0';
+			for (int j = 0; j < strlen(DB[i]); j++)
 			{
-				firstWord.push_back(Text[i]);			// first word for compare 	
-				continue;
+				DB[i][j] = ptr[j];
 			}
-			else
-			{
-				int j = i;
-				j++;
-				while (true) //viewing the all text
-				{
-					for ( ; Text[j] != ' ' && Text[j] != '\0' && Text[j] != '.' && Text[j] != ',' 
-						 && Text[j] != ':' && Text[j] != ';' && Text[j] != '!' && Text[j] != '?' 
-						 && Text[j] != '-' && Text[j] != '(' && Text[j] != ')'; j++) //getting the next word
-					{
-						nextWord.push_back(Text[j]);
-					}
-					
-					if (checkRepetitions())
-					{
-						if (firstWord.size() == nextWord.size()) 
-						{
-							if (checkSameSymbols(firstWord, nextWord) /*checking for identical symbols*/) //move this if to the top if
-							{
-								if (unicalID)
-								{
-									addSameWord(firstWord);
-									unicalID = false;
-								}
-
-								addSameWord(nextWord);
-							}	
-						}
-					}
-					if (!nextWord.empty()) nextWord.clear();
-					if (Text[j] == '\0') break;
-					j++;
-				}	
-			}
-			if (!firstWord.empty()) firstWord.clear();
-
-			firstQueue = false;
+			sizeDB++;
+			ptr = strtok_s(NULL, delimiter, &pch);
 		}
 
+		for (int i = 0; i < sizeDB; i++) // i+++ add last
+		{
+			firstWord = DB[i];
+
+			for (int j = i + 1; j < sizeDB; j++)
+			{
+				nextWord = DB[j];
+
+				if (checkRepetitions() && strlen(firstWord) == strlen(nextWord) && checkSameSymbols(firstWord, nextWord)) {
+
+					if (unicalID)
+					{
+						addSameWord(firstWord);
+						unicalID = false;
+					}
+
+					addSameWord(nextWord);
+				}	
+			}
+			firstQueue = false;
+		}
 	}
 };
 
-SameWords::SameWords(string Text)
+SameWords::SameWords(char* Text)
 {
-	if (Text.size() == 0)
-	{
-		cout << "Text is empty" << endl;
-	}
-	else
-	{
-		this->Text = Text;
-		findSameWords(this->Text);
-	}
-	
+	if (Text == NULL) cout << "Text is empty" << endl;
+
+	DB = new char* [255];
+	this->Text = Text;
+
+	findSameWords(this->Text);
 }
 
 SameWords::SameWords()
@@ -162,18 +148,33 @@ SameWords::SameWords()
 
 SameWords::~SameWords()
 {
+	for (int i = 0; i < sizeDB; i++)
+	{
+		DB[i] = NULL;
+	}
+	for (int i = 0; i < sizeDB; i++)
+	{
+		delete[] DB[i];
+	}
+	DB = NULL;
+	Text = NULL;
+	firstWord = NULL;
+	nextWord = NULL;
+	delete[] DB;
+	delete Text;
+	delete firstWord;
+	delete nextWord;
+
 }
 
-
-int main() 
-{	
+int main()
+{
 	cout << "Enter the text: ";
-	string Text;
-	getline(cin, Text);
+	char Text[255];
+	gets_s(Text);
 
-	SameWords samewordcheck;
 	SameWords sameword(Text);
-	sameword.getSameWords();
-	
+	sameword.printSameWords();
+
 	return 0;
 }
