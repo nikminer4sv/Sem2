@@ -14,7 +14,7 @@ EasyFunctionResult EasyFunction();
 void HardFunction();
 double HardFunctionCore(double x, double s);
 double Find(double min, double max, double p, int& k_iter);
-void PrintTable(double* results, double* ROF, int* iterations, int arraySize, double sMin, double ds);
+void PrintTable(double* results, double* functionResult, int* iterations, int arraySize, double sMin, double ds);
 
 int main() {
 
@@ -90,7 +90,7 @@ void HardFunction() {
     int arraySize = int((sMax - sMin)/ds + 1);
     int count = 0;
     double results[arraySize];
-    double ROF[arraySize]; 
+    double functionResult[arraySize]; 
     int iterations[arraySize];
 
     for (double sMinCopy = sMin; sMinCopy <= sMax + ds/2; sMinCopy += ds) {
@@ -99,10 +99,10 @@ void HardFunction() {
         double result = Find(minValue, maxValue, p, s, k_iter);
         results[count] = result;
         iterations[count] = k_iter;
-        ROF[count++] = HardFunctionCore(result, s);
+        functionResult[count++] = HardFunctionCore(result, s);
     }
 
-    PrintTable(results, ROF, iterations, arraySize, sMin, ds);
+    PrintTable(results, functionResult, iterations, arraySize, sMin, ds);
 
 }
 
@@ -115,12 +115,12 @@ void PrintSeparator(char symbol, int length) {
 
 }
 
-void PrintTable(double* results, double* ROF, int* iterations, int arraySize, double sMin, double ds) {
+void PrintTable(double* results, double* functionResult, int* iterations, int arraySize, double sMin, double ds) {
 
     cout << "\tS\t|\tX\t|\tF(x)\t\t|\tk_iter\n";
     PrintSeparator('-', 75);
 
     for (int i = 0; i < arraySize; sMin += ds, i++)
-        cout << "\t" << sMin << "\t|\t" << results[i] << "\t|\t" << ROF[i] << "\t|\t" << iterations[i] << "\n";
+        cout << "\t" << sMin << "\t|\t" << results[i] << "\t|\t" << functionResult[i] << "\t|\t" << iterations[i] << "\n";
     
 }
