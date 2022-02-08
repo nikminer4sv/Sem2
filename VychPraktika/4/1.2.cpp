@@ -1,125 +1,120 @@
 #include <iostream>
-#include <vector>
-#include <string>
+#include <cstring>
 
 using namespace std;
 
-int GetArraySize(char Array[]);
-void ChangeSeparatorToVoid(char Array[], int ArraySize);
-int DeleteFirstAndLastVoids(char Array[], int ArraySize);
-void LineToWords(char Array[], int ArraySize, vector<string>& Words, int Index);
-int DifferentWordsNumber(vector<string>& Words);
-void Rate(vector<string>& Words, string **WordRate);
-void Print(string **WordRate, int Number);
+#define LEN_MAX (255)
+
+// не использовать std::string и std::vector
+// вместо велосипедов использовать strtok, strdup, strcpy, strlen
+
+int Trim(char Array[], int ArraySize);
+char** Split(char* str, int& Count);
+bool WordsComparison(char* str1, char* str2);
+int DifferentWordsNumber(char** Words, int Count);
+char** Rate(char** Words, int Count);
+void Print(char** WordRate, int Number);
 
 int main() 
 {   
     cout << "Enter the text you want to print: \n";
-    char *Array = new char[255];
-    cin.getline(Array, 255); 
+    char *Array = new char[LEN_MAX];
+    cin.getline(Array, LEN_MAX); 
 
-    int ArraySize = GetArraySize(Array);
-    ChangeSeparatorToVoid(Array, ArraySize);
-    ArraySize = DeleteFirstAndLastVoids(Array, ArraySize);
+///
+    
+    int ArraySize = strlen(Array);
+    ArraySize = Trim(Array, ArraySize);
 
-    int Index = 0;
-    vector<string> Words;
-    LineToWords(Array, ArraySize, Words, Index);
-
-    int Number = DifferentWordsNumber(Words);
-    string **WordRate = new string*[Number];
-    for (int i = 0; i < Number; i++)
-	{
-		WordRate[i] = new string[2];
-	}
-
-    Rate(Words, WordRate);
+    int Count = 0;
+    char** Words = Split(Array, Count);
+    
+    int Number = DifferentWordsNumber(Words, Count);
+    
+    char** WordRate = Rate(Words, Count);
     Print(WordRate, Number);
 }
 
-int GetArraySize(char Array[]) 
+int Trim(char Array[], int ArraySize) 
 {
-    int Size = 0;
-
-    while (Array[Size] != '\0')
-        Size += 1;
-
-    return Size;
-}
-
-void ChangeSeparatorToVoid(char Array[], int ArraySize) 
-{
-    for (int i = 0; i < ArraySize; i++) 
-    {
-        if (Array[i] == ' ' || Array[i] == '?' || 
-            Array[i] == ',' || Array[i] == '.' || 
-            Array[i] == ':' || Array[i] == ';' || 
-            Array[i] == '!' || Array[i] == '-' || 
-            Array[i] == '(' || Array[i] == ')') 
-        { 
-            Array[i] = ' ';
-        }
-    }
-}
-
-int DeleteFirstAndLastVoids(char Array[], int ArraySize) 
-{
-    int First = 0;
-
-    while (Array[First] == ' ') 
-    {
-        for (int i = 0; i < ArraySize; i++)
-        {
-            Array[i] = Array[i + 1];
-        }
-        ArraySize--;
-    }
-
     while (Array[ArraySize - 1] == ' ')
     {
         ArraySize--;
     }
     Array[ArraySize] = '\0';
 
+    int First = 0;
+    while (Array[First] == ' ') 
+    {
+        First++;
+        for (int i = 0; i < ArraySize; i++)
+        {
+            Array[i] = Array[i + 1];
+        }
+        ArraySize--;
+    }
     return ArraySize;
 }
 
-void LineToWords(char Array[], int ArraySize, vector<string>& Words, int Index)
+char** Split(char* str, int& Count)
 {
-    string Word = "";
+    char Separartors[] = " ,.!?;:()-";
 
-    if (Index < ArraySize)
+    char* Word = strtok(strdup(str), Separartors);
+    while (Word)
     {
-        while ((Array[Index] != ' ') && (Index < ArraySize))
-        {
-            Word += Array[Index];
-            Index++;
-        }
-        Words.push_back(Word);
-
-        if (Array[Index + 1] == ' ')
-        {
-            while (Array[Index + 1] == ' ')
-            {
-                Index++;
-            }
-        }
-        Index++;
-        LineToWords(Array, ArraySize, Words, Index);
+        Count++;
+        Word = strtok(nullptr, Separartors);
     }
+
+    char** Result = new char*[Count];
+    int i = 0;
+
+    Word = strtok(strdup(str), Separartors);
+    while (Word)
+    {
+        Result[i] = strdup(Word);
+        Word = strtok(nullptr, Separartors);
+        i++;
+    }
+    
+    return Result;
 }
 
-int DifferentWordsNumber(vector<string>& Words)
+bool WordsComparison(char* str1, char* str2)
+{
+    bool Flag = true;
+
+    if (strlen(str1) == strlen(str2))
+    {
+        unsigned int Counter1 = 0;
+        for (unsigned int j = 0; j < strlen(str1); j++)
+        {
+            if (str1[j] == str2[j])
+            {
+                Counter1++;
+            }
+        }
+        if (Counter1 != strlen(str1))
+        {
+            Flag = false;
+        }
+    }
+
+    return Flag;
+}
+
+int DifferentWordsNumber(char** Words, int Count)
 {
     int Counter = 0;
 
-    for (int i = 0; i < Words.size(); i++)
+    for (int i = 0; i < Count; i++)
     {
         bool Flag = true;
 
         for (int Before = 0; Before < i; Before++)
         {
-            if (Words[Before] == Words[i])
+            if (WordsComparison(Words[i],Words[Before]))
             {
                 Flag = false;
             }
@@ -133,49 +128,56 @@ int DifferentWordsNumber(vector<string>& Words)
     return Counter;
 }
 
-void Rate(vector<string>& Words, string **WordRate)
+char** Rate(char** Words, int Count)
 {
     int Number = 0;
+    char** Result = new char*[Count];
 
-    for (int i = 0; i < Words.size(); i++)
+    for (int i = 0; i < Count; i++)
     {
         int Counter = 1;
         bool Flag = true;
         
-        for (int After = i + 1; After < Words.size(); After++)
+        for (int After = i + 1; After < Count; After++)
         {
-            if (Words[i] == Words[After])
+            if (WordsComparison(Words[i],Words[After]))
             {
                 Counter++;
             }
         }
         for (int Before = 0; Before < i; Before++)
         {
-            if (Words[Before] == Words[i])
+            if (WordsComparison(Words[i],Words[Before]))
             {
                 Flag = false;
             }
         }
         if (Flag)
         {
-            WordRate[Number][0] = Words[i];
-            WordRate[Number++][1] = to_string(Counter);
+            char num[] = "", str[LEN_MAX] = "", str1[] = " - ";
+            sprintf(num, "%d",Counter);
+            strcat_s(str, Words[Number]);
+            strcat_s(str, str1);
+            strcat_s(str, num);
+            Result[Number] = str;
+            //cout << Result[Number] << endl;
+            Number++; //????
         }
     }
+
+
+    //cout << Number << endl << Result[0] << endl << Result[1];
+    return Result;
 }
 
-void Print(string **WordRate, int Number)
+void Print(char** WordRate, int Number)
 {
     cout << "\n\nRate of words:\n\n";
 
     for (int i = 0; i < Number; i++)
     {
-        cout << "  " << WordRate[i][0] << " - " << WordRate[i][1] << endl;
+        cout << "  " << WordRate[i] << endl;
     }
 
     cout << "\n\n";
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 80a54adb7657bd45a71fabeae19865a6e1a01b99
