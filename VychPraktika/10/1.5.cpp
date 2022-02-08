@@ -14,9 +14,9 @@ int main()
 
 void Func()
 {
-    double a, b = 1.234; //Нижний и верхний пределы интегрирования (a, b), погрешность (eps).
+    double a, b = 1.234;
     double const p = 1e-6;
-    double I = p + 1, I1 = 0; // I-предыдущее вычисленное значение интеграла, I1-новое, с большим N.
+    double I = p + 1, I1 = 0; 
     double Results[24];
     int Iters[24];
     int Counter = 0;
@@ -29,14 +29,14 @@ void Func()
             for (int N = 2; (N <= 4) || (abs(I1 - I) > p); N *= 2)
             {
                 double h, sum2 = 0, sum4 = 0, sum = 0;
-                h = (b - a) / (2 * N); //Шаг интегрирования.
+                h = (b - a) / (2 * N); 
                 for (int i = 1; i <= 2 * N - 1; i += 2)
                 {
-                    sum4 += Function(a + h * i, t);       //Значения с нечётными индексами, которые нужно умножить на 4.
-                    sum2 += Function(a + h * (i + 1), t); //Значения с чётными индексами, которые нужно умножить на 2.
+                    sum4 += Function(a + h * i, t);       
+                    sum2 += Function(a + h * (i + 1), t); 
                     k_iters++;
                 }
-                sum = Function(a, t) + 4 * sum4 + 2 * sum2 - Function(b, t); //Отнимаем значение Function(b) так как ранее прибавили его дважды.
+                sum = Function(a, t) + 4 * sum4 + 2 * sum2 - Function(b, t); 
                 I = I1;
                 I1 = (h / 3) * sum;
             }

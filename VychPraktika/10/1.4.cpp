@@ -51,7 +51,7 @@ double Func(double x, double s)
     return x * x - exp(x) - 1.5 * s;
 }
 
-double Find(double min, double max, double p, double s, int& k_iter)
+double& Find(double min, double max, double p, double s, int& k_iter)
 {
     while (abs(max - min) > p)
     {
@@ -74,7 +74,7 @@ void FuncB()
     for (; smin <= smax + ds/2; smin += ds)
     {
         int k_iter = 0;
-        double s = smin, Result = Find(min, max, p, s, k_iter);
+        double s = smin, &Result = Find(min, max, p, s, k_iter);
         Results[Count] = Result;
         Iters[Count] = k_iter;
         ROF[Count++] = Func(Result, s);
