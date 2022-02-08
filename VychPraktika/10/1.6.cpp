@@ -1,10 +1,14 @@
 #include <iostream>
+#include <typeinfo>
 
 using namespace std;
 
-void Fill(int* Array, int n);
-void DirectMergeSort(int* Array, int n);
-void Print(int* Array, int n);
+template<typename T>
+void Fill(T* Array, int ArraySize);
+template<typename T>
+void DirectMergeSort(T* Array, int ArraySize);
+template<typename T>
+void Print(T* Array, int ArraySize);
 
 int main()
 {
@@ -17,7 +21,8 @@ int main()
     switch (k)
     {
     case 1:
-    {    int* Array = new int[n];
+    {    
+        int* Array = new int[n];
         Fill(Array, n);
         DirectMergeSort(Array, n);
         Print(Array, n);
@@ -25,8 +30,13 @@ int main()
     }
         
     case 2:
-        cout << "Nothing.";
+    {    
+        double* Array = new double[n];
+        Fill(Array, n);
+        DirectMergeSort(Array, n);
+        Print(Array, n);
         break;
+    }
     
     case 3:
         cout << "Nothing.";
@@ -42,15 +52,48 @@ int main()
     }
 }
 
-void Fill(int Array[], int ArraySize)
+template<typename T>
+void Fill(T* Array, int ArraySize)
 {
-    for (int i = 0; i < ArraySize; i++)
+    int* Int;
+    double* Double;
+    char *Char;
+    char** PChar;
+    if (typeid(Array) == typeid(Int))
     {
-        Array[i] = rand() % 100 + 1;
+        for (int i = 0; i < ArraySize; i++)
+        {
+            Array[i] = rand() % 100 + 1;
+        }
+    }
+    else if (typeid(Array) == typeid(Double))
+    {
+        for (int i = 0; i < ArraySize; i++)
+        {
+            Array[i] = (rand() % 1000 + 1) / 10;
+        }
+    }
+    else if (typeid(Array) == typeid(Char))
+    {
+        for (int i = 0; i < ArraySize; i++)
+        {
+            Array[i] = rand() % 39 + 41;
+        }
+    }
+    else if (typeid(Array) == typeid(PChar))
+    {
+        for (int i = 0; i < ArraySize; i++)
+        {
+            for (int j = 0; j < rand() % 10 + 1; j++)
+            {
+                Array[i][j] = rand() % 39 + 41;
+            }
+        }
     }
 }
 
-void DirectMergeSort(int Array[], int ArraySize)
+template<typename T>
+void DirectMergeSort(T* Array, int ArraySize)
 {
     if (ArraySize < 2)
         return;
@@ -79,7 +122,8 @@ void DirectMergeSort(int Array[], int ArraySize)
     delete[]buf;
 }
 
-void Print(int Array[], int ArraySize)
+template<typename T>
+void Print(T* Array, int ArraySize)
 {
     for (int i = 0; i < ArraySize; i++)
     {
