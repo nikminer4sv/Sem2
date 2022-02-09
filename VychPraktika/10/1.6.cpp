@@ -2,6 +2,7 @@
 
 using namespace std;
 
+template<typename T>
 void Fill(int* Array, int n);
 void DirectMergeSort(int* Array, int n);
 void Print(int* Array, int n);

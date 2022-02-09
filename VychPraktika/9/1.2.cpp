@@ -38,9 +38,6 @@ bool WordInText(char* text, char* word) {
 
     }
 
-    //hello
-    //el
-
     return false;
 
 }
