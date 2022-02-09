@@ -33,6 +33,16 @@ private:
 
     }
 
+    void Destroy(Node* node)
+    {
+        if (node)
+        {
+            Destroy(node->Left);
+            Destroy(node->Right);
+            delete node;
+        }
+    }
+
 public:
     BinarySearchTree() { Root = nullptr; }
 
@@ -114,16 +124,6 @@ public:
 
         TaskImpl(Root);
 
-    }
-
-    void Destroy(Node* node)
-    {
-        if (node)
-        {
-            Destroy(node->Left);
-            Destroy(node->Right);
-            delete node;
-        }
     }
 
     ~BinarySearchTree()

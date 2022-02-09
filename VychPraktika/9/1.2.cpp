@@ -42,7 +42,9 @@ bool WordInText(char* text, char* word) {
 
 }
 
-void EditText(char* text) {
+// hello, my little friend friend b b c.
+
+char* EditText(char* text) {
 
     char* result = new char[strlen(text)];
     int resultIndex = 0;
@@ -107,23 +109,20 @@ void EditText(char* text) {
 
     }
 
-    for (int i = 0; i < strlen(result); i++) {
-        cout << result[i];
-    }
+    return result;
 
 }
 
 int main() {
 
     char* text = new char[256];
-    //char* word = new char[256];
+    char* result = new char[256];
     gets(text);
-    //gets(word);
 
-    //cout << WordInText(text, word);
+    result = EditText(text);
 
-    //cout << text << endl;
-
-    EditText(text);
+    for (int i = 0; i < strlen(result); i++) {
+        cout << result[i];
+    }
 
 }
