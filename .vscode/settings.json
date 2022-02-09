@@ -17,6 +17,9 @@
         "utility": "cpp",
         "vector": "cpp",
         "__locale": "cpp",
-        "ios": "cpp"
+        "ios": "cpp",
+        "__bit_reference": "cpp",
+        "algorithm": "cpp",
+        "chrono": "cpp"
     }
 }
