@@ -5,14 +5,14 @@ using namespace std;
 
 void Print(double* Results, int* Iters);
 double Function(double x, int t);
-void Func();
+void Func(double (*xz)(double x, int t));
 
 int main()
 {
-    Func();
+    Func(Function);
 }
 
-void Func()
+void Func(double (*xz)(double x, int t))
 {
     double a, b = 1.234;
     double const p = 1e-6;
@@ -32,11 +32,11 @@ void Func()
                 h = (b - a) / (2 * N); 
                 for (int i = 1; i <= 2 * N - 1; i += 2)
                 {
-                    sum4 += Function(a + h * i, t);       
-                    sum2 += Function(a + h * (i + 1), t); 
+                    sum4 += xz(a + h * i, t);       
+                    sum2 += xz(a + h * (i + 1), t); 
                     k_iters++;
                 }
-                sum = Function(a, t) + 4 * sum4 + 2 * sum2 - Function(b, t); 
+                sum = xz(a, t) + 4 * sum4 + 2 * sum2 - xz(b, t); 
                 I = I1;
                 I1 = (h / 3) * sum;
             }

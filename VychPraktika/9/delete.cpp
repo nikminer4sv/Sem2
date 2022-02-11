@@ -1,5 +1,5 @@
 #include <iostream>
-#include <tuple>
+#include <cstring>
 
 using namespace std;
 
@@ -40,11 +40,6 @@ char** SplitToWords(char* text, int& count) {
         } else {
 
             if (isWord == true) {
-
-                /*for (int j = index; j < i; j++)
-                    cout << text[j];
-
-                cout << endl;*/
 
                 result[resultIndex] = new char[i - index];
 

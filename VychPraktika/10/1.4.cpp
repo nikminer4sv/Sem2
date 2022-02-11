@@ -3,67 +3,48 @@
 
 using namespace std;
 
-void FuncA();
-void FuncB();
-double Func(double x, double s);
-double Find(double min, double max, double p, int& k_iter);
+void FuncA(double (*xz)(double min, double max, double p, double s, int& k_iter, char ch));
+void FuncB(double (*xz)(double min, double max, double p, double s, int& k_iter, char ch));
+double Func(double x, double s, char ch);
+double Find(double min, double max, double p, double s, int& k_iter, char ch);
 void PrintTable(double* Results, double* ROF, int* Iters, int ArraySize, double smin);
 
 int main()
 {
-    FuncA();
-    FuncB();
+    FuncA(Find);
+    FuncB(Find);
 }
 
-void FuncA()
+void FuncA(double (*xz)(double min, double max, double p, double s, int& k_iter, char ch))
 {
-    int min = 0, max = 2;
-    double a = 1, b = 2, c = -3, d, x1, x2; 
-    
-    d = b * b - 4 * a * c;
-    if (d > 0) 
-    {
-        x1 = ((-b) + sqrt(d)) / (2 * a);
-        x2 = ((-b) - sqrt(d)) / (2 * a);
-        if ((min < x1) && (x1 < max))
-        {
-            cout << "x1 = " << x1 << "\n";
-        }
-        if ((min < x2) && (x2 < max))
-        {
-            cout << "x2 = " << x2 << "\n";
-        }
-    }
-    else if (d == 0) // Условие для дискриминанта равного нулю
-    {
-        x1 = -(b / (2 * a));
-        if ((min < x1) && (x1 < max))
-        {
-            cout << "x1 = x2 = " << x1 << "\n";
-        }
-    }
-    else // Условие при дискриминанте меньше нуля
-        cout << "D < 0, Действительных корней уравнения не существует";
+    double const p = 1e-6;
+    double min = 0, max = 2;
+    int k_iter = 0;
+    double Result = xz(min, max, p, 0, k_iter, 'a');
+    cout << "Result of A: " << Result << "\tAmount of iterations: " << k_iter << endl << endl;
 }
 
-double Func(double x, double s)
+double Func(double x, double s, char ch)
 {
-    return x * x - exp(x) - 1.5 * s;
+    if (ch == 'a')
+        return (x + 1) * (x + 1) - 5;
+    else if (ch == 'b')
+        return x * x - exp(x) - 1.5 * s;
 }
 
-double& Find(double min, double max, double p, double s, int& k_iter)
+double Find(double min, double max, double p, double s, int& k_iter, char ch)
 {
     while (abs(max - min) > p)
     {
-        min = max - (max - min) * Func(max, s) / (Func(max, s) - Func(min, s));
-        max = min - (min - max) * Func(min, s) / (Func(min, s) - Func(max, s));
+        min = max - (max - min) * Func(max, s, ch) / (Func(max, s, ch) - Func(min, s, ch));
+        max = min - (min - max) * Func(min, s, ch) / (Func(min, s, ch) - Func(max, s, ch));
         k_iter++;
     }
 
     return max;
 }
 
-void FuncB() 
+void FuncB(double (*xz)(double min, double max, double p, double s, int& k_iter, char ch)) 
 {
     double const p = 1e-6;
     double min = -1.5, max = 1, smin = 0.9, smax = 1.1, ds = 0.05;
@@ -74,10 +55,10 @@ void FuncB()
     for (; smin <= smax + ds/2; smin += ds)
     {
         int k_iter = 0;
-        double s = smin, &Result = Find(min, max, p, s, k_iter);
+        double s = smin, Result = xz(min, max, p, s, k_iter, 'b');
         Results[Count] = Result;
         Iters[Count] = k_iter;
-        ROF[Count++] = Func(Result, s);
+        ROF[Count++] = Func(Result, s, 'b');
     }
 
     PrintTable(Results, ROF, Iters, ArraySize, smin);

@@ -1,20 +1,18 @@
 #include <iostream>
-#include <typeinfo>
+#include <cstring>
 
 using namespace std;
 
 template<typename T>
-<<<<<<< HEAD
-void Fill(int* Array, int n);
-void DirectMergeSort(int* Array, int n);
-void Print(int* Array, int n);
-=======
 void Fill(T* Array, int ArraySize);
+void Fill(double* Array, int ArraySize);
+void Fill(char* Array, int ArraySize);
+void Fill(char** Array, int ArraySize);
 template<typename T>
 void DirectMergeSort(T* Array, int ArraySize);
+void DirectMergeSort(char** Array, int ArraySize);
 template<typename T>
 void Print(T* Array, int ArraySize);
->>>>>>> 1964d344654dc1278d83efd58ff8292eee96fd19
 
 int main()
 {
@@ -28,29 +26,43 @@ int main()
     {
     case 1:
     {    
-        int* Array = new int[n];
-        Fill(Array, n);
-        DirectMergeSort(Array, n);
-        Print(Array, n);
+        int* Int = new int[n];
+        Fill(Int, n);
+        DirectMergeSort(Int, n);
+        Print(Int, n);
         break;
     }
         
     case 2:
     {    
-        double* Array = new double[n];
-        Fill(Array, n);
-        DirectMergeSort(Array, n);
-        Print(Array, n);
+        double* Double = new double[n];
+        Fill(Double, n);
+        DirectMergeSort(Double, n);
+        Print(Double, n);
         break;
     }
     
     case 3:
-        cout << "Nothing.";
+    {
+        char* Char = new char[n];
+        Fill(Char, n);
+        DirectMergeSort(Char, n);
+        Print(Char, n);
         break;
+    }
         
     case 4:
-        cout << "Nothing.";
+    {
+        char** PChar = new char*[n];
+        for (int i = 0; i < n; i++)
+        {
+            PChar[i] = new char[255];
+        }
+        Fill(PChar, n);
+        DirectMergeSort(PChar, n);
+        Print(PChar, n);
         break;
+    }
     
     default:
         cout << "You fuckin fuckin you";
@@ -61,39 +73,36 @@ int main()
 template<typename T>
 void Fill(T* Array, int ArraySize)
 {
-    int* Int;
-    double* Double;
-    char *Char;
-    char** PChar;
-    if (typeid(Array) == typeid(Int))
+    for (int i = 0; i < ArraySize; i++)
     {
-        for (int i = 0; i < ArraySize; i++)
-        {
-            Array[i] = rand() % 100 + 1;
-        }
+        Array[i] = rand() % 100 + 1;
     }
-    else if (typeid(Array) == typeid(Double))
+}
+void Fill(double* Array, int ArraySize)
+{
+    for (int i = 0; i < ArraySize; i++)
     {
-        for (int i = 0; i < ArraySize; i++)
-        {
-            Array[i] = (rand() % 1000 + 1) / 10;
-        }
+        Array[i] = (rand() % 1000 + 1) / 10.0;
     }
-    else if (typeid(Array) == typeid(Char))
+}
+
+void Fill(char* Array, int ArraySize)
+{
+    char Symbols[] = "abcdefghijklmnopqrstuvwxyz";
+    for (int i = 0; i < ArraySize; i++)
     {
-        for (int i = 0; i < ArraySize; i++)
-        {
-            Array[i] = rand() % 39 + 41;
-        }
+        Array[i] = Symbols[rand() % int(sizeof(Symbols) - 2) + 1];
     }
-    else if (typeid(Array) == typeid(PChar))
+}
+
+void Fill(char** Array, int ArraySize)
+{
+    char Symbols[] = "abcdefghijklmnopqrstuvwxyz";
+    for (int i = 0; i < ArraySize; i++)
     {
-        for (int i = 0; i < ArraySize; i++)
+        for (int j = 0; j < rand() % 10 + 1; j++)
         {
-            for (int j = 0; j < rand() % 10 + 1; j++)
-            {
-                Array[i][j] = rand() % 39 + 41;
-            }
+            Array[i][j] = Symbols[rand() % int(sizeof(Symbols) - 2) + 1];
         }
     }
 }
@@ -107,11 +116,11 @@ void DirectMergeSort(T* Array, int ArraySize)
     DirectMergeSort(Array, ArraySize / 2);
     DirectMergeSort(&Array[ArraySize / 2], ArraySize - (ArraySize / 2));
 
-    int* buf = new int[ArraySize];
+    T* buf = new T[ArraySize];
     int idbuf = 0, idl = 0, idr = ArraySize / 2 ;
 
     while ((idl < ArraySize / 2) && (idr < ArraySize))
-        if (Array[idl] > Array[idr]) 
+        if (Array[idl] < Array[idr]) 
             buf[idbuf++] = Array[idl++];
         else
             buf[idbuf++] = Array[idr++];
@@ -128,12 +137,50 @@ void DirectMergeSort(T* Array, int ArraySize)
     delete[]buf;
 }
 
+void DirectMergeSort(char** Array, int ArraySize)
+{
+    if (ArraySize < 2)
+        return;
+
+    DirectMergeSort(Array, ArraySize / 2);
+    DirectMergeSort(&Array[ArraySize / 2], ArraySize - (ArraySize / 2));
+
+    char** buf = new char*[ArraySize];
+    for (int i = 0; i < ArraySize; i++)
+    {
+        buf[i] = new char[255];
+    }  
+    int idbuf = 0, idl = 0, idr = ArraySize / 2 ;
+    // ArraySize = 10, idr = 5
+
+    while ((idl < ArraySize / 2) && (idr < ArraySize))
+    // (0 < 5) && (5 < 10)
+        if (strcmp(Array[idl], Array[idr]) <= 0) 
+        // Array[0] > Array[5]
+            buf[idbuf++] = Array[idl++];
+            //buf[0] = Array[0], idbuf = 1, idl = 1
+        else
+            buf[idbuf++] = Array[idr++];
+            //buf[0] = Array[0], idbuf = 1, idr = 6
+
+    while (idl < ArraySize / 2) 
+        buf[idbuf++] = Array[idl++];
+
+    while (idr < ArraySize) 
+        buf[idbuf++] = Array[idr++];
+
+    for (idl = 0; idl < ArraySize; idl++)
+        Array[idl] = buf[idl];
+        
+    delete[]buf;
+}
+
 template<typename T>
 void Print(T* Array, int ArraySize)
 {
-    for (int i = 0; i < ArraySize; i++)
+    for (int i = 1; i <= ArraySize; i++)
     {
-        cout << Array[i] << "\t";
+        cout << Array[i - 1] << "\t";
         if ((i % 20) == 0)
         {
             cout << endl;
