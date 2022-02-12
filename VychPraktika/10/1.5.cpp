@@ -54,12 +54,8 @@ double Function(double x, int t)
     {
         x1 *= x;
     }
-    for (int i = 0; i < 2; i++)
-    {
-        x2 *= x;
-    }
 
-    return (sin(x1) * sin(x1)) / (1 + x2);
+    return (sin(x1) * sin(x1)) / (1 + x * x);
 }
 
 void Print(double* Results, int* Iters)
