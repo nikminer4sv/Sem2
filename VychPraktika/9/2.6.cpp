@@ -149,11 +149,11 @@ public:
 
     }*/
 
-    /*~DoublyLinkedList() {
+    ~DoublyLinkedList() {
 
         Node* current = Head;
 
-        while(current != nullptr) {
+        while(current->Next != Head) {
             Node* next = current->Next;
             delete current;
             current = next;
@@ -161,7 +161,7 @@ public:
 
         Head = nullptr;
 
-    }*/
+    }
 
 };
 
