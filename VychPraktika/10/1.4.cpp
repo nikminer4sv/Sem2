@@ -3,25 +3,30 @@
 
 using namespace std;
 
-void FuncA(double (*xz)(double min, double max, double p, double s, int& k_iter, char ch));
-void FuncB(double (*xz)(double min, double max, double p, double s, int& k_iter, char ch));
+void FuncA(double (*xz)(double min, double max, double p, double s, int& k_iter, char ch), double min, double max);
+void FuncB(double (*xz)(double min, double max, double p, double s, int& k_iter, char ch), double min, double max, double s);
 double Func(double x, double s, char ch);
 double Find(double min, double max, double p, double s, int& k_iter, char ch);
 void PrintTable(double* Results, double* ROF, int* Iters, int ArraySize, double smin);
 
 int main()
 {
-    FuncA(Find);
-    FuncB(Find);
+    double minA = 0, maxA = 2;
+    FuncA(Find, minA, maxA);
+    double minB = -1.5, maxB = 1, smin = 0.9, smax = 1.1, ds = 0.05;
+    cout << "\tS\t\tX\t\tF(x)\t\tk_iter\n\n";
+    for (double s = smin; s <= smax + ds/2; s += ds)
+    {
+        FuncB(Find, minB, maxB, s);
+    }
 }
 
-void FuncA(double (*xz)(double min, double max, double p, double s, int& k_iter, char ch))
+void FuncA(double (*xz)(double min, double max, double p, double s, int& k_iter, char ch), double min, double max)
 {
     double const p = 1e-6;
-    double min = 0, max = 2;
     int k_iter = 0;
     double Result = xz(min, max, p, 0, k_iter, 'a');
-    cout << "Result of A: " << Result << "\tAmount of iterations: " << k_iter << endl << endl;
+    cout << "\tResult of A: " << Result << "\tAmount of iterations: " << k_iter << endl << endl;
 }
 
 double Func(double x, double s, char ch)
@@ -44,32 +49,11 @@ double Find(double min, double max, double p, double s, int& k_iter, char ch)
     return max;
 }
 
-void FuncB(double (*xz)(double min, double max, double p, double s, int& k_iter, char ch)) 
+void FuncB(double (*xz)(double min, double max, double p, double s, int& k_iter, char ch), double min, double max, double s)
 {
     double const p = 1e-6;
-    double min = -1.5, max = 1, smin = 0.9, smax = 1.1, ds = 0.05;
-    int ArraySize = int((smax - smin)/ds + 1), Count = 0;
-    double Results[ArraySize], ROF[ArraySize]; 
-    int Iters[ArraySize];
+    int k_iter = 0;
+    double Result = xz(min, max, p, s, k_iter, 'b');
 
-    for (; smin <= smax + ds/2; smin += ds)
-    {
-        int k_iter = 0;
-        double s = smin, Result = xz(min, max, p, s, k_iter, 'b');
-        Results[Count] = Result;
-        Iters[Count] = k_iter;
-        ROF[Count++] = Func(Result, s, 'b');
-    }
-
-    PrintTable(Results, ROF, Iters, ArraySize, smin);
-}
-
-void PrintTable(double* Results, double* ROF, int* Iters, int ArraySize, double smin)
-{
-    cout << "\tS\t\tX\t\tF(x)\t\tk_iter\n\n";
-    smin = 0.9;
-    for (int i = 0; i < ArraySize; smin += 0.05, i++)
-    {
-        cout << "\t" << smin << "\t\t" << Results[i] << "\t" << ROF[i] << "\t\t" << Iters[i] << "\n";
-    }
+    cout << "\t" << s << "\t\t" << Result << "\t" << Func(Result, s, 'b') << "\t\t" << k_iter << "\n";
 }
