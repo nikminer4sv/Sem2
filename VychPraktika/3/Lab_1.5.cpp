@@ -1,7 +1,12 @@
 #include <iostream>
 #include <iomanip>
-#include "Methods.h"
+#include "Methods_Lab_1.5.h"
 using namespace std;
+
+
+double f(double x, double t, double s) {
+    return pow(1 + x * x, 1 / t) / exp(sin(x) + s);
+}
 
 int main() {
 
@@ -13,11 +18,11 @@ int main() {
 
     
     double area1;
-    int n = 1; //начальное число шагов
+    int n = 1; //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 
-    cout << "Введите левую границу интегрирования a = ";
+    cout << "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ a = ";
     cin >> a;
-    cout << "\nВведите правую границу интегрирования b = ";
+    cout << "\nпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ b = ";
     cin >> b;
  
     int k_iter = 0;
@@ -26,7 +31,7 @@ int main() {
         for (double t = 2; t <= tMax; t++)
         {
             k_iter = 0;
-            area1 = Integral(a, b, s, t, k_iter);
+            area1 = Integral(f, a, b, s, t, k_iter);
 
             cout << "\tS\t\tT\t\tIntegral\t\tk_iter\n";
             cout << setw(9) << s << setw(16) << t << setw(22) << area1 << setw(18) << k_iter << endl << endl;
