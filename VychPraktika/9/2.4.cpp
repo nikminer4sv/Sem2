@@ -95,25 +95,6 @@ public:
 
     }
 
-    /*void Print() {
-        //ситуация когда лист пустой
-        //поставить ассерт на размер листа
-
-        //assert(Size > 0);
-        
-        Node* Temp = Head;
-
-        cout << "Size is: " << Size << endl;
-
-        for (int i = 0; i < Size; i++) {
-
-            PrintStudentInfo(Temp->Data, i + 1);
-            Temp = Temp->Next;
-
-        }
-
-    }*/
-
     ~CharList() {
 
         Node* current = Head;
@@ -138,9 +119,6 @@ void PrintList(CharList& list) {
     cout << endl;
 
 }
-
-// hello
-// el
 
 void Task(CharList& list1, CharList& list2) {
 
@@ -182,8 +160,8 @@ int main() {
 
     CharList list1;
     CharList list2;
-    list1.Add("Hello dear bitch friend, you are bitc");
-    list2.Add("bitch");
+    list1.Add("Hello dear friend, you are awesome");
+    list2.Add("are");
 
     Task(list1, list2);
 

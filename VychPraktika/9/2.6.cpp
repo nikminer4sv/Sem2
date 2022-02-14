@@ -17,7 +17,8 @@ struct Node {
     Node* Next;
     Node* Prev;
 
-    Node() { Next = nullptr; }
+    Node() { Next = nullptr; Prev = nullptr;}
+
 
 };
 
@@ -54,8 +55,6 @@ public:
                 Temp = Temp->Next;
 
         }
-
-        
 
         return Temp->Data;
     }
@@ -115,7 +114,6 @@ public:
             Temp->Next->Next->Prev = Temp;
             Temp->Next = Temp->Next->Next;
 
-            // 1 2 3 4 5
         }
 
         Size -= 1;
@@ -123,31 +121,6 @@ public:
         return true;
 
     }
-
-    void Test() {
-
-        this->Remove(4);
-
-    }
-
-    /*void Print() {
-        //ситуация когда лист пустой
-        //поставить ассерт на размер листа
-
-        //assert(Size > 0);
-        
-        Node* Temp = Head;
-
-        cout << "Size is: " << Size << endl;
-
-        for (int i = 0; i < Size; i++) {
-
-            PrintStudentInfo(Temp->Data, i + 1);
-            Temp = Temp->Next;
-
-        }
-
-    }*/
 
     ~DoublyLinkedList() {
 
@@ -176,9 +149,9 @@ void PrintList(DoublyLinkedList& list) {
 
 double Task(DoublyLinkedList& list) {
 
-    if (list.Size < 2)
+    if (list.Size < 2 || list.Size % 2)
         throw InvalidListSize();
-
+        
     double min = list.Get(0) + list.Get(list.Size - 1);
     
     for (int i = 1; i < list.Size - 1; i++) {
@@ -193,45 +166,6 @@ double Task(DoublyLinkedList& list) {
     return min;
 
 }
-
-// hello
-// el
-
-/*void Task(CharList& list1, CharList& list2) {
-
-    if (list2.Size == 0 || list1.Size - list2.Size < 0) 
-        return;
-
-    int forSize = list1.Size - list2.Size;
-
-    for (int i = 0; i < forSize + 1; i++) {
-
-        bool exist = true;
-
-        for (int j = 0; j < list2.Size; j++) {
-
-            if (list1.Get(i + j) != list2.Get(j)) {
-
-                exist = false;
-                break;
-
-            }
-
-        }
-
-        if (exist) {
-
-            for (int j = 0; j < list2.Size; j++) {
-                list1.Remove(i);
-            }
-
-            forSize = list1.Size - list2.Size;
-
-        }
-
-    }
-
-}*/
 
 int main() {
 
@@ -260,7 +194,6 @@ int main() {
     list.Add(4.123);
     list.Add(0.5678);
     list.Add(8.123);
-    //list.Test();
 
     cout << Task(list) << endl;
 

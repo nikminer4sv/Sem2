@@ -20,6 +20,8 @@
         "ios": "cpp",
         "__bit_reference": "cpp",
         "algorithm": "cpp",
-        "chrono": "cpp"
+        "chrono": "cpp",
+        "new": "cpp",
+        "tuple": "cpp"
     }
 }
