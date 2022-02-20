@@ -121,9 +121,6 @@ void PrintList(CharList& list) {
 
 }
 
-// hello
-// el
-
 void Task(CharList& list1, CharList& list2) {
 
     if (list2.Size == 0 || list1.Size - list2.Size < 0) 
@@ -164,8 +161,8 @@ int main() {
 
     CharList list1;
     CharList list2;
-    list1.Add("Hello dear bitch friend, you are bitc");
-    list2.Add("bitch");
+    list1.Add("Hello dear friend, you are awesome");
+    list2.Add("are");
 
     Task(list1, list2);
 
