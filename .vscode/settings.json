@@ -21,5 +21,10 @@
         "__bit_reference": "cpp",
         "algorithm": "cpp",
         "chrono": "cpp"
+    },
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#352B30",
+        "titleBar.activeBackground": "#4A3C44",
+        "titleBar.activeForeground": "#FBFAFA"
     }
 }

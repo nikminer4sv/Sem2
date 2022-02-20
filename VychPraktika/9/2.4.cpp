@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 
 using namespace std;
 
@@ -94,25 +95,6 @@ public:
         return true;
 
     }
-
-    /*void Print() {
-        //ситуация когда лист пустой
-        //поставить ассерт на размер листа
-
-        //assert(Size > 0);
-        
-        Node* Temp = Head;
-
-        cout << "Size is: " << Size << endl;
-
-        for (int i = 0; i < Size; i++) {
-
-            PrintStudentInfo(Temp->Data, i + 1);
-            Temp = Temp->Next;
-
-        }
-
-    }*/
 
     ~CharList() {
 
