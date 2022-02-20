@@ -2,25 +2,21 @@
 
 using namespace std;
 
-double** ToSum(double** matrix1, double** matrix2, int size) {
+double* ToSum(double* matrix1, double* matrix2, int size) {
 
-    double** result = new double*[size];
-    for (int i = 0; i < size; i++)
-        result[i] = new double[size];
+    double* result = new double[size * size];
 
-        for (int i = 0; i < size; i++) 
-            for (int j = 0; j < size; j++) 
-                result[i][j] = matrix1[i][j] + matrix2[i][j];
+    for (int i = 0; i < size; i++) 
+        for (int j = 0; j < size; j++) 
+            result[i * size + j] = matrix1[i * size + j] + matrix2[i * size + j];
 
-        return result;    
+    return result;    
 
 }
 
-double** ToSquare(double** matrix, int size) {
+double* ToSquare(double* matrix, int size) {
 
-    double** result = new double*[size];
-    for (int i = 0; i < size; i++)
-        result[i] = new double[size];
+    double* result = new double[size * size];
 
     for (int i = 0; i < size; i++) {
 
@@ -30,14 +26,14 @@ double** ToSquare(double** matrix, int size) {
 
             for (int k = 0; k < size; k++) {
 
-                double firstElement = matrix[i][k];
-                double secondElement = matrix[k][j];
+                double firstElement = matrix[i * size + k];
+                double secondElement = matrix[k * size + j];
 
                 sum += firstElement * secondElement;
 
             }
 
-            result[i][j] = sum;
+            result[i * size + j] = sum;
 
         }   
         
@@ -60,15 +56,12 @@ void Print(double* matrix, int size) {
 
 }
 
-double** Task(double** matrix, int size) {
+double* Task(double* matrix, int size) {
 
-    double** result = new double*[size];
-    for (int i = 0; i < size; i++)
-        result[i] = new double[size];
+    double* result = new double[size * size];
 
     result = ToSum(matrix, ToSum(ToSquare(matrix, size), ToSum(ToSquare(ToSquare(matrix, size), size), ToSquare(ToSquare(ToSquare(matrix, size), size), size), size), size), size);
     return result;
-
 
 }
 
@@ -77,13 +70,14 @@ int main() {
     int size;
     cin >> size;
 
-    double* matrix = new double[size];
+    double* matrix = new double[size * size];
 
     for (int i = 0; i < size * size; i++)
             cin >> matrix[i];
 
-    //double** result = Task(matrix, size);
+    //double* result = ToSquare(matrix, size); 
+    double* result = Task(matrix, size);
 
-    Print(matrix, size);
+    Print(result, size);
 
 }
