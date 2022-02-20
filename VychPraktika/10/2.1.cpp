@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 
-
 using namespace std;
 
 void CombSort(int values[], int lenD) 
@@ -25,7 +24,7 @@ void CombSort(int values[], int lenD)
 
 int main() 
 {
-    ifstream in;
+    /*ifstream in;
     in.open("numbers1.txt");
     int n = 1;
     int k = 0;
@@ -83,5 +82,32 @@ int main()
         }
     }
     cout << endl << "End of program";
-    return 0;
+    return 0;*/
+
+    ifstream in;
+    in.open("numbers2.txt");
+    int k = 0;
+    bool array[10001]{};
+
+    if (in.is_open())
+    {
+        while (!in.eof())
+        {
+            in >> k;
+            array[k] = true;
+        }
+    }
+    int Counter = 0;
+    for (int i = 1; i < 10001; i++)
+    {
+        if (array[i - 1])
+        {
+            cout << i - 1 << "\t";
+            Counter++;
+            if ((Counter % 20) == 0)
+            {
+                cout << endl;
+            }
+        }
+    }
 }
