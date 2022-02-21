@@ -3,50 +3,30 @@
 using namespace std;
 
 void quadraticMatrix(int* matrix, const int n, int* quadratMatrix){
-
-    int idColumnMatrix = 0;
-    int idRowMatrix = 0;
-
-    int startPositionColumn = 0;
-    int startPositionRow = 0;
-
-    int indexN = n - 1;
-    
-    for (int iterQuadraticMatrix = 0, i = 0; iterQuadraticMatrix < n * n; i++)
+   
+  
+    for (int i = 0; i < n; i++)
     {
-
-        if (iterQuadraticMatrix == indexN && i == n)
+        for (int j = 0; j < n; j++)
         {
-            indexN += n;
-            idColumnMatrix = startPositionColumn = -1;
-            startPositionRow += n;
-            idRowMatrix = startPositionRow; 
+             int sum = 0;
+            for (int j1 = 0; j1 < n; j1++)
+            {
+                sum += matrix[i*n+j1] * matrix[j1*n+j];
+            }
+            quadratMatrix[i*n+j] = sum;
         }
-
-        if (i == n)
-        {
-            iterQuadraticMatrix++;
-            idColumnMatrix = ++startPositionColumn;
-            idRowMatrix = startPositionRow;
-            i = 0;
-        }
-        
-        quadratMatrix[iterQuadraticMatrix] += matrix[idRowMatrix++] * matrix[idColumnMatrix];
-
-        idColumnMatrix += n;   
-    }
+    }  
 }
 
 void printMatrix(int* matrix, const int n){
-    int indexN = n - 1;
-    for (int i = 0; i < n * n; i++)
+    for (int i = 0; i < n; i++)
     {
-        cout << matrix[i] << "\t";
-        if (i == indexN)
+        for (int j = 0; j < n; j++)
         {
-            indexN += n;
-            cout << endl;
+            cout << matrix[i*n+j] << '\t';
         }
+        cout << endl;
     }
     cout << endl;
 }
@@ -60,13 +40,13 @@ void printVector(int* vectorB, const int n){
 }
 
 void multiplyingVectorMatrix(int* oldMatrix, int* vectorB, const int n, int* newMatrix){
-    for (int i = 0, j = 0; i < n * n; i++)
+     for (int i = 0; i < n; i++)
     {
-        if (j == n)
-            j = 0;
-        
-        newMatrix[i] = oldMatrix[i] * vectorB[j++];
-    }  
+        for (int j = 0; j < n; j++)
+        {
+            newMatrix[i*n+j] = oldMatrix[i*n+j] * vectorB[j];
+        }
+    } 
 }
 
 

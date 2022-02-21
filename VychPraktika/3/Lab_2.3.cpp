@@ -89,7 +89,6 @@ private:
                 slow = slow->next;
             }
             if (!fast) {
-                //cout << "This element does not exist" << endl;
                 return;
             }
             
@@ -137,6 +136,7 @@ private:
         if (temp->next == nullptr)
         last->next = p; // присваиваем в текущем последнем узле указателю next следующий узел 
         last = p; // last присваем новый последний узел
+
         size++;
     }
 
