@@ -111,11 +111,6 @@ tuple<int*, int> ResultingArray() {
 
     resultSize -= 1;
 
-    for (int i = 0; i < resultSize; i++) 
-        cout << result[i] << " ";
-
-    cout << endl;
-
     int* finalResult = new int[resultSize];
     int finalResultSize = 0;
 
