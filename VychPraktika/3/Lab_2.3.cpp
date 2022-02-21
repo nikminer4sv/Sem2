@@ -2,13 +2,14 @@
 #include <string>
 using namespace std;
 
-struct DataOfBirthDay{
+
+struct DataOfBirthDay {
     int Day;
     int Mounth;
     int Year;
 };
 
-struct Student{
+struct Student {
     string Name;
     string Surname;
     string Patronymic;
@@ -17,103 +18,155 @@ struct Student{
     float Progress;
 
     DataOfBirthDay Data;
-};
 
-struct Node {
-
-    Student student;
-    Node* next;
-
-    Node(string surname, string name, string patronymic, int day, int mounth, int year, int course, float progress){
-        next = nullptr;
-        student.Name = name;
-        student.Surname = surname;
-        student.Patronymic = patronymic;
-
-        student.Data.Day = day;
-        student.Data.Mounth = mounth;
-        student.Data.Year = year;
-
-        student.Course = course;
-        student.Progress = progress;
+    void Print() {
+        cout << Surname << " " << Name << " " << Patronymic << endl;
+        cout << Data.Day << '.' << Data.Mounth << '.' << Data.Year << endl;
+        cout << "Course - " << Course << endl;
+        cout << "Progress - " << Progress << endl << endl;
     }
 };
 
 
-class list{
+struct Node {
+    Student students;
+    Node* next;
+
+    Node(const Student& student) {
+        //fillStudents(students, student);
+        students = student;
+        this->next = nullptr;
+    }
+};
+
+class list {
 private:
-    Node* first;
-    Node* last;
+    Node* first = nullptr;
+    Node* last = nullptr;
     int size = 0;
 
-    string Surname;
-    string Name;
-    string Patronymic;
-    int Day;
-    int Mounth;
-    int Year;
-    int Course;
-    float Progress;
+    bool Separator(const Node* a, const Node* b) {
+        return a->students.Surname > b->students.Surname && b->next->students.Surname > a->students.Surname;
+    }
 
-    bool is_empty() {
+    bool Compare(const Student& a, const Student& b) {
+        return a.Surname == b.Surname && a.Name == b.Name && a.Patronymic == b.Patronymic;
+    }
+
+    bool CompareSymbols(const Node* a, const Student& b) {
+        return a->students.Surname[0] == b.Surname[0] && a->students.Name[0] == b.Name[0] && a->students.Patronymic[0] == b.Patronymic[0];
+    }
+
+    bool NewCompare(const Node* a, const Student& b) {
+        return a->students.Name[0] != b.Name[0] || a->students.Surname[0] != b.Surname[0] || a->students.Patronymic[0] != b.Patronymic[0];
+    }
+
+
+public:
+    bool is_empty() const {
         return first == nullptr;
-    }   
-    
-    void createNewList(list& newL, char firstSurnameSymbol, char firstNameSymbol, char firstPatronymicSymbol){    
+    }
+
+    void print() {
+
+        Node* p = first;
+        while (p) {
+            p->students.Print();
+            p = p->next;
+        }
+        cout << endl;
+    }
+
+
+    void createNewList(list& newL, Student& stud) {
         while (true)
         {
             if (is_empty()) return;
-            if (first->student.Surname[0] == firstSurnameSymbol && first->student.Name[0] == firstNameSymbol &&
-                first->student.Patronymic[0] == firstPatronymicSymbol) 
+            if (CompareSymbols(first, stud))
             {
-                newL.push_back(first->student.Surname, first->student.Name, first->student.Patronymic, first->student.Data.Day, 
-                            first->student.Data.Mounth, first->student.Data.Year, first->student.Course, first->student.Progress);
-                remove_first();
+                newL.push_back(first->students);
+                remove(first->students);
                 continue;
             }
-            else if (last->student.Surname[0] == firstSurnameSymbol && last->student.Name[0] == firstNameSymbol && 
-                    last->student.Patronymic[0] == firstPatronymicSymbol) 
+            else if (CompareSymbols(last, stud))
             {
-                newL.push_back(last->student.Surname, last->student.Name, last->student.Patronymic, last->student.Data.Day,
-                    last->student.Data.Mounth, last->student.Data.Year, last->student.Course, last->student.Progress);
-                remove_last();
+                newL.push_back(last->students);
+                remove(last->students);
                 continue;
             }
 
             Node* slow = first;
             Node* fast = first->next;
 
-            while (fast && (fast->student.Name[0] != firstNameSymbol || fast->student.Surname[0] != firstSurnameSymbol
-                || fast->student.Patronymic[0] != firstPatronymicSymbol)) {
+            while (fast && NewCompare(fast, stud)) {
                 fast = fast->next;
                 slow = slow->next;
             }
             if (!fast) {
                 return;
             }
-            
-            newL.push_back(fast->student.Surname, fast->student.Name, fast->student.Patronymic, fast->student.Data.Day,
-                    fast->student.Data.Mounth, fast->student.Data.Year, fast->student.Course, fast->student.Progress);
+
+            newL.push_back(fast->students);
             slow->next = fast->next;
             delete fast;
         }
     }
 
-    void print() {
+
+    void remove(const Student& stud) {
         if (is_empty()) return;
-        Node* p = first;
-        while (p) {
-            cout << p->student.Surname << " " << p->student.Name << " " << p->student.Patronymic << endl;
-            cout << p->student.Data.Day << '.' << p->student.Data.Mounth << '.' << p->student.Data.Year << endl;
-            cout << "Course - " << p->student.Course << endl;
-            cout << "Progress - " << p->student.Progress << endl << endl;
-            p = p->next;
+
+        if (Compare(first->students, stud)) {
+
+            Node* p = first;
+            first = p->next;
+            delete p;
+            return;
         }
-        cout << endl;
+
+        if (Compare(last->students, stud)) {
+
+            if (first == last) {
+                Node* p = first;
+                first = p->next;
+                delete p;
+            }
+
+            Node* p = first;
+            while (p->next != last)
+                p = p->next;
+
+            p->next = nullptr;
+
+            delete last;
+            last = p;
+            return;
+        }
+
+        Node* itPrev = first;       //it_prev
+        Node* itCurrent = first->next; //it_current
+
+        while (itCurrent && !Compare(itCurrent->students, stud))
+        {
+            itCurrent = itCurrent->next;
+            itPrev = itPrev->next;
+        }
+
+        if (!itCurrent) {
+            cout << "This element does not exist" << endl;
+            return;
+        }
+
+        itPrev->next = itCurrent->next;
+        delete itCurrent;
     }
 
-    void push_back(string surname, string name, string patronymic, int day, int mounth, int year, int course, float progress) {
-        Node* p = new Node(surname, name, patronymic, day, mounth, year, course, progress);
+    list() : first(nullptr), last(nullptr) {}
+
+    void push_back(Student& stud) {
+
+        Node* p = new Node(stud);
+
         if (is_empty()) {
             first = p;
             last = p;
@@ -122,185 +175,131 @@ private:
         }
 
         Node* temp = first;
+        size++;
+
         while (temp->next != nullptr)
         {
-            if (p->student.Surname > temp->student.Surname && temp->next->student.Surname > p->student.Surname)
+            if (Separator(p, temp))
             {
                 p->next = temp->next;
                 temp->next = p;
-                break;
+                return;
             }
             else temp = temp->next;
         }
 
-        if (temp->next == nullptr)
+        if (size == 2 && p->students.Surname < temp->students.Surname)  // провервка в начале когда только два узла
+        {
+            p->next = last;
+            first = p;
+            last = p->next;
+            return;
+        }
         last->next = p; // присваиваем в текущем последнем узле указателю next следующий узел 
         last = p; // last присваем новый последний узел
-
-        size++;
     }
 
-    // Node* find(string _val) {
-    //     Node* p = first;
-    //     while (p && p->val != _val) p = p->next;
-    //         return (p && p->val == _val) ? p : nullptr;
-    // }
-
-    void remove_first() {
-        if (is_empty()) return;
-        Node* p = first;
-        first = p->next;
-        delete p;
-    }
-
-    void remove_last() {
-        if (is_empty()) return;
-        if (first == last) {
-            remove_first();
-            return;
-        }
-        Node* p = first;
-        while (p->next != last) p = p->next;
-        p->next = nullptr;
-        delete last;
-        last = p;
-    }
-
-    void remove(string Surname, string Name, string Patronymic) {
-        if (is_empty()) return;
-        if (first->student.Surname == Surname && first->student.Name == Name && first->student.Patronymic == Patronymic) 
-        {
-            remove_first();
-            return;
-        }
-        else if (last->student.Surname == Surname && last->student.Name == Name && last->student.Patronymic == Patronymic) 
-        {
-            remove_last();
-            return;
-        }
-
-        Node* slow = first;
-        Node* fast = first->next;
-        while (fast && (fast->student.Surname != Surname && fast->student.Name != Name && fast->student.Patronymic != Patronymic)) 
-        {
-            fast = fast->next;
-            slow = slow->next;
-        }
-        if (!fast) {
-
-            cout << "This element does not exist" << endl;
-            return;
-        }
-        slow->next = fast->next;
-        delete fast;
-    }
-
-public:
-    list() : first(nullptr), last(nullptr) {}
-
-    void Menu(){
-
-        list newList;
-        while (true)
-        {   
-            cout << "Enter the choose:  " << endl;
-
-            cout << "1. Add new student." << endl;
-            cout << "2. Search a student by \"symbols\" and create a new list of them." << endl;
-            cout << "3. Delete a student." << endl;
-            cout << "4. Print the list's of students." << endl;
-            cout << "5. Exit." << endl;
-
-            int choose;
-            cin >> choose;
-
-            if(choose == 5) break; 
-
-            switch (choose)
-            {
-                case 1:
-                {
-                    cout << "Surname = ";
-                    cin >> Surname;
-
-                    cout << "Name = ";
-                    cin >> Name;
-
-                    cout << "Patronymic = ";
-                    cin >> Patronymic;
-
-                    cout << "Data of birth (1 4 2002):";
-                    cin >> Day;
-                    cin >> Mounth;
-                    cin >> Year;
-
-                    cout << "Course of student: ";
-                    cin >> Course;
-
-                    cout << "Progress of student: ";
-                    cin >> Progress;
-                    
-                    push_back(Surname, Name, Patronymic, Day, Mounth, Year, Course, Progress);
-                    
-                    break;
-                }
-                case 2:
-                {
-                    cout << "Enter the first symbols of surname, name, patronymic (\"K\" \"D\" \"A\"): ";
-                    char firstSurnameSymbol;
-                    cin >> firstSurnameSymbol;
-
-                    char firstNameSymbol;
-                    cin >> firstNameSymbol;
-
-                    char firstPatronymicSymbol;
-                    cin >> firstPatronymicSymbol;
-
-                    createNewList(newList, firstSurnameSymbol, firstNameSymbol, firstPatronymicSymbol);
-
-                    break;
-                }
-                case 3:
-                {
-                    cout << "Enter the surname, name, patronymic of student (\"Kazlou\" \"Dzmitry\" \"Andreevich\")";
-
-                    cout << "Surname = ";
-                    cin >> Surname;
-
-                    cout << "Name = ";
-                    cin >> Name;
-
-                    cout << "Patronymic = ";
-                    cin >> Patronymic;
-
-                    remove(Surname, Name, Patronymic);
-
-                    break;
-                }
-                case 4:
-                {   
-                    cout << "\n========================LIST=OF=STUDENTS===========================" << endl;
-                    print();
-                    cout << "====================SECOND=LIST=OF=STUDENTS========================" << endl;
-                    newList.print();
-
-                    break;
-                }
-
-                default:
-                    break;
-            }
-
-            cout << endl;
-        } 
-    }
 };
 
+void Menu(list& listStudents, Student& stud, list& newList)
+{
+    while (true)
+    {
+        cout << "Enter the choose:  " << endl;
 
-int main(){
+        cout << "1. Add new student." << endl;
+        cout << "2. Search a student by \"symbols\" and create a new list of them." << endl;
+        cout << "3. Delete a student." << endl;
+        cout << "4. Print the list's of students." << endl;
+        cout << "5. Exit." << endl;
 
-    list Students;
-    Students.Menu();
+        int choose;
+        cin >> choose;
+
+        if (choose == 5) break;
+
+        switch (choose)
+        {
+        case 1:
+        {
+            cout << "Surname = ";
+            cin >> stud.Surname;
+
+            cout << "Name = ";
+            cin >> stud.Name;
+
+            cout << "Patronymic = ";
+            cin >> stud.Patronymic;
+
+            cout << "Data of birth (1 4 2002):";
+            cin >> stud.Data.Day;
+            cin >> stud.Data.Mounth;
+            cin >> stud.Data.Year;
+
+            cout << "Course of student: ";
+            cin >> stud.Course;
+
+            cout << "Progress of student: ";
+            cin >> stud.Progress;
+
+
+            listStudents.push_back(stud);
+
+            break;
+        }
+        case 2:
+        {
+            cout << "Enter the first symbols of surname, name, patronymic (\"K\" \"D\" \"A\"): ";
+
+            cin >> stud.Surname[0];
+            cin >> stud.Name[0];
+            cin >> stud.Patronymic[0];
+
+            listStudents.createNewList(newList, stud);
+
+            break;
+        }
+        case 3:
+        {
+            cout << "Enter the surname, name, patronymic of student (\"Kazlou\" \"Dzmitry\" \"Andreevich\")";
+
+            cout << "Surname = ";
+            cin >> stud.Surname;
+
+            cout << "Name = ";
+            cin >> stud.Name;
+
+            cout << "Patronymic = ";
+            cin >> stud.Patronymic;
+
+            listStudents.remove(stud);
+
+            break;
+        }
+        case 4:
+        {
+            cout << "\n========================LIST=OF=STUDENTS===========================" << endl;
+            listStudents.print();
+            cout << "====================SECOND=LIST=OF=STUDENTS========================" << endl;
+            newList.print();
+
+            break;
+        }
+
+        default:
+            break;
+        }
+
+        cout << endl;
+    }
+}
+
+int main() {
+
+    list listStudents, newList;
+    Student students;
+
+    Menu(listStudents, students, newList);
 
     return 0;
 }
