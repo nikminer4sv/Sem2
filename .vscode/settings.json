@@ -20,8 +20,17 @@
         "ios": "cpp",
         "__bit_reference": "cpp",
         "algorithm": "cpp",
+<<<<<<< HEAD
+        "chrono": "cpp"
+    },
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#352B30",
+        "titleBar.activeBackground": "#4A3C44",
+        "titleBar.activeForeground": "#FBFAFA"
+=======
         "chrono": "cpp",
         "new": "cpp",
         "tuple": "cpp"
+>>>>>>> 3b4a3dabc170d6b28d31eedc136c1f1d5639dfff
     }
 }

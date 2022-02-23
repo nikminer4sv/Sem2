@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 
 using namespace std;
 
@@ -165,5 +166,6 @@ int main() {
     Task(list1, list2);
 
     PrintList(list1);
+    cout << list1.Size << endl;
 
 }   
