@@ -70,7 +70,7 @@ void PrintStudentInfo(Student student)
     cout << "Average mark: " << student.AverageMark << endl;
 }
 
-bool DateComporator(Date First, Date Last)
+bool DateComparator(Date First, Date Last)
 {
     if (First.Year == Last.Year)
     {
@@ -95,6 +95,7 @@ public:
     StudentList();
     ~StudentList();
 
+    void SortStudents(StudentList &studentList);
     void insert(Student newStudent, int index);
     void removeAt(int index);
     void pop_front();
@@ -119,7 +120,7 @@ private:
         }
     };
 
-    bool StudentsComporator(Student First, Student Second)
+    bool StudentsComparator(Student First, Student Second)
     {
 
         return (First.Surname < Second.Surname);
@@ -197,14 +198,17 @@ void StudentList::removeAt(int index)
     else
     {
         Node *previous = this->head;
-
-        FindNeededPointer(previous, index);
+        for (int i = 0; i < index - 1; i++)
+        {
+            previous = previous->pNext;
+        }
 
         Node *toDelete = previous->pNext;
 
         previous->pNext = toDelete->pNext;
 
         delete toDelete;
+
         Size--;
     }
 }
@@ -223,44 +227,13 @@ void StudentList::push_back(Student addedStudent)
     }
     else
     {
-        Node *current = new Node(addedStudent, this->head);
-        if (!StudentsComporator(head->newStudent, current->newStudent))
-        {
-            current->pNext = head;
-            head = current;
-        }
-        else
-        {
+        Node *current = this->head;
 
-            if (head->pNext == nullptr)
-            {
-                head->pNext = current;
-            }
-            else
-            {
-                Node *first = this->head;
-                Node *second = head->pNext;
-                bool isPutted = false;
-
-                while (second != nullptr)
-                {
-                    if (StudentsComporator(first->newStudent, current->newStudent) &&
-                        !StudentsComporator(second->newStudent, current->newStudent))
-                    {
-                        current->pNext = first->pNext;
-                        first->pNext = current;
-                        isPutted = true;
-                        break;
-                    }
-                    first = first->pNext;
-                    second = second->pNext;
-                }
-                if (!isPutted)
-                {
-                    second->pNext = current;
-                }
-            }
+        while (current->pNext != nullptr)
+        {
+            current = current->pNext;
         }
+        current->pNext = new Node(addedStudent);
     }
     Size++;
 }
@@ -283,6 +256,7 @@ Student &StudentList::operator[](const int index)
     if (index > Size - 1)
         throw invalid_argument("Accessing element out of bounds.");
     int counter = 0;
+
     Node *current = this->head;
 
     while (current != nullptr)
@@ -296,41 +270,37 @@ Student &StudentList::operator[](const int index)
     }
 }
 
-void FindTheOldestStudent(StudentList &studentList, StudentList *theOldestStudents)
+void StudentList::SortStudents(StudentList &studentList)
 {
-    for (int i = 1; i <= 4; i++)
+    for (int i = 0; i < studentList.GetSize() - 1; i++)
     {
-        int count = 1;
-        int index;
-        for (int k = 0; k < studentList.GetSize(); k++)
+        Student min = studentList[i];
+        int index_min = i;
+        int count = 0;
+        for (int j = i + 1; j < studentList.GetSize(); j++)
         {
-            if (i == studentList[k].Course)
+            if (!studentList.StudentsComparator(min, studentList[j]))
             {
-                Student theOldestStudent = studentList[k];
-                if (k + 1 <= studentList.GetSize())
-                {
-                    for (int j = k + 1; j < studentList.GetSize(); j++)
-                    {
-                        if (i == studentList[j].Course)
-                            if (!DateComporator(theOldestStudent.BirthDate, studentList[j].BirthDate))
-                            {
-                                count++;
-                                index = j;
-                            }
-                    }
-                }
-                theOldestStudents->push_back(theOldestStudent);
-                if (count == 1)
-                {
-                    studentList.removeAt(k);
-                }
-                else
-                {
-                    studentList.removeAt(index);
-                }
+                count++;
+                min = studentList[j];
+                index_min = j;
             }
         }
+        if (count != 0)
+        {
+            studentList.insert(studentList[index_min], i);
+            studentList.removeAt(index_min + 1);
+        }
     }
+}
+
+void FillTheStudentList(StudentList *studentList, const int size)
+{
+    for (int k = 0; k < size; k++)
+    {
+        studentList->push_back(CreateStudent());
+    }
+    studentList->SortStudents(*studentList);
 }
 
 void PrintStudentsInfo(StudentList &studentList)
@@ -343,12 +313,31 @@ void PrintStudentsInfo(StudentList &studentList)
     cout << endl;
 }
 
-void FillTheStudentList(StudentList *studentList, const int size)
+Student SearchTheoldestStudent(StudentList &studentList, Student firstStudent, int Course)
 {
-    for (int k = 0; k < size; k++)
+    Date minDate = firstStudent.BirthDate;
+    Student tempStudent = firstStudent;
+    for (int k = 0; k < studentList.GetSize(); k++)
     {
-        studentList->push_back(CreateStudent());
+        if (!DateComparator(minDate, studentList[k].BirthDate) && studentList[k].Course == Course)
+        {
+            tempStudent = studentList[k];
+            minDate = studentList[k].BirthDate;
+        }
     }
+    return tempStudent;
+}
+
+void FillTheOldestStudentList(StudentList &studentList, StudentList *theOldestStudentList)
+{
+    for (int course = 1; course <= 4; course++)
+        for (int k = 0; k < studentList.GetSize(); k++)
+            if (course == studentList[k].Course)
+            {
+                theOldestStudentList->push_back(SearchTheoldestStudent(studentList, studentList[k], course));
+                break;
+            }
+    theOldestStudentList->SortStudents(*theOldestStudentList);
 }
 
 int main()
@@ -363,13 +352,12 @@ int main()
     cout << "All students: " << endl;
     PrintStudentsInfo(studentList);
 
+    StudentList theOldestStudentList;
+    FillTheOldestStudentList(studentList, &theOldestStudentList);
     cout << "The oldest students: " << endl;
-    StudentList theOldestStudents;
-    FindTheOldestStudent(studentList, &theOldestStudents);
-    PrintStudentsInfo(theOldestStudents);
+    PrintStudentsInfo(theOldestStudentList);
 
     studentList.clear();
-    theOldestStudents.clear();
 
     return 0;
 }
