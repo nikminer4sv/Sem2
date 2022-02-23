@@ -25,6 +25,23 @@ struct Student {
         cout << "Course - " << Course << endl;
         cout << "Progress - " << Progress << endl << endl;
     }
+
+    static bool Separator(const Student& a, const Student& b) {
+        return a.Surname >= b.Surname;
+    }
+
+    static bool Compare(const Student& a, const Student& b) {
+        return a.Surname == b.Surname && a.Name == b.Name && a.Patronymic == b.Patronymic;
+    }
+
+    static bool CompareSymbols(const Student& a, const Student& b) {
+        return a.Surname[0] == b.Surname[0] && a.Name[0] == b.Name[0] && a.Patronymic[0] == b.Patronymic[0];
+    }
+
+    static bool NewCompare(const Student& a, const Student& b) {
+        return a.Name[0] != b.Name[0] || a.Surname[0] != b.Surname[0] || a.Patronymic[0] != b.Patronymic[0];
+    }
+   
 };
 
 struct Node {
@@ -42,23 +59,6 @@ private:
     Node* first = nullptr;
     Node* last = nullptr;
     int size = 0;
-
-    bool Separator(const Student& a, const Student& b) {
-        return a.Surname >= b.Surname;
-    }
-
-    bool Compare(const Student& a, const Student& b) {
-        return a.Surname == b.Surname && a.Name == b.Name && a.Patronymic == b.Patronymic;
-    }
-
-    bool CompareSymbols(const Node* a, const Student& b) {
-        return a->students.Surname[0] == b.Surname[0] && a->students.Name[0] == b.Name[0] && a->students.Patronymic[0] == b.Patronymic[0];
-    }
-
-    bool NewCompare(const Node* a, const Student& b) {
-        return a->students.Name[0] != b.Name[0] || a->students.Surname[0] != b.Surname[0] || a->students.Patronymic[0] != b.Patronymic[0];
-    }
-
 
 public:
     bool is_empty() const {
@@ -81,13 +81,13 @@ public:
         {
             if (is_empty()) return;
 
-            if (CompareSymbols(first, stud))
+            if (Student::CompareSymbols(first->students, stud))
             {
                 newL.push_back(first->students);
                 remove(first->students);
                 continue;
             }
-            else if (CompareSymbols(last, stud))
+            else if (Student::CompareSymbols(last->students, stud))
             {
                 newL.push_back(last->students);
                 remove(last->students);
@@ -97,7 +97,7 @@ public:
             Node* itPrev = first;
             Node* itCurrent = first->next;
 
-            while (itCurrent && NewCompare(itCurrent, stud)) {
+            while (itCurrent && Student::NewCompare(itCurrent->students, stud)) {
                 itCurrent = itCurrent->next;
                 itPrev = itPrev->next;
             }
@@ -115,7 +115,7 @@ public:
     void remove(const Student& stud) {
         if (is_empty()) return;
 
-        if (Compare(first->students, stud)) {
+        if (Student::Compare(first->students, stud)) {
 
             Node* p = first;
             first = p->next;
@@ -123,7 +123,7 @@ public:
             return;
         }
 
-        if (Compare(last->students, stud)) {
+        if (Student::Compare(last->students, stud)) {
 
             if (first == last) {
                 Node* p = first;
@@ -145,7 +145,7 @@ public:
         Node* itPrev = first;       
         Node* itCurrent = first->next; 
 
-        while (itCurrent && !Compare(itCurrent->students, stud))
+        while (itCurrent && !Student::Compare(itCurrent->students, stud))
         {
             itCurrent = itCurrent->next;
             itPrev = itPrev->next;
@@ -176,7 +176,7 @@ public:
         Node* temp = first;
         size++;
 
-        if (size == 2 && Separator(temp->students, p->students))
+        if (size == 2 && Student::Separator(temp->students, p->students))
         {
             p->next = last;
             first = p;
@@ -185,13 +185,13 @@ public:
 
         while (temp->next != nullptr)
         {
-            if (Separator(p->students, temp->students) && Separator(temp->next->students, p->students))
+            if (Student::Separator(p->students, temp->students) && Student::Separator(temp->next->students, p->students))
             {
                 p->next = temp->next;
                 temp->next = p;
                 return;
             }
-            else if (Separator(temp->students, p->students))
+            else if (Student::Separator(temp->students, p->students))
             {
                 p->next = first;
                 first = p;
