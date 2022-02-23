@@ -49,9 +49,9 @@ private:
     Node *last = nullptr;
     int size = 0;
 
-    bool StudentsComparator(const Node *a, const Node *b)
+    bool StudentsComparator(const Student &a, const Student &b)
     {
-        return a->newStudent.Surname > b->newStudent.Surname && b->pNext->newStudent.Surname > a->newStudent.Surname;
+        return a.Surname >= b.Surname;
     }
 
     bool Compare(const Student &a, const Student &b)
@@ -202,25 +202,31 @@ public:
 
         while (temp->pNext != nullptr)
         {
-            if (StudentsComparator(p, temp))
+            if (StudentsComparator(p->newStudent, temp->newStudent) && StudentsComparator(temp->pNext->newStudent, p->newStudent))
             {
                 p->pNext = temp->pNext;
                 temp->pNext = p;
+                return;
+            }
+            else if (StudentsComparator(temp->newStudent, p->newStudent))
+            {
+                p->pNext = first;
+                first = p;
                 return;
             }
             else
                 temp = temp->pNext;
         }
 
-        if (size == 2 && p->newStudent.Surname < temp->newStudent.Surname)
+        if (size == 2 && p->newStudent.Surname < temp->newStudent.Surname) // провервка в начале когда только два узла
         {
             p->pNext = last;
             first = p;
-            last = p->pNext;
+            // last = p->pNext;
             return;
         }
-        last->pNext = p;
-        last = p;
+        last->pNext = p; // присваиваем в текущем последнем узле указателю pNext следующий узел
+        last = p;        // last присваем новый последний узел
     }
 };
 
