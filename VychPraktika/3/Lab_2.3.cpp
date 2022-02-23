@@ -45,8 +45,8 @@ private:
     Node* last = nullptr;
     int size = 0;
 
-    bool Separator(const Node* a, const Node* b) {
-        return a->students.Surname > b->students.Surname && b->next->students.Surname > a->students.Surname;
+    bool Separator(const Student& a, const Student& b) {
+        return a.Surname >= b.Surname;
     }
 
     bool Compare(const Student& a, const Student& b) {
@@ -179,10 +179,16 @@ public:
 
         while (temp->next != nullptr)
         {
-            if (Separator(p, temp))
+            if (Separator(p->students, temp->students) && Separator(temp->next->students, p->students))
             {
                 p->next = temp->next;
                 temp->next = p;
+                return;
+            }
+            else if (Separator(temp->students, p->students))
+            {
+                p->next = first;
+                first = p;
                 return;
             }
             else temp = temp->next;
@@ -192,7 +198,7 @@ public:
         {
             p->next = last;
             first = p;
-            last = p->next;
+            //last = p->next;
             return;
         }
         last->next = p; // присваиваем в текущем последнем узле указателю next следующий узел 
