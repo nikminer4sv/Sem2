@@ -27,13 +27,11 @@ struct Student {
     }
 };
 
-
 struct Node {
     Student students;
     Node* next;
 
     Node(const Student& student) {
-        //fillStudents(students, student);
         students = student;
         this->next = nullptr;
     }
@@ -82,6 +80,7 @@ public:
         while (true)
         {
             if (is_empty()) return;
+
             if (CompareSymbols(first, stud))
             {
                 newL.push_back(first->students);
@@ -95,20 +94,20 @@ public:
                 continue;
             }
 
-            Node* slow = first;
-            Node* fast = first->next;
+            Node* itPrev = first;
+            Node* itCurrent = first->next;
 
-            while (fast && NewCompare(fast, stud)) {
-                fast = fast->next;
-                slow = slow->next;
+            while (itCurrent && NewCompare(itCurrent, stud)) {
+                itCurrent = itCurrent->next;
+                itPrev = itPrev->next;
             }
-            if (!fast) {
+            if (!itCurrent) {
                 return;
             }
 
-            newL.push_back(fast->students);
-            slow->next = fast->next;
-            delete fast;
+            newL.push_back(itCurrent->students);
+            itPrev->next = itCurrent->next;
+            delete itCurrent;
         }
     }
 
@@ -143,8 +142,8 @@ public:
             return;
         }
 
-        Node* itPrev = first;       //it_prev
-        Node* itCurrent = first->next; //it_current
+        Node* itPrev = first;       
+        Node* itCurrent = first->next; 
 
         while (itCurrent && !Compare(itCurrent->students, stud))
         {
@@ -177,6 +176,13 @@ public:
         Node* temp = first;
         size++;
 
+        if (size == 2 && Separator(temp->students, p->students))
+        {
+            p->next = last;
+            first = p;
+            return;
+        }
+
         while (temp->next != nullptr)
         {
             if (Separator(p->students, temp->students) && Separator(temp->next->students, p->students))
@@ -194,15 +200,8 @@ public:
             else temp = temp->next;
         }
 
-        if (size == 2 && p->students.Surname < temp->students.Surname)  // провервка в начале когда только два узла
-        {
-            p->next = last;
-            first = p;
-            //last = p->next;
-            return;
-        }
-        last->next = p; // присваиваем в текущем последнем узле указателю next следующий узел 
-        last = p; // last присваем новый последний узел
+        last->next = p; 
+        last = p;
     }
 
 };
