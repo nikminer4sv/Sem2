@@ -76,13 +76,15 @@ public:
         
 
         if (index == 0) {
-            startIndex += 1;
+            startIndex = indices[startIndex];
             return;
         }
 
         int tempValue = startIndex;
         for (int i = 0; i < index - 1; i++) 
             tempValue = indices[tempValue];
+
+        indices[tempValue] = indices[indices[tempValue]];
 
         // H e l g o i
         // 5 2 3 4 0 1
@@ -142,7 +144,7 @@ void Task(ArrayList& list1, ArrayList& list2) {
 
     int forSize = list1.GetSize() - list2.GetSize();
 
-    for (int i = 0; i < forSize + 1; i++) {
+    for (int i = 0; i < forSize; i++) {
 
         bool exist = true;
 
@@ -160,7 +162,8 @@ void Task(ArrayList& list1, ArrayList& list2) {
         if (exist) {
             
             for (int j = 0; j < list2.GetSize(); j++) {
-                list1.Delete(i);cout << "GG";
+                list1.Delete(i);
+                cout << i << endl;
             }
 
         }
@@ -177,13 +180,13 @@ int main() {
     list1.Append('l');
     list1.Append('l');
     list1.Append('o');
-    list1.Insert('i', 1);
+    list1.Print();
 
     ArrayList list2;
     list2.Append('e');
     list2.Append('l');
-    
-    //Task(list1, list2);
+
+    Task(list1, list2);
     /*list1.Delete(1);
     list1.Delete(1);
     list1.Delete(1);
@@ -205,7 +208,7 @@ int main() {
     // H e l l o i 
     // 5 2 3 4 0 1
 
-    list1.PrintRawData();
+    //list1.PrintRawData();
     list1.Print();
 
 }

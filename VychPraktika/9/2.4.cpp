@@ -144,9 +144,8 @@ void Task(CharList& list1, CharList& list2) {
 
         if (exist) {
 
-            for (int j = 0; j < list2.Size; j++) {
+            for (int j = 0; j < list2.Size; j++) 
                 list1.Remove(i);
-            }
 
             forSize = list1.Size - list2.Size;
 
