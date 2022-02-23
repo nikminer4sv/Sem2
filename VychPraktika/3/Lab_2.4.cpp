@@ -96,9 +96,9 @@ public:
 
     list() : first(nullptr), last(nullptr) {}
 
-    void push_back(char& stud) {
+    void push_back(char& symbol) {
 
-        Node* p = new Node(stud);
+        Node* p = new Node(symbol);
 
         if (is_empty()) {
             first = p;
@@ -140,7 +140,12 @@ public:
 
     void Task(list& l2){
 
+        Node* itPrev = first;       
 
+        while (itPrev->next)
+        {
+            
+        }
     }
 
 };
@@ -182,7 +187,7 @@ void Menu(list& l1, char& symbol, list& l2)
             // cin >> stud.Patronymic[0];
 
             // l1.createl2(l2, stud);
-
+            l1.Task(l2);
             break;
         }
         case 3:

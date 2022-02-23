@@ -83,14 +83,16 @@ public:
 
             if (Student::CompareSymbols(first->students, stud))
             {
-                newL.push_back(first->students);
-                remove(first->students);
+                newL.push_back(stud);
+                cout << "FIRST" << endl;
+                remove(stud);
                 continue;
             }
             else if (Student::CompareSymbols(last->students, stud))
             {
-                newL.push_back(last->students);
-                remove(last->students);
+                newL.push_back(stud);
+                cout << "LAST" << endl;
+                remove(stud);
                 continue;
             }
 
@@ -108,6 +110,7 @@ public:
             newL.push_back(itCurrent->students);
             itPrev->next = itCurrent->next;
             delete itCurrent;
+            size--;
         }
     }
 
@@ -119,17 +122,13 @@ public:
 
             Node* p = first;
             first = p->next;
+
+            size--;
             delete p;
             return;
         }
 
         if (Student::Compare(last->students, stud)) {
-
-            if (first == last) {
-                Node* p = first;
-                first = p->next;
-                delete p;
-            }
 
             Node* p = first;
             while (p->next != last)
@@ -137,6 +136,7 @@ public:
 
             p->next = nullptr;
 
+            size--;
             delete last;
             last = p;
             return;
@@ -161,6 +161,7 @@ public:
     }
 
     list() : first(nullptr), last(nullptr) {}
+
 
     void push_back(Student& stud) {
 
@@ -193,8 +194,8 @@ public:
             }
             else if (Student::Separator(temp->students, p->students))
             {
-                p->next = first;
-                first = p;
+                p->next = temp;
+                temp = p;
                 return;
             }
             else temp = temp->next;
@@ -266,7 +267,7 @@ void Menu(list& listStudents, Student& stud, list& newList)
         }
         case 3:
         {
-            cout << "Enter the surname, name, patronymic of student (\"Kazlou\" \"Dzmitry\" \"Andreevich\")";
+            cout << "Enter the surname, name, patronymic of student (\"Kazlou\" \"Dzmitry\" \"Andreevich\")" << endl;
 
             cout << "Surname = ";
             cin >> stud.Surname;
