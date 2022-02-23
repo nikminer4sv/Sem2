@@ -1,4 +1,5 @@
 #include <iostream>
+#include <conio.h>
 
 using namespace std;
 
@@ -19,6 +20,19 @@ struct Student
     Date DateOfBirth;
     int Course;
     int Progress;
+
+    static bool Compare(const Student& First, const Student& Second)
+    {
+        return First.LastName < Second.LastName;
+    }
+
+    void Print(int Number)
+    {
+        cout << Number << ". "
+            << LastName << " "
+            << FirstName << " "
+            << Patronymic << "\n";
+    }
 };
 
 struct Node
@@ -30,6 +44,12 @@ struct Node
     {
         Next = nullptr;
     }
+
+    explicit Node(const Student& data, Node* next = nullptr)
+    {
+        Data = data;
+        Next = next;
+    }
 };
 
 
@@ -40,20 +60,6 @@ private:
 
 public:
     int Size;
-
-private:
-    bool Comparator(Student Head, Student Second)
-    {
-        return (Head.LastName < Second.LastName);
-    }
-
-    void PrintInfo(Student StudentData, int Number)
-    {
-        cout << Number << ". "
-            << StudentData.LastName << " "
-            << StudentData.FirstName << " "
-            << StudentData.Patronymic << "\n";
-    }
 
 public:
     StudentsList()
@@ -75,55 +81,31 @@ public:
         return Temp->Data;
     }
 
-    void Add(const Student& AddStudent) {
-
+    void Add(const Student& AddStudent) 
+    {
         Size++;
 
-        Node* NewNode = new Node;
-        NewNode->Data = AddStudent;
-
-        if (Head == nullptr) {
-            Head = NewNode;
-        }
-        else if (!Comparator(Head->Data, NewNode->Data))
+        if (!Head || Student::Compare(AddStudent, Head->Data)) 
         {
-            NewNode->Next = Head;
-            Head = NewNode;
+            Head = new Node(AddStudent, Head);
+            return;
         }
-        else if (Head->Next == nullptr)
+        
+        Node *Temp = Head;
+        Node *BeforeTemp = Head;
+
+        while (Temp && Student::Compare(Temp->Data, AddStudent)) 
         {
-            Head->Next = NewNode;
+            BeforeTemp = Temp;
+            Temp = Temp->Next;
         }
-        else
-        {
-            Node* First = Head;
-            Node* Second = Head->Next;
-            bool IsPutted = false;
 
-            while (Second->Next != nullptr) {
-
-                if (Comparator(First->Data, NewNode->Data) && !Comparator(Second->Data, NewNode->Data))
-                {
-                    NewNode->Next = First->Next;
-                    First->Next = NewNode;
-                    IsPutted = true;
-                    break;
-                }
-
-                First = First->Next;
-                Second = Second->Next;
-            }
-
-            if (!IsPutted)
-            {
-                Second->Next = NewNode;
-            }
-        }
+        BeforeTemp->Next = new Node(AddStudent, Temp);
     }
 
     bool Remove(int Index)
     {
-        if (Index > Size - 1 || Index < 0)
+        if (Size == 0 || Index > Size - 1 || Index < 0)
             return false;
 
         if (Index == 0)
@@ -152,12 +134,12 @@ public:
 
         for (int i = 0; i < Size; i++)
         {
-            PrintInfo(Temp->Data, i + 1);
+            Temp->Data.Print(i + 1);
             Temp = Temp->Next;
         }
     }
 
-    ~StudentsList()
+    void Clear()
     {
         Node* Current = Head;
 
@@ -169,6 +151,11 @@ public:
         }
 
         Head = nullptr;
+    }
+
+    ~StudentsList()
+    {
+        Clear();
     }
 
 };
@@ -203,7 +190,7 @@ private:
                 cout << "Please, enter the number.\n";
                 cin.clear();
                 fflush(stdin);
-                getchar();
+                _getch();
                 PrintMenu();
                 continue;
             }
@@ -213,7 +200,7 @@ private:
                 cout << "Please, enter the right number.\n";
                 cin.clear();
                 fflush(stdin);
-                getchar();
+                _getch();
                 PrintMenu();
                 continue;
             }
@@ -271,17 +258,12 @@ private:
 
         cin.clear();
         fflush(stdin);
-        getchar();
-    }
-
-    bool Comporator(double First, double Second)
-    {
-        return First > Second;
+        _getch();
     }
 
     double AverageProgress(StudentsList* Students)
     {
-        double EverybodyProgress = 0.0, Average = 0.0;
+        double EverybodyProgress = 0.0;
 
         for (int i = 0; i < Students->Size; i++)
         {
@@ -289,36 +271,28 @@ private:
             EverybodyProgress += Temp.Progress;
         }
 
-        Average = EverybodyProgress / Students->Size;
-
-        return Average;
+        return EverybodyProgress / Students->Size;
     }
 
     void Task(StudentsList* Students, StudentsList* TaskStudents)
     {
         double Average = AverageProgress(Students);
-
-        StudentsList NewList;
+        int Count = 0;
 
         for (int i = 0; i < Students->Size; i++)
         {
             Student Temp = Students->Get(i);
-            if (Comporator(Temp.Progress, Average))
+            if (Temp.Progress > Average)
             {
-                cout << Temp.Progress << " > " << Average << endl;
-                NewList.Add(Temp);
-                Students->Remove(i);
+                (*TaskStudents).Add(Temp);
+                Count++;
             }
         }
-        *TaskStudents = NewList;
+        while(Count--)
+        {
+            Students->Remove(Students->Size - 1);
+        }
         Print(TaskStudents);
-    }
-
-    void TaskResult()
-    {
-        system("cls");
-        Task(Students, TaskStudents);
-        Task(Students, TaskStudents);
     }
 
 public:
@@ -353,7 +327,8 @@ public:
                 break;
 
             case 4:
-                TaskResult();
+                system("cls");
+                Task(Students, TaskStudents);
                 break;
 
             case 5:
