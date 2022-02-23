@@ -157,6 +157,7 @@ public:
         }
 
         itPrev->next = itCurrent->next;
+        size--;
         delete itCurrent;
     }
 

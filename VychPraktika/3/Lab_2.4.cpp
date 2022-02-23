@@ -1,7 +1,5 @@
 #include <iostream>
-#include <string>
 using namespace std;
-
 
 struct Node {
 
@@ -43,6 +41,7 @@ public:
             p->Print();
             p = p->next;
         }
+        cout << "Size = " << size << endl;
         cout << endl;
     }
 
@@ -53,17 +52,13 @@ public:
 
             Node* p = first;
             first = p->next;
+
+            size--;
             delete p;
             return;
         }
 
         if (Compare(last->symbolData, symbol)) {
-
-            if (first == last) {
-                Node* p = first;
-                first = p->next;
-                delete p;
-            }
 
             Node* p = first;
             while (p->next != last)
@@ -71,6 +66,7 @@ public:
 
             p->next = nullptr;
 
+            size--;
             delete last;
             last = p;
             return;
@@ -91,6 +87,7 @@ public:
         }
 
         itPrev->next = itCurrent->next;
+        size--;
         delete itCurrent;
     }
 
@@ -127,7 +124,7 @@ public:
             }
             else if (Separator(temp->symbolData, p->symbolData))
             {
-                p->next = first;
+                p->next = temp;
                 first = p;
                 return;
             }
@@ -144,6 +141,19 @@ public:
 
         while (itPrev->next)
         {
+            int quantity = 1;
+            while (itPrev->next && Compare(itPrev->symbolData, itPrev->next->symbolData))
+            {
+                quantity++;
+                itPrev = itPrev->next;
+            }
+            
+            if (quantity == 2)
+                l2.push_back(itPrev->symbolData);
+                
+
+            if (itPrev->next)
+                itPrev = itPrev->next;
             
         }
     }
@@ -157,7 +167,7 @@ void Menu(list& l1, char& symbol, list& l2)
         cout << "Enter the choose:  " << endl;
 
         cout << "1. Add new symbol." << endl;
-        cout << "2. Search a students by \"symbols\" and create a new list of them." << endl;
+        cout << "2. Search for identical symbols, that are repeated twice and create a new list of them." << endl;
         cout << "3. Delete a symbol." << endl;
         cout << "4. Print the list's of symbols." << endl;
         cout << "5. Exit." << endl;
@@ -170,23 +180,24 @@ void Menu(list& l1, char& symbol, list& l2)
         switch (choose)
         {
         case 1:
-        {
-            cout << "Symbol = ";
-            cin >> symbol;
+        {   
+            cout << "How many symbols do you want to enter? " << endl;
+            int amount;
+            cin >> amount;
+            for (int i = 0; i < amount; i++)
+            {
+                cout << "Symbol = ";
+                cin >> symbol;
 
-            l1.push_back(symbol);
-
+                l1.push_back(symbol);
+            }
+            
             break;
         }
         case 2:
         {
-            // cout << "Enter the first symbols of surname, name, patronymic (\"K\" \"D\" \"A\"): ";
+            cout << "Creating a new list...";
 
-            // cin >> stud.Surname[0];
-            // cin >> stud.Name[0];
-            // cin >> stud.Patronymic[0];
-
-            // l1.createl2(l2, stud);
             l1.Task(l2);
             break;
         }
