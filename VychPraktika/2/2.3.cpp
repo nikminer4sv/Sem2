@@ -59,16 +59,6 @@ private:
         return a.Surname == b.Surname && a.Name == b.Name && a.Patronymic == b.Patronymic;
     }
 
-    bool CompareSymbols(const Node *a, const Student &b)
-    {
-        return a->newStudent.Surname[0] == b.Surname[0] && a->newStudent.Name[0] == b.Name[0] && a->newStudent.Patronymic[0] == b.Patronymic[0];
-    }
-
-    bool NewCompare(const Node *a, const Student &b)
-    {
-        return a->newStudent.Name[0] != b.Name[0] || a->newStudent.Surname[0] != b.Surname[0] || a->newStudent.Patronymic[0] != b.Patronymic[0];
-    }
-
 public:
     int GetSize() { return size; }
     Student &operator[](const int index);
@@ -96,23 +86,11 @@ public:
         {
             if (is_empty())
                 return;
-            if (CompareSymbols(first, stud))
-            {
-                newStudentList.push_back(first->newStudent);
-                removeAt(first->newStudent);
-                continue;
-            }
-            else if (CompareSymbols(last, stud))
-            {
-                newStudentList.push_back(last->newStudent);
-                removeAt(last->newStudent);
-                continue;
-            }
 
             Node *slow = first;
             Node *fast = first->pNext;
 
-            while (fast && NewCompare(fast, stud))
+            while (fast)
             {
                 fast = fast->pNext;
                 slow = slow->pNext;
