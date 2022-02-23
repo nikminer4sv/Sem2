@@ -299,8 +299,8 @@ void FillTheStudentList(StudentList *studentList, const int size)
     for (int k = 0; k < size; k++)
     {
         studentList->push_back(CreateStudent());
+        studentList->SortStudents(*studentList);
     }
-    studentList->SortStudents(*studentList);
 }
 
 void PrintStudentsInfo(StudentList &studentList)
@@ -313,19 +313,21 @@ void PrintStudentsInfo(StudentList &studentList)
     cout << endl;
 }
 
-Student SearchTheoldestStudent(StudentList &studentList, Student firstStudent, int Course)
+int SearchTheoldestStudent(StudentList &studentList, int firstStudent, int Course)
 {
-    Date minDate = firstStudent.BirthDate;
-    Student tempStudent = firstStudent;
+    Date minDate = studentList[firstStudent].BirthDate;
+    Student tempStudent = studentList[firstStudent];
+    int minIndex = firstStudent;
     for (int k = 0; k < studentList.GetSize(); k++)
     {
         if (!DateComparator(minDate, studentList[k].BirthDate) && studentList[k].Course == Course)
         {
+            minIndex = k;
             tempStudent = studentList[k];
             minDate = studentList[k].BirthDate;
         }
     }
-    return tempStudent;
+    return minIndex;
 }
 
 void FillTheOldestStudentList(StudentList &studentList, StudentList *theOldestStudentList)
@@ -334,10 +336,12 @@ void FillTheOldestStudentList(StudentList &studentList, StudentList *theOldestSt
         for (int k = 0; k < studentList.GetSize(); k++)
             if (course == studentList[k].Course)
             {
-                theOldestStudentList->push_back(SearchTheoldestStudent(studentList, studentList[k], course));
+                int index = SearchTheoldestStudent(studentList, k, course);
+                theOldestStudentList->push_back(studentList[index]);
+                studentList.removeAt(index);
+                theOldestStudentList->SortStudents(*theOldestStudentList);
                 break;
             }
-    theOldestStudentList->SortStudents(*theOldestStudentList);
 }
 
 int main()
@@ -358,6 +362,7 @@ int main()
     PrintStudentsInfo(theOldestStudentList);
 
     studentList.clear();
+    theOldestStudentList.clear();
 
     return 0;
 }
