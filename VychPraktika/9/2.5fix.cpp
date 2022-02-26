@@ -76,10 +76,10 @@ public:
     }
 
     void Delete(size_t idx, size_t length){
-        if (idx < 0 || idx+length > GetSize() - 1)
+        if (idx < 0 || idx + length > GetSize() - 1)
             throw InvalidIndex();
 
-        for(int it = idx; it<idx+length;it++){
+        for(int it = idx; it < idx + length; it++){
             Delete(it);
         }
     }
