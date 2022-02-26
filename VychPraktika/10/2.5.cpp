@@ -120,7 +120,7 @@ public:
 
     bool Insert(char* value, int index)
     {
-        if (Size == ASize)
+        if (Size == ASize || strlen(value) == 0)
         {
             return false;
         }
