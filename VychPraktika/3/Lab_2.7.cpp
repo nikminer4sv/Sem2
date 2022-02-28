@@ -1,4 +1,4 @@
-#include <iostream>  // for cin cout
+#include <iostream>
 #include <conio.h>
 #include <ctime>
 
@@ -6,9 +6,9 @@ using namespace std;
 
 struct Tree
 {
-    int Data;  // число
-    Tree* right;    //указатель на левое поддерево
-    Tree* left;   //указатель на правое поддерево
+    int Data; 
+    Tree* right;    
+    Tree* left;   
 
     Tree()
     {
@@ -19,82 +19,92 @@ struct Tree
 
 Tree* search(Tree*, int);
 void add(Tree*&, int);
-void add_rand(Tree*&, int);
-void print_tree(Tree*);
 void print_tree_level(Tree*, int);
-void del_tree(Tree*& Head);
-void task(Tree* );
+void del_tree(Tree*& );
+void task(Tree*& );
+void deleteMinTree(Tree*&, const int , int&);
 
 int main()
 {
     srand(time(NULL));
 
     Tree* Head = NULL;
-    Tree* Task = NULL;
+
     bool IsWorking = true;
 
     while (IsWorking)
     {
-        system("cls");
+        //system("cls");
         cout << "1. Add\n"
             << "2. Add random\n"
             << "3. Print tree\n"
             << "4. Task\n"
-            << "5. Exit\n";
+            << "5. Delete\n"
+            << "0. Exit\n";
 
-        int Choice = 0;
+        int Choice;
         cin >> Choice;
 
         switch (Choice)
         {
-        case 1:
-        {
-            system("cls");
-            cout << "Enter the number: ";
-            int Number;
-            cin >> Number;
-            add(Head, Number);
-        }
-        break;
-
-        case 2:
-        {
-            system("cls");
-            cout << "Enter the amount: ";
-            int Number;
-            cin >> Number;
-            for (int i = 0; i < Number; i++)
+            case 1:
             {
-                add(Head, rand() % 50 + 1);
+                //system("cls");
+                cout << "Enter the number: ";
+                int Number;
+                cin >> Number;
+                add(Head, Number);
+                break;
             }
-        }
-        break;
+            
 
-        case 3:
-            system("cls");
-            print_tree_level(Head, 0);
-            _getch();
-            break;
+            case 2:
+            {
+                //system("cls");
+                cout << "Enter the amount: ";
+                int Number;
+                cin >> Number;
+                for (int i = 0; i < Number; i++)
+                {
+                    add(Head, rand() % 50 + 1);
+                }
+                break;
+            }
+            
 
-        case 4:
-        {
-            system("cls");
-            Task = Head;
-            task(Task);
-            _getch();
-            break;
-        }
+            case 3:
+            {
+                //system("cls");
+                print_tree_level(Head, 0);
+                _getch();
+                break;
+            }
 
-        case 5:
-            IsWorking = false;
-            del_tree(Head);
-            del_tree(Task);
-            break;
+            case 4:
+            {
+                //system("cls");
+                task(Head);
+                _getch();
+                break;
+            }
 
-        default:
-            cout << "Dolboeb\n";
-            _getch();
-            break;
+            case 5:
+            {
+                del_tree(Head);
+                break;
+            }
+
+            case 0:
+            {
+                IsWorking = false;
+                break;
+            }
+            default:
+            {
+                cout << "Dolboeb\n";
+                _getch();
+                break;
+            }
         }
     }
 }
@@ -137,16 +147,6 @@ void add(Tree*& Head, int Data)
     }
 }
 
-void print_tree(Tree* Head)
-{
-    if (Head)
-    {
-        print_tree(Head->right);
-        cout << Head->Data << " ";
-        print_tree(Head->left);
-    }
-}
-
 void print_tree_level(Tree* Head, int level)
 {
     if (Head)
@@ -167,23 +167,61 @@ void del_tree(Tree*& Head)
         del_tree(Head->right);
         del_tree(Head->left);
         delete Head;
-        Head = NULL;
+        Head = nullptr;
     }
+
 }
 
-void findR(Tree* Task, int& minValueR)
-{
-    if (Task && Task->right)
+void findR(Tree*& Task, int& minValueR, int& count)
+{   
+    count = 0;
+    if (Task->right)
+    {   
+        Tree* Help = Task->right;
+        while (true)
+        {
+            if (Help)
+            {
+                minValueR = Help->Data;
+                count++;
+                Help = Help->right;
+                continue;
+            }
+            break;
+        } 
+    }
+    else 
     {
-        minValueR = Task->right->Data;
-        findR(Task->right, minValueR);
+        minValueR = Task->Data;
+        count++;
+    }
+    
+    int x = 0;
+    deleteMinTree(Task->right, count, x);
+}
+
+void deleteMinTree(Tree*& Task, const int count, int& x)
+{
+    if (Task)
+    {
+        x++;
+        cout << Task->Data << endl;
+        deleteMinTree(Task->right, count, x);
+        if(x == count){
+            del_tree(Task);
+            x = 0;
+        }
     }
 }
 
-void task(Tree* Task)
+void task(Tree*& Task)
 {
     int minValueR = 0;
-
-    findR(Task, minValueR);
+    int count = 0;
+    int x = 0;
+    if (Task) 
+        findR(Task, minValueR, count);
+   
     cout << minValueR << endl;
+
 }
