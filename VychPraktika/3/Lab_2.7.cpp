@@ -205,7 +205,7 @@ void deleteMinTree(Tree*& Task, const int count, int& x)
     if (Task)
     {
         x++;
-        cout << Task->Data << endl;
+        //cout << Task->Data << endl;
         deleteMinTree(Task->right, count, x);
         if(x == count){
             del_tree(Task);
@@ -222,6 +222,6 @@ void task(Tree*& Task)
     if (Task) 
         findR(Task, minValueR, count);
    
-    cout << minValueR << endl;
+    cout << "MinvALUE" << minValueR << endl;
 
 }
