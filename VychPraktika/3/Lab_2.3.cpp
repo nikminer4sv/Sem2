@@ -25,15 +25,30 @@ struct Student {
         cout << "Course - " << Course << endl;
         cout << "Progress - " << Progress << endl << endl;
     }
-};
 
+    static bool Separator(const Student& a, const Student& b) {
+        return a.Surname >= b.Surname;
+    }
+
+    static bool Compare(const Student& a, const Student& b) {
+        return a.Surname == b.Surname && a.Name == b.Name && a.Patronymic == b.Patronymic;
+    }
+
+    static bool CompareSymbols(const Student& a, const Student& b) {
+        return a.Surname[0] == b.Surname[0] && a.Name[0] == b.Name[0] && a.Patronymic[0] == b.Patronymic[0];
+    }
+
+    static bool NewCompare(const Student& a, const Student& b) {
+        return a.Name[0] != b.Name[0] || a.Surname[0] != b.Surname[0] || a.Patronymic[0] != b.Patronymic[0];
+    }
+   
+};
 
 struct Node {
     Student students;
     Node* next;
 
     Node(const Student& student) {
-        //fillStudents(students, student);
         students = student;
         this->next = nullptr;
     }
@@ -44,23 +59,6 @@ private:
     Node* first = nullptr;
     Node* last = nullptr;
     int size = 0;
-
-    bool Separator(const Node* a, const Node* b) {
-        return a->students.Surname > b->students.Surname && b->next->students.Surname > a->students.Surname;
-    }
-
-    bool Compare(const Student& a, const Student& b) {
-        return a.Surname == b.Surname && a.Name == b.Name && a.Patronymic == b.Patronymic;
-    }
-
-    bool CompareSymbols(const Node* a, const Student& b) {
-        return a->students.Surname[0] == b.Surname[0] && a->students.Name[0] == b.Name[0] && a->students.Patronymic[0] == b.Patronymic[0];
-    }
-
-    bool NewCompare(const Node* a, const Student& b) {
-        return a->students.Name[0] != b.Name[0] || a->students.Surname[0] != b.Surname[0] || a->students.Patronymic[0] != b.Patronymic[0];
-    }
-
 
 public:
     bool is_empty() const {
@@ -82,33 +80,37 @@ public:
         while (true)
         {
             if (is_empty()) return;
-            if (CompareSymbols(first, stud))
+
+            if (Student::CompareSymbols(first->students, stud))
             {
-                newL.push_back(first->students);
-                remove(first->students);
+                newL.push_back(stud);
+                cout << "FIRST" << endl;
+                remove(stud);
                 continue;
             }
-            else if (CompareSymbols(last, stud))
+            else if (Student::CompareSymbols(last->students, stud))
             {
-                newL.push_back(last->students);
-                remove(last->students);
+                newL.push_back(stud);
+                cout << "LAST" << endl;
+                remove(stud);
                 continue;
             }
 
-            Node* slow = first;
-            Node* fast = first->next;
+            Node* itPrev = first;
+            Node* itCurrent = first->next;
 
-            while (fast && NewCompare(fast, stud)) {
-                fast = fast->next;
-                slow = slow->next;
+            while (itCurrent && Student::NewCompare(itCurrent->students, stud)) {
+                itCurrent = itCurrent->next;
+                itPrev = itPrev->next;
             }
-            if (!fast) {
+            if (!itCurrent) {
                 return;
             }
 
-            newL.push_back(fast->students);
-            slow->next = fast->next;
-            delete fast;
+            newL.push_back(itCurrent->students);
+            itPrev->next = itCurrent->next;
+            delete itCurrent;
+            size--;
         }
     }
 
@@ -116,21 +118,17 @@ public:
     void remove(const Student& stud) {
         if (is_empty()) return;
 
-        if (Compare(first->students, stud)) {
+        if (Student::Compare(first->students, stud)) {
 
             Node* p = first;
             first = p->next;
+
+            size--;
             delete p;
             return;
         }
 
-        if (Compare(last->students, stud)) {
-
-            if (first == last) {
-                Node* p = first;
-                first = p->next;
-                delete p;
-            }
+        if (Student::Compare(last->students, stud)) {
 
             Node* p = first;
             while (p->next != last)
@@ -138,15 +136,16 @@ public:
 
             p->next = nullptr;
 
+            size--;
             delete last;
             last = p;
             return;
         }
 
-        Node* itPrev = first;       //it_prev
-        Node* itCurrent = first->next; //it_current
+        Node* itPrev = first;       
+        Node* itCurrent = first->next; 
 
-        while (itCurrent && !Compare(itCurrent->students, stud))
+        while (itCurrent && !Student::Compare(itCurrent->students, stud))
         {
             itCurrent = itCurrent->next;
             itPrev = itPrev->next;
@@ -158,10 +157,12 @@ public:
         }
 
         itPrev->next = itCurrent->next;
+        size--;
         delete itCurrent;
     }
 
     list() : first(nullptr), last(nullptr) {}
+
 
     void push_back(Student& stud) {
 
@@ -177,26 +178,32 @@ public:
         Node* temp = first;
         size++;
 
+        if (size == 2 && Student::Separator(temp->students, p->students))
+        {
+            p->next = last;
+            first = p;
+            return;
+        }
+
         while (temp->next != nullptr)
         {
-            if (Separator(p, temp))
+            if (Student::Separator(p->students, temp->students) && Student::Separator(temp->next->students, p->students))
             {
                 p->next = temp->next;
                 temp->next = p;
                 return;
             }
+            else if (Student::Separator(temp->students, p->students))
+            {
+                p->next = temp;
+                temp = p;
+                return;
+            }
             else temp = temp->next;
         }
 
-        if (size == 2 && p->students.Surname < temp->students.Surname)  // провервка в начале когда только два узла
-        {
-            p->next = last;
-            first = p;
-            last = p->next;
-            return;
-        }
-        last->next = p; // присваиваем в текущем последнем узле указателю next следующий узел 
-        last = p; // last присваем новый последний узел
+        last->next = p; 
+        last = p;
     }
 
 };
@@ -261,7 +268,7 @@ void Menu(list& listStudents, Student& stud, list& newList)
         }
         case 3:
         {
-            cout << "Enter the surname, name, patronymic of student (\"Kazlou\" \"Dzmitry\" \"Andreevich\")";
+            cout << "Enter the surname, name, patronymic of student (\"Kazlou\" \"Dzmitry\" \"Andreevich\")" << endl;
 
             cout << "Surname = ";
             cin >> stud.Surname;
