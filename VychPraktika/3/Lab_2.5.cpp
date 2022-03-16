@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cstring>
-#define Asize 255
+#define Asize (255)
 using namespace std;
 
 class TaskE

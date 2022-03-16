@@ -9,7 +9,7 @@ struct Node {
     Node* Next;
     Node* Prev;
 
-    Node() { Next = nullptr; Prev = nullptr; }
+    Node(double Data) {this->Data = Data; Next = nullptr; Prev = nullptr; }
 };
 
 class DoubleLink
@@ -47,7 +47,7 @@ public:
     {
         if (Head == nullptr)
         {
-            Head = new Node;
+            Head = new Node(Value);
             Head->Data = Value;
             Head->Next = Tail;
             Head->Prev = Tail;
@@ -56,7 +56,7 @@ public:
         {
             if (Size == 1)
             {
-                Tail = new Node;
+                Tail = new Node(Value);
                 Tail->Data = Value;
                 Head->Next = Tail;
                 Head->Prev = Tail;
@@ -65,7 +65,7 @@ public:
             }
             else
             {
-                Tail->Next = new Node;
+                Tail->Next = new Node(Value);
                 Tail->Next->Prev = Tail;
                 Tail = Tail->Next;
                 Tail->Next = Head;
@@ -87,7 +87,7 @@ public:
             delete_el->Prev->Next = Head->Next;
             delete_el->Next->Prev = Head->Prev;
             Head = delete_el->Next;
-            delete[] delete_el;
+            delete delete_el;
         }
         else
         {
@@ -101,7 +101,7 @@ public:
             auto* delete_el = Temp;
             Temp->Next->Next->Prev = delete_el;
             Temp->Next = delete_el->Next->Next;
-            delete[] delete_el;
+            delete delete_el;
         }
 
         Size--;
@@ -149,14 +149,8 @@ void Fill(DoubleLink& list, int n)
     
 }
 
-void TaskResult(double sum)
+double Task(DoubleLink& list, int n)
 {
-    cout << "Sum: " << sum;
-}
-
-void Task(DoubleLink& list, int n)
-{
-
     Node* Temp1 = list.getHead();
     Node* Temp2 = Temp1->Next;
     Node* Temp3 = list.getTail();
@@ -174,9 +168,8 @@ void Task(DoubleLink& list, int n)
         Temp3 = Temp3->Prev;
         Temp4--;
     }
-    cout << endl;
 
-    TaskResult(sum);
+    return sum;
 }
 
 int main()
@@ -190,5 +183,5 @@ int main()
 
     Fill(list, n);
     list.PrintList();
-    Task(list, n);
+     cout << "Sum: " << Task(list, n);
 }
