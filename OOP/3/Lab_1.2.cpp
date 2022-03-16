@@ -1,36 +1,33 @@
-#include <stdlib.h>
-#include <ctime>  
-#include <fstream>
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
-int main()
+void writeNewFile(ifstream& in, ofstream& out)
 {
-    srand((unsigned)time(NULL));
-    double k = 0;
-    ifstream infile("numbersi.txt");
-    ofstream outfile("1.bin", ios::binary);
-
-    while (!infile.eof())
+    int k = 0;
+    if (in.is_open())
     {
-        infile >> k;
-        if (k > 1.0)
-            outfile.write(reinterpret_cast <char*>(&k), sizeof (double));
+        while (!in.eof())
+        {
+            in >> k;
+            cout << k <<endl;
+            out.write(reinterpret_cast <char*>(&k), sizeof (k));
+        } 
     }
-
-    infile.close();
-    infile.open("numbersi.txt");
-
-    while (!infile.eof())
-    {
-        infile >> k;
-        if (k <= 1.0)
-            outfile.write(reinterpret_cast <char*>(&k), sizeof (double));
-    }
-
-    infile.close();
-    outfile.close();
-
-    return 0;
 }
+
+int main() 
+{
+    
+    ifstream in;
+    in.open("lab_1.1_numbers2.txt");
+    ofstream out;
+    out.open("lab_1.2.bin", ios::binary);
+    writeNewFile(in, out);
+
+    out.close();
+    in.close();
+}
+
+
