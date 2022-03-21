@@ -6,41 +6,46 @@ using namespace std;
 #pragma pack(push, 1)
 struct Student {
 
-    int age;
+    int age = 0;
     int progress;
+    int course;
     char name[20]{};
     char surname[20]{};
     char patronymic[20]{};
     bool gender;
+    bool isEmpty;
 
-    Student() = default;
+    Student() {
+        isEmpty = true;
+    }
 
-    Student(std::fstream& str){
+    Student(std::ifstream& str){
         str.read(reinterpret_cast<char*>(this), sizeof(Student));
     }
 
-    friend std::fstream& operator >> (std::fstream& str, Student& stud);
 };
-
-std::fstream& operator >> (std::fstream& str, Student& stud){
-    str.read(reinterpret_cast<char*>(&stud), sizeof(stud));
+std::ifstream& operator >> (std::ifstream& str, Student& stud){
+    str.read(reinterpret_cast<char*>(&stud), sizeof(Student));
     return str;
 }
-
-#pragma pack(pop)
 
 int main() {
 
     bool isWorking = true;
     bool isPaused = false;
-    fstream database;
-    database.open("database", ios::binary);
+    ofstream outputFileStream;
+    ofstream outputResultStream;
+    ifstream inputFileStream;
+    outputFileStream.open("database", ios::app);
+    outputResultStream.open("result.txt", ios::app);
+    inputFileStream.open("database");
 
     while (isWorking) {
 
         cout << "1. Add\n"
              << "2. Print\n"
-             << "3. Exit\n";
+             << "3. Task\n"
+             << "4. Exit\n";
 
         int choice;
         cin >> choice;
@@ -55,29 +60,73 @@ int main() {
                 cin >> student.patronymic;
                 cin >> student.age;
                 cin >> student.progress;
+                cin >> student.course;
                 cin >> student.gender;
+                student.isEmpty = false;
 
-                database.write(reinterpret_cast<char*>(&student), sizeof(student));
-                database.flush();
+                outputFileStream.write(reinterpret_cast<char*>(&student), sizeof(student));
                 break;
 
             }
 
             case 2: {
 
-                Student student;
-
-                database >> student;
-
                 system("clear");
-                cout << student.age << endl;
+                cout << "----------ALL STUDENTS----------" << endl;
+                int counter = 0;
+                while (!inputFileStream.eof()) {
+                    counter += 1;
+                    Student student;
+                    inputFileStream >> student;
+                    if (student.isEmpty)
+                        break;
+                    cout << "-----------------------------" << endl;
+                    cout << student.name << endl;
+                    cout << student.surname << endl;
+                    cout << student.patronymic << endl;
+                    cout << student.age << endl;
+                    cout << student.progress << endl;
+                    cout << student.gender << endl;
+
+                }
+
+                cout << "-----------------------------" << endl;
+
+                inputFileStream.clear();
+                inputFileStream.seekg(0, ios::beg);
                 isPaused = true;
                 break;
 
             }
 
             case 3: {
-                database.close();
+                
+                int n;
+                cin >> n;
+
+                system("clear");
+
+                while (!inputFileStream.eof()) {
+                    Student student;
+                    inputFileStream >> student;
+                    if (student.isEmpty)
+                        break;
+                    
+                    if (student.course == n && student.progress < 4)
+                        outputResultStream << student.name << " " << student.surname << " " << student.patronymic << endl;
+
+                }
+
+                inputFileStream.clear();
+                inputFileStream.seekg(0, ios::beg);
+
+                break;
+            }
+
+            case 4: {
+                inputFileStream.close();
+                outputFileStream.close();
+                outputResultStream.close();
                 exit(0);
                 break;
             }
@@ -86,6 +135,7 @@ int main() {
 
         if (isPaused) {
             cin.clear();
+            fflush(stdin);
             cin.get();
             isPaused = false;
         }
@@ -94,8 +144,8 @@ int main() {
         
     }
 
-    /*ofstream database;
-    database.open("database", ios::binary);
+    /*ofstream stream;
+    stream.open("stream", ios::binary);
 
     Student student{};
     student.name[0] = 'N';
@@ -105,18 +155,20 @@ int main() {
     student.gender = true;
     student.progress = 9;
 
-    database.write(reinterpret_cast<char*>(&student), sizeof(student));
-    database.flush();
+    stream.write(reinterpret_cast<char*>(&student), sizeof(student));
+    stream.flush();
 
-    ifstream database_r("database",ios::binary);
+    ifstream database_r("stream",ios::binary);
 
     Student student2{};
     database_r >> student2;
 
-    database.close();
+    stream.close();
 
     cout << student2.age;*/
 
     
 
 }
+
+#pragma pack(pop)
