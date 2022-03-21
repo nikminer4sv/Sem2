@@ -24,7 +24,6 @@ struct Student
     unsigned short Progress;
 };
 
-
 class BINFile
 {
 private:
@@ -93,9 +92,30 @@ public:
     void readBinFile(ifstream& infile, Student& NoName)
     {
         if (!infile.is_open()) 
+        {
             cout << "You loh" << endl;
-
+            return;
+        }
+        
         infile.read(reinterpret_cast<char*>(&NoName), sizeof(Student));
+    }
+
+    void readTextFile(ifstream& infile, Student& tempStudent)
+    {
+        if (!infile.is_open())
+        {
+            cout << "You loh" << endl;
+            return;
+        }
+        
+        infile >> tempStudent.LastName
+        >> tempStudent.FirstName
+        >> tempStudent.Patronymic
+        >> tempStudent.DateOfBirth.day
+        >> tempStudent.DateOfBirth.month
+        >> tempStudent.DateOfBirth.year
+        >> tempStudent.Course
+        >> tempStudent.Progress;
     }
 
     void printStudent(Student& NoName)
@@ -117,11 +137,19 @@ public:
         int sizeTemp = 0;
         for (int i = 0; i < size; i++)
         {
-            infile.read(reinterpret_cast<char*>(&tempStudent), sizeof(Student));
+            readBinFile(infile, tempStudent);
 
             if (comparator(tempStudent, course, F, I, O))
             {
-                out.write(reinterpret_cast<char*>(&tempStudent), sizeof(Student));
+                out << tempStudent.LastName << endl
+                << tempStudent.FirstName << endl
+                << tempStudent.Patronymic << endl
+                << tempStudent.DateOfBirth.day << ' '
+                << tempStudent.DateOfBirth.month << ' '
+                << tempStudent.DateOfBirth.year << endl
+                << tempStudent.Course << endl
+                << tempStudent.Progress << endl;
+
                 sizeTemp++;
             }    
         }
@@ -141,7 +169,7 @@ int main()
     srand(time(NULL));
 
     Student NoName;
-    Student BINNoName;
+    Student TextNoName;
     BINFile task;
     
     int size = 0;
@@ -170,7 +198,7 @@ int main()
 
                 size += quantity;
 
-                ofstream out("1.3.bin", ios::binary | ios::app);
+                ofstream out("1.4.bin", ios::binary | ios::app);
 
                 for (int i = 0; i < quantity; i++)
                     task.createBinFile(out, NoName);
@@ -182,12 +210,12 @@ int main()
 
             case 2:
             {
-                ifstream infile("1.3.bin", ios::binary);
+                ifstream infile("1.4.bin", ios::binary);
 
                 for (int i = 0; i < size; i++)
                 {
-                    task.readBinFile(infile, BINNoName);
-                    task.printStudent(BINNoName);
+                    task.readBinFile(infile, TextNoName);
+                    task.printStudent(TextNoName);
                 }
                 
                 infile.close();
@@ -206,8 +234,8 @@ int main()
                 cin >> I;
                 cin >> O;
                 
-                ifstream infile("1.3.bin", ios::binary);
-                ofstream out("1.3.task.bin", ios::binary | ios::app);
+                ifstream infile("1.4.bin", ios::binary);
+                ofstream out("1.4.task.txt");
 
                 sizeTask += task.task(size, course, F, I, O, infile, out);
                 infile.close();
@@ -217,12 +245,12 @@ int main()
 
             case 4:
             {
-                ifstream infile("1.3.task.bin", ios::binary);
+                ifstream infile("1.4.task.txt");
                 cout << sizeTask << endl;
                 for (int i = 0; i < sizeTask; i++)
                 {
-                    task.readBinFile(infile, BINNoName);
-                    task.printStudent(BINNoName);
+                    task.readTextFile(infile, TextNoName);
+                    task.printStudent(TextNoName);
                 }
                 
                 infile.close();

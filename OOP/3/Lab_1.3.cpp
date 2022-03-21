@@ -12,6 +12,7 @@ struct Date
     unsigned short month;
     unsigned short year;
 };
+static_assert(std::is_trivially_copyable<Date>());
 
 struct Student
 {
@@ -23,13 +24,14 @@ struct Student
     unsigned short Course;
     unsigned short Progress;
 };
+static_assert(std::is_trivially_copyable<Student>());
 
 
 class BINFile
 {
 private:
-    int n;
-    char* text;
+    int n = 10;
+    char* text = new char[n]{};
 
     template<typename T> 
     T getRand(T min, T max)
@@ -75,8 +77,11 @@ private:
     }
 
 public:
-    BINFile();
-    ~BINFile();
+    BINFile() = default;
+
+    ~BINFile(){
+       delete[] text;
+    }
 
     void createBinFile(ofstream& out, Student& NoName)
     {
@@ -98,7 +103,7 @@ public:
         infile.read(reinterpret_cast<char*>(&NoName), sizeof(Student));
     }
 
-    void printStudent(Student& NoName)
+    void printStudent(const Student& NoName) const
     {
         cout << endl;
         cout << "Last name: " << NoName.LastName << endl;
@@ -128,12 +133,6 @@ public:
         return sizeTemp;
     }
 };
-BINFile::BINFile()
-{
-    n = 10;
-    text = new char[n];
-}
-BINFile::~BINFile(){delete[] text;}
 
 
 int main() 
