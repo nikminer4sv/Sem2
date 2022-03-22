@@ -19,24 +19,20 @@ struct Student {
 };
 
 string ToJSON(const Student& student) {
-    nlohmann::json studentJSON = student;
-    string studentSTRING = studentJSON.dump();
-    return studentSTRING;
+    return nlohmann::json(student).dump(4);
 }
 
 Student FromJSON(const string& json) {
-    Student student = nlohmann::json::parse(json).get<Student>();
-    return student;
+    return nlohmann::json::parse(json).get<Student>();
 }
 
 int main() {
-
     ofstream outputFileStream;
     ofstream outputResultStream;
     ifstream inputFileStream;
-    outputFileStream.open("db.txt", ios::app);
+    outputFileStream.open("db.json", ios::app);
     outputResultStream.open("result.txt");
-    inputFileStream.open("db.txt");
+    inputFileStream.open("db.json");
     bool isWorking = true;
     bool isPaused = false;
 
@@ -83,6 +79,7 @@ int main() {
                     cout << student.surname << endl;
                     cout << student.patronymic << endl;
                     cout << student.age << endl;
+                    cout << student.course << endl;
                     cout << student.progress << endl;
                     cout << student.gender << endl;
 
@@ -126,7 +123,7 @@ int main() {
                 inputFileStream.close();
                 outputFileStream.close();
                 outputResultStream.close();
-                exit(0);
+                isWorking = false;
                 break;
             }
 
@@ -142,19 +139,5 @@ int main() {
         system("clear");
         
     }
-
-
-    /*Student student{"Nikita", "Korotki", "Denisovich", 18, 2, 10, 1};
-
-    nlohmann::json studentJSON = student;
-
-    string studentSTRING = studentJSON.dump(4);
-
-    cout << studentJSON << endl;*/
-
-    /*string json = "{\"age\":18,\"course\":2,\"gender\":true,\"name\":\"Nikita\",\"patronymic\":\"Denisovich\",\"progress\":10,\"surname\":\"Korotki\"}";*/
-
-    //Student student = nlohmann::json::parse(json).get<Student>();
-    //cout << student.age;/*
 
 }

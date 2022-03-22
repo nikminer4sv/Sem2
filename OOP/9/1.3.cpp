@@ -7,23 +7,24 @@ using namespace std;
 struct Student {
 
     int age = 0;
-    int progress;
-    int course;
+    int progress = 0;
+    int course = 0;
     char name[20]{};
     char surname[20]{};
     char patronymic[20]{};
-    bool gender;
-    bool isEmpty;
-
-    Student() {
-        isEmpty = true;
-    }
+    bool gender = false;
+    bool isEmpty = true;
+    
+    Student() = default;
 
     Student(std::ifstream& str){
         str.read(reinterpret_cast<char*>(this), sizeof(Student));
     }
-
 };
+static_assert(std::is_trivially_copyable<Student>());
+
+#pragma pack(pop)
+
 std::ifstream& operator >> (std::ifstream& str, Student& stud){
     str.read(reinterpret_cast<char*>(&stud), sizeof(Student));
     return str;
