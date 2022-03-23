@@ -19,7 +19,9 @@ int main()
     const int size = 10001;
     int garbage;
     Vector<bool> array(size);
-    cout << array.getSize() << endl;
+    cout << "SIZE=" << array.getSize() << ", CAPACITY=" << array.getCapacity() << endl;
+
+    array.setSize(array.getCapacity());
 
     if (in.is_open())
     {
@@ -32,7 +34,6 @@ int main()
             }
         }
     }
-
     in.close();
 
     for (int i = 0; i < size; i++)

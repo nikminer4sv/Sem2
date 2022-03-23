@@ -1,145 +1,144 @@
-#ifndef VICTOR
-#define VICTOR
+#pragma once
 
-#include <iostream>
+#include <algorithm>
 #include <ctime>
+#include <cstring>
+#include <iostream>
 
-using namespace std;
-
-template<typename T>
+template <typename T>
 class Vector
 {
-private:
-    int _Size; 
-    int _Count; 
-    T* _Vector;
-
 public:
     Vector()
     {
-        this->_Size = 0;
-        this->_Count = 0;
-        this->_Vector = new T [this->_Size];
+        std::cout << "Vector::Vector() <-" << this << std::endl;
     }
 
-    Vector(const int Size)
+    Vector(const size_t capacity)
     {
-        this->_Size = Size;
-        this->_Count = 0;
-        this->_Vector = new T [this->_Size];
+        this->_Capacity = capacity;
+        this->_Vector = new T[this->_Capacity];
     }
 
-    Vector(const Vector& obj)
+    Vector(const Vector &obj)
     {
-        this->_Size = obj._Size;
-        this->_Count = obj._Count;
-        this->_Vector = new T [this->_Size];
+        copy(obj);
+    }
 
-        for (int i = 0; i < this->_Size; i++)
-            this->_Vector[i] = obj._Vector[i];
+    Vector &operator=(const Vector &obj)
+    {
+        copy(obj);
+        return *this;
     }
 
     ~Vector()
     {
-        cout << "!!!!!!!!!!!GARBAGE!!!!!!!!!!!!!" << endl;
-        garbageCollector();
+        std::cout << "Vector::~Vector() <-" << this << std::endl;
+        this->_Capacity = 0;
+        this->_Size = 0;
+        delete[] this->_Vector;
     }
 
 public:
-    Vector& operator = (const Vector& obj)
+    int getCapacity() const
     {
-        delete[] this->_Vector;
-
-        this->_Count = obj._Count;
-        this->_Size = obj._Size;
-        this->_Vector = new T [this->_Size];
-
-        for (int i = 0; i < this->_Size; i++)
-            this->_Vector[i] = obj._Vector[i];
-
-        return *this;
+        return this->_Capacity;
     }
 
-    int getAmount() const
-    {
-        return this->_Count;
-    }
-
-    int getSize() const
+    size_t getSize() const
     {
         return this->_Size;
     }
 
-    void push_back(const T value)
+    void setSize(const size_t size_new)
     {
-
-        if (this->_Count >= this->_Size)
+        if (size_new > this->_Capacity)
         {
-            this->_Count++;
-            this->_Size = _Count;
-
-            T *_tempVector = new T [this->_Size];
-
-            for (int i = 0; i < this->_Size - 1; i++)
-                _tempVector[i] = _Vector[i];
-            _tempVector[this->_Size - 1] = value;
-
-            delete[] this->_Vector;
-            
-            this->_Vector = new T [this->_Size];
-
-            for (int i = 0; i < this->_Size; i++)
-                this->_Vector[i] = _tempVector[i];
-            
-            delete[] _tempVector;  
-            return;
+            resize(size_new);
         }
-        
-        this->_Vector[this->_Count++] = value;
+
+        this->_Size = size_new;
     }
 
-    T& operator[] (const int idx)
+    T &operator[](const size_t idx)
     {
-        try
-        {
-            if (idx >= this->_Size || idx < 0)
-                throw 0;
+        return at(idx);
+    }
 
-            return this->_Vector[idx];
-        }
-        catch(const int e)
+    const T &operator[](const size_t idx) const
+    {
+        return at(idx);
+    }
+
+    void push_back(const T &value)
+    {
+        if (this->_Size >= this->_Capacity)
         {
-            if (e == 0)
-                cout << "Error! Going aboard 2!" << endl;
-        }  
+            resize(std::max(this->_Capacity * 2, this->_Size + 1));
+        }
+
+        this->_Vector[this->_Size++] = value;
     }
 
 private:
-    void garbageCollector()
+    T &at(const size_t idx)
     {
-        this->_Size = 0;
-        delete[] this->_Vector;
+        if (idx >= this->_Size)
+            throw std::invalid_argument("index is out of bounds");
+
+        return this->_Vector[idx];
     }
+
+    void copy(const Vector &obj)
+    {
+        if (this->_Vector)
+        {
+            delete[] this->_Vector;
+        }
+
+        this->_Size = obj._Size;
+        this->_Capacity = obj._Capacity;
+        this->_Vector = new T[this->_Capacity];
+
+        std::memcpy(this->_Vector, obj._Vector, this->_Size * sizeof(T));
+    }
+
+    void resize(const size_t capacity_new)
+    {
+        std::cout << "Vector::resize() -> " << capacity_new << std::endl;
+
+        T *tempVector = new T[capacity_new];
+
+        if (this->_Vector)
+        {
+            std::memcpy(tempVector, this->_Vector, std::min(capacity_new, this->_Capacity) * sizeof(T));
+            delete[] this->_Vector;
+        }
+
+        this->_Vector = tempVector;
+    }
+
+private:
+    size_t _Capacity = 0;
+    size_t _Size = 0;
+    T *_Vector = nullptr;
 };
 
-template<typename T>
-void randomFill(Vector<T>& obj)
+template <typename T>
+void randomFill(Vector<T> &obj)
 {
     srand(time(NULL));
-    int size = obj.getSize() - obj.getAmount();
+    int size = obj.getCapacity() - obj.getSize();
     for (int i = 0; i < size; i++)
     {
         obj.push_back(rand() % 100);
-    }    
+    }
 }
 
-template<typename T>
-void randomFill(Vector<T>& obj, const int size)
+template <typename T>
+void randomFill(Vector<T> &obj, const int size)
 {
     srand(time(NULL));
     for (int i = 0; i < size; i++)
-        obj.push_back(rand() % 100); 
+        obj.push_back(rand() % 100);
 }
-
-
-#endif
