@@ -4,12 +4,18 @@
 
 namespace nikminer4sv {
 
-    template<typename T>
+    template<class T>
     class List {
         public:
-            struct Node {
-                T value;
-                Node* next;
+            struct Node
+            {
+                T value {};
+                Node *next = nullptr;
+
+                Node() {}
+
+                Node(const T&val, Node *next = nullptr) 
+                : value(val), next(next) {}
             };
             
         public:
@@ -17,15 +23,20 @@ namespace nikminer4sv {
 
             List(const List& list) {
                 this->size = list.GetSize();
-                for (size_t i = 0; i < size; i++)
-                    this[i] = list[i];
+
+                Node *node = list.head;
+                while (node != nullptr)
+                {
+                    Append(node->value);
+                    node = node->next;
+                }
             }
 
-            ~List() {
+            /*~List() {
                 Clear();
             }
 
-            void Clear(){
+            void Clear() {
                 Node* temp = head;
                 while (temp->next != nullptr) {
                     Node* gg = temp;
@@ -34,7 +45,7 @@ namespace nikminer4sv {
                 }
                 this->head = nullptr;
                 this->size = 0;
-            }
+            }*/
 
             int GetSize() const {
                 return this->size;
@@ -107,6 +118,18 @@ namespace nikminer4sv {
                 return temp->value;
 
             }
+
+            List<T>& operator = (const List<T>& list){
+
+                this->size = list.size;
+                
+                this->Clear();
+                for (size_t i = 0; i < this->size; i++)
+                    this->Append(list[i]);
+
+                return *this;
+            }
+
             friend std::ostream& operator<< (std::ostream &os, const List<T>& list) {
 
                 if (list.GetSize() == 0)
