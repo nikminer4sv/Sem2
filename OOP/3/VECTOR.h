@@ -1,10 +1,5 @@
 #pragma once
 
-#include <algorithm>
-#include <ctime>
-#include <cstring>
-#include <iostream>
-
 template <typename T>
 class Vector
 {
@@ -65,7 +60,7 @@ public:
         return at(idx);
     }
 
-    const T &operator[](const size_t idx) const
+    T &operator[](const size_t idx) const
     {
         return at(idx);
     }

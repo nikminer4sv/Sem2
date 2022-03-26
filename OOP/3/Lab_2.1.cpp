@@ -1,3 +1,6 @@
+#include <algorithm>
+#include <ctime>
+#include <cstring>
 #include <iostream>
 #include <fstream>
 #include "VECTOR.h"
@@ -6,12 +9,12 @@ using namespace std;
 
 int main()
 {
-    ofstream out("2.1.txt");
-    for (int i = 0; i < 10000; i++)
-    {
-        out << i << endl;
-    }
-    out.close();
+    // ofstream out("2.1.txt");
+    // for (int i = 0; i < 10000; i++)
+    // {
+    //     out << i << endl;
+    // }
+    // out.close();
 
     ifstream in;
     in.open("2.1.txt");
