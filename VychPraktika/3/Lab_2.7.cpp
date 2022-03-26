@@ -222,6 +222,6 @@ void task(Tree*& Task)
     if (Task) 
         findR(Task, minValueR, count);
    
-    cout << "MinvALUE" << minValueR << endl;
+    cout << "MinvALUE " << minValueR << endl;
 
 }
