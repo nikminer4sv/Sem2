@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <string>
 #include <math.h>
 
 using namespace std;
@@ -51,6 +52,29 @@ double Function(int x) {
 }
 
 void t2_1_2() {
+
+    string n;
+    cin >> n;
+    string frac = n.substr(n.find('.') + 1);
+
+    bool flag = true;
+    for (size_t i = 0; i < frac.size(); i++) {
+        for (size_t j = i + 1; j < frac.size(); j++) {
+            if (frac[i] == frac[j]) {
+                flag = false;
+                break;
+            }
+        }
+    }
+
+    if (flag)
+        cout << "Yes" << endl;
+    else 
+        cout << "No" << endl;
+
+}
+
+void t2_2() {
 
     double x0 = -0.6, xn = 0.8, dx = 0.1;
     for (double x = x0; x < xn; x += dx) {
