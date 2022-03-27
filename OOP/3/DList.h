@@ -16,7 +16,7 @@ struct Node
 };
 
 template <typename T>
-class DoubleLink
+class DList
 {
 private:
     Node<T> *Head;
@@ -24,26 +24,44 @@ private:
     int Size;
 
 public:
-    DoubleLink()
+    DList()
     {
         Head = nullptr;
         Tail = nullptr;
         Size = 0;
     }
 
-    int getSize() const
+    DList(const T value) : DList() { Add(value); }
+
+    ~DList()
     {
-        return Size;
+        if (Head)
+            Clear();
     }
 
-    Node<T> *getHead()
+    int getSize() const { return Size; }
+
+    Node<T> *getHead() const { return Head; }
+
+    Node<T> *getTail() const { return Tail; }
+
+    DList &operator=(DList &obj)
     {
-        return Head;
+        copy(obj);
+        return *this;
     }
 
-    Node<T> *getTail()
+    void copy(DList &obj)
     {
-        return Tail;
+        if (this->Head)
+            this->Clear();
+
+        T value;
+        for (int i = 0; i < obj.getSize(); i++)
+        {
+            value = obj.getDataForIndex(i);
+            this->Add(value);
+        }
     }
 
     void Add(const T Value)
@@ -51,7 +69,6 @@ public:
         if (Head == nullptr)
         {
             Head = new Node<T>(Value);
-            Head->Data = Value;
             Head->Next = Tail;
             Head->Prev = Tail;
         }
@@ -60,7 +77,6 @@ public:
             if (Size == 1)
             {
                 Tail = new Node<T>(Value);
-                Tail->Data = Value;
                 Head->Next = Tail;
                 Head->Prev = Tail;
                 Tail->Prev = Head;
@@ -72,49 +88,75 @@ public:
                 Tail->Next->Prev = Tail;
                 Tail = Tail->Next;
                 Tail->Next = Head;
-                Tail->Data = Value;
+                Head->Prev = Tail;
             }
         }
 
         Size++;
     }
 
-    bool Remove(int Index)
+    T getDataForData(const T value)
+    {
+        Node<T> *Temp = Head;
+
+        while (value != Temp->Data)
+        {
+            Temp = Temp->Next;
+        }
+
+        return Temp->Data;
+    }
+
+    T getDataForIndex(const int idx)
+    {
+        Node<T> *Temp = Head;
+        int i = 0;
+        while (i != idx)
+        {
+            Temp = Temp->Next;
+            i++;
+        }
+
+        return Temp->Data;
+    }
+
+    bool Remove(const int Index)
     {
         if (Size == 0 || Index > Size - 1 || Index < 0)
             return false;
 
         if (Index == 0)
         {
-            auto *delete_el = Head;
-            delete_el->Prev->Next = Head->Next;
-            delete_el->Next->Prev = Head->Prev;
-            Head = delete_el->Next;
+            Node<T> *delete_el = Head;
+            Head->Prev->Next = Head->Next;
+            Head->Next->Prev = Head->Prev;
+            Head = Head->Next;
             delete delete_el;
         }
         else
         {
             Node<T> *Temp = Head;
 
-            for (int i = 0; i < Index - 1; i++)
-            {
+            for (int i = 0; i < Index; i++)
                 Temp = Temp->Next;
-            }
 
-            auto *delete_el = Temp;
-            Temp->Next->Next->Prev = delete_el;
-            Temp->Next = delete_el->Next->Next;
+            Node<T> *delete_el = Temp;
+
+            Temp->Next->Prev = Temp->Prev;
+            Temp->Prev->Next = Temp->Next;
+
             delete delete_el;
         }
 
         Size--;
-
+        std::cout << "Size -> " << Size << std::endl;
         return true;
     }
 
     void PrintList()
     {
         Node<T> *Temp = Head;
+       
         for (int i = 0; i < Size; i++)
         {
             if (i % 10 == 0 && i != 0)
@@ -127,25 +169,21 @@ public:
 
     void Clear()
     {
-        Node<T> *current = Head;
-
-        while (current->Next != Head)
+        while (--Size)
         {
-            Node<T> *Next = current->Next;
-            delete current;
-            current = Next;
+            Head = Head->Next;
+            delete Head->Prev;
         }
-
         Head = nullptr;
     }
 
-    void Fill(DoubleLink &list, int n)
+    void Fill(DList &list, int n)
     {
         for (int i = 0; i < n; i++)
             list.Add((rand() % 1000 + 1) / 100.0);
     }
 
-    double Task(DoubleLink &list, int n)
+    double Task(DList &list, int n)
     {
         Node<T> *Temp1 = list.getHead();
         Node<T> *Temp2 = Temp1->Next;
@@ -153,7 +191,6 @@ public:
         int Temp4 = n;
 
         double sum = 0;
-        int Index1 = 0, Index2 = list.getSize() - 1;
 
         for (int i = 0; i < n - 2; i++)
         {
@@ -166,10 +203,5 @@ public:
         }
         std::cout << std::endl;
         return sum;
-    }
-
-    ~DoubleLink()
-    {
-        Clear();
     }
 };
