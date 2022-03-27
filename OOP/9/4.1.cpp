@@ -25,7 +25,7 @@ class Route {
 
 };
 
-class Ve
+class Vehicle
 
 int main() {
 
