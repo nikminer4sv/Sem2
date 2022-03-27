@@ -1,10 +1,10 @@
 #pragma once
 
-
-//add copy constructor, find_for_element(getter), delete_element(delete list),
+// add copy constructor, find_for_element(getter), delete_element(delete list),
+template <typename T>
 struct Tree
 {
-    int Data;
+    T Data;
     Tree *right;
     Tree *left;
 
@@ -15,14 +15,15 @@ struct Tree
     }
 };
 
+template <typename T>
 class TreeFunction
 {
 private:
-    Tree* Head;
+    Tree<T> *Head;
 
-    Tree *search(Tree *Head, int Data)
+    Tree<T> *search(Tree<T> *Head, T Data)
     {
-        Tree *pv = Head, *ppv = Head;
+        Tree<T> *pv = Head, *ppv = Head;
 
         while (pv)
         {
@@ -37,7 +38,7 @@ private:
         return ppv;
     }
 
-    void deleteMinTree(Tree *&Head, const int count, int &x)
+    void deleteMinTree(Tree<T> *&Head, const int count, int &x)
     {
         if (Head)
         {
@@ -52,7 +53,7 @@ private:
         }
     }
 
-    void print_tree_level(Tree *Head, const int level)
+    void print_tree_level(Tree<T> *Head, const int level)
     {
         if (Head)
         {
@@ -65,7 +66,7 @@ private:
         }
     }
 
-    void del_tree(Tree *&Head)
+    void del_tree(Tree<T> *&Head)
     {
         if (Head)
         {
@@ -76,13 +77,76 @@ private:
         }
     }
 
-public:
-    TreeFunction()
+    void findR(T &minValueR, int &count)
     {
-        this->Head = NULL;
+        count = 0;
+        if (Head->right)
+        {
+            Tree<T> *Help = Head->right;
+            while (true)
+            {
+                if (Help)
+                {
+                    minValueR = Help->Data;
+                    count++;
+                    Help = Help->right;
+                    continue;
+                }
+                break;
+            }
+        }
+        else
+        {
+            minValueR = Head->Data;
+            count++;
+        }
+
+        int x = 0;
+        deleteMinTree(Head->right, count, x);
     }
 
+    void del_data(Tree<T> *&Head, const T data, bool &deleted)
+    {
+        if (Head)
+        {
+            del_data(Head->right, data, deleted);
+            del_data(Head->left, data, deleted);
 
+            if (Head->Data != data && !deleted)
+            {
+                delete Head;
+                Head = nullptr;
+            }
+            else if(!deleted)
+            {
+                deleted = true;
+                delete Head;
+                Head = nullptr;
+            } 
+        }
+    }
+
+    void copy(Tree<T> *Head, Tree<T> *obj)
+    {
+        if (Head)
+            del_tree();
+
+        if (obj)
+        {
+            Head = new Tree<T>;
+            add(obj->Data);
+            copy(Head->left, obj->left);
+            copy(Head->right, obj->right);
+        }
+        
+    }
+public:
+    TreeFunction() { this->Head = NULL; }
+
+    TreeFunction(const T data) : TreeFunction() { this->add(data); }
+
+    TreeFunction(const TreeFunction& obj) { copy(this->Head, obj->Head); }
+    
     ~TreeFunction()
     {
         if (this->Head)
@@ -90,9 +154,24 @@ public:
         del_tree();
     }
 
-    void add(const int Data)
+    TreeFunction &operator=(const TreeFunction& obj)
     {
-        Tree *pnew = new Tree;
+        std::cout << this->Head << std::endl;
+        std::cout << obj.Head << std::endl;
+        copy(this->Head, obj.Head);
+       
+        return *this;
+    }
+
+    T getData(const T Data)
+    {
+        Tree<T> *Temp = search(this->Head, Data);
+        return Temp->Data;
+    }
+
+    void add(const T Data)
+    {
+        Tree<T> *pnew = new Tree<T>;
         pnew->Data = Data;
         pnew->right = NULL;
         pnew->left = NULL;
@@ -101,9 +180,9 @@ public:
             Head = pnew;
         else
         {
-            Tree *ppv;
+            Tree<T> *ppv;
             ppv = search(Head, Data);
-        
+
             if (Data < ppv->Data)
                 ppv->right = pnew;
             else
@@ -135,42 +214,29 @@ public:
         }
     }
 
-    void findR(int &minValueR, int &count)
-    {
-        count = 0;
-        if (Head->right)
-        {
-            Tree *Help = Head->right;
-            while (true)
-            {
-                if (Help)
-                {
-                    minValueR = Help->Data;
-                    count++;
-                    Help = Help->right;
-                    continue;
-                }
-                break;
-            }
-        }
-        else
-        {
-            minValueR = Head->Data;
-            count++;
-        }
-
-        int x = 0;
-        deleteMinTree(Head->right, count, x);
-    }
-
     void task()
     {
-        int minValueR = 0;
+        T minValueR;
         int count = 0;
-        int x = 0;
         if (Head)
             findR(minValueR, count);
 
         std::cout << "MinValue " << minValueR << std::endl;
+    }
+
+    void del_data(const T data)
+    {
+        bool deleted = false;
+        if (Head)
+        {
+            del_data(Head->right, data, deleted);
+            del_data(Head->left, data, deleted);
+            if (!deleted)
+            {
+                delete Head;
+                Head = nullptr;
+            }
+            
+        }
     }
 };
