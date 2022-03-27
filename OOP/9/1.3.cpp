@@ -34,10 +34,10 @@ int main() {
 
     bool isWorking = true;
     bool isPaused = false;
-    ofstream outputFileStream;
+    fstream outputFileStream;
     ofstream outputResultStream;
     ifstream inputFileStream;
-    outputFileStream.open("database", ios::app);
+    outputFileStream.open("database", ios::in | ios::out | ios::binary | ios::app);
     outputResultStream.open("result.txt", ios::app);
     inputFileStream.open("database");
 
@@ -66,6 +66,7 @@ int main() {
                 student.isEmpty = false;
 
                 outputFileStream.write(reinterpret_cast<char*>(&student), sizeof(student));
+                outputFileStream.flush();
                 break;
 
             }
@@ -79,8 +80,10 @@ int main() {
                     counter += 1;
                     Student student;
                     inputFileStream >> student;
-                    if (student.isEmpty)
-                        break;
+                    if(!inputFileStream.good()){
+                        break
+                    }
+
                     cout << "-----------------------------" << endl;
                     cout << student.name << endl;
                     cout << student.surname << endl;
