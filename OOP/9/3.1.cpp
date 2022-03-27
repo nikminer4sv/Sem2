@@ -4,18 +4,21 @@
 
 using namespace std;
 
-string inttohex(int a)
-{
+string IntToHex(int a) {
     string tmp("");
-    do
-    {
-        int r(a%16);
-        if (r>9) {r+=(int)'A'-10;}
-        else  {r+=(int)'0';};
-        tmp=(char)r+tmp;
-        a/=16;
+    do {
+        int r(a % 16);
+        if (r > 9)
+            r += (int)'A' - 10;
+        else  
+            r+=(int)'0';
+
+        tmp = (char)r + tmp;
+        a /= 16;
     } while (a);
+
     return tmp;
+
 }
 
 bool IsPalindrom(string input) {
@@ -62,8 +65,8 @@ void t4_2() {
 
     for(size_t i = 0;i < 1000000; i++) {
 
-        if (IsPalindrom(to_string(i)) && IsPalindrom(inttohex(i))) 
-            cout << i << " " << inttohex(i) << endl;
+        if (IsPalindrom(to_string(i)) && IsPalindrom(IntToHex(i))) 
+            cout << i << " " << IntToHex(i) << endl;
 
     }
 

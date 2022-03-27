@@ -8,36 +8,62 @@ void t2_4() {
     list<char> list1{'a', 'b', 'c', 'd', 'e', 'f'};
     list<char> list2{'d', 'e'};
 
-    for (size_t i = 0; i < list1.size() - list2.size(); i++) {
-        
-        bool flag = true;
-        for (size_t j = 0; j < list2.size(); j++) {
-            list<char>::iterator it1 = list1.begin();
-            advance(it1, i + j);
-            list<char>::iterator it2 = list2.begin();
-            advance(it2, j);
+    int forSize = list1.size() - list2.size();
+
+    for (int i = 0; i < forSize + 1; i++) {
+
+        bool exist = true;
+
+        for (int j = 0; j < list2.size(); j++) {
+
+            auto it1 = next(list1.begin(), i + j);
+            auto it2 = next(list2.begin(), j);    
             if (*it1 != *it2) {
-                flag = false;
+                exist = false;
                 break;
             }
+
         }
 
-        if (flag) {
-            list<char>::iterator it = list1.begin();
-            advance(it, i);
-            for (size_t j = 0; j < list2.size(); j++) {
+        if (exist) {
+            auto it1 = next(list1.begin(), i);
+            auto it2 = next(list1.begin(), i + list2.size());
+            list1.erase(it1, it2);
 
-                list1.erase(it);
-            }
+            forSize = list1.size() - list2.size();
+
         }
+    }
+
+    for (auto it1 = list1.begin(); it1 != list1.end(); ++it1)
+        cout << *it1;
+
+    cout << endl;
+
+}
+
+void t2_6() {
+
+    list<int> l{2,4,1,3,5,6,2,3,4,10};
+    int min = INT_MAX;
+    auto left = l.begin();
+    auto right = l.end();
+    right = prev(right, 1);
+    for (int i = 0; i < l.size() / 2; i++) {
+
+        int sum = *left + *right;
+
+        cout << *left << " " << *right << endl;
+
+        if (sum < min)
+            min = sum;
+
+        left = next(left, 1);
+        right = prev(right, 1);
 
     }
 
-    list<char>::iterator it = list1.begin();
-    for (int i = 0; i < list1.size(); i++) {
-        cout << *it;
-        advance(it, 1);
-    }
+    cout << min;
 
 }
 
