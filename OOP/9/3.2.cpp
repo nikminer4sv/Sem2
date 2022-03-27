@@ -1,105 +1,111 @@
 #include <iostream>
 #include <vector>
-#include <string>
-#include <math.h>
+#include <fstream>
 
 using namespace std;
 
-vector<int> Split(int n) {
+void t2_1() {
+    ifstream in;
+    in.open("test.txt");
+    int k = 0;
+    vector<int> array(10000);
+ 
+    if (in.is_open()) {
 
-    vector<int> numbers;
+        while (!in.eof()) {
+            in >> k;
+            array[k]++;
+        }
 
-    while (true) {
-
-        if (n == 0)
-            break;
-
-        double temp = (double)n / 10;
-        n /= 10;
-        numbers.push_back(round((temp-n)*10));
     }
 
-    reverse(numbers.begin(), numbers.end());
+    for (int i = 10000; i > 0; i--) 
+        if (array[i - 1] == 2) 
+            cout << i - 1 << ' ';    
+}
 
-    return numbers;
+vector<double> ToSum(vector<double> matrix1, vector<double> matrix2, int size) {
+
+    vector<double> result(size*size);
+
+    for (int i = 0; i < size; i++) 
+        for (int j = 0; j < size; j++) 
+            result[i * size + j] = matrix1[i * size + j] + matrix2[i * size + j];
+
+    return result;    
 
 }
 
-void t2_1_1() {
+vector<double> ToSquare(vector<double> matrix, int size) {
 
-    int n, k;
-    cin >> n >> k;
+    vector<double> result(size*size);
 
-    vector<int> numbers = Split(n);
+    for (int i = 0; i < size; i++) {
 
-    int left = 0, right = 0;
-    for (size_t i = 0; i < k; i++) {
-        left += numbers[i];
-        right += numbers[numbers.size() - 1 - i];
-    }
+        for (int j = 0; j < size; j++) {
+        
+            double sum = 0;
 
-    if (left == right)
-        cout << "Yes" << endl;
-    else 
-        cout << "No" << endl;
+            for (int k = 0; k < size; k++) {
 
-}
+                double firstElement = matrix[i * size + k];
+                double secondElement = matrix[k * size + j];
 
-double Function(int x) {
+                sum += firstElement * secondElement;
 
-    return 1 / pow(1 + x, 3) - 1;
-
-}
-
-void t2_1_2() {
-
-    string n;
-    cin >> n;
-    string frac = n.substr(n.find('.') + 1);
-
-    bool flag = true;
-    for (size_t i = 0; i < frac.size(); i++) {
-        for (size_t j = i + 1; j < frac.size(); j++) {
-            if (frac[i] == frac[j]) {
-                flag = false;
-                break;
             }
-        }
+
+            result[i * size + j] = sum;
+
+        }   
+        
     }
 
-    if (flag)
-        cout << "Yes" << endl;
-    else 
-        cout << "No" << endl;
+    return result;
 
 }
 
-void t2_2() {
+void Print(vector<double> matrix, int size) {
 
-    double x0 = -0.6, xn = 0.8, dx = 0.1;
-    for (double x = x0; x < xn; x += dx) {
+    for (int i = 0; i < size; i++) {
 
-        double sum = 1;
-        double operand = 1;
-        int counter = 2;
-        int sign = -1;
-        while (operand > 0.000001) {
+        for (int j = 0; j < size; j++)
+            cout << matrix[i * size + j] << " ";
 
-            double tempOperand = (double)counter*(counter+1)/2*pow(x, counter) * sign;
-            sum += tempOperand;
-            operand = tempOperand;
-            sign *= -1;
-
-        }
-
-        cout << x << " " << sum << endl;
+        cout << endl;
 
     }
+
+}
+
+vector<double> Task(vector<double> matrix, int size) {
+
+    vector<double> result(size*size);
+
+    result = ToSum(matrix, ToSum(ToSquare(matrix, size), ToSum(ToSquare(ToSquare(matrix, size), size), ToSquare(ToSquare(ToSquare(matrix, size), size), size), size), size), size);
+    return result;
 
 }
 
 int main() {
 
-    t2_1_2();
+    /*
+
+    int size;
+    cin >> size;
+
+    vector<double> matrix(size*size);
+
+    for (int i = 0; i < size * size; i++)
+            cin >> matrix[i];
+
+    //vector<double> result = ToSquare(matrix, size); 
+    vector<double> result = Task(matrix, size);
+
+    Print(result, size);
+
+    */
+
+   t2_1();
 
 }
