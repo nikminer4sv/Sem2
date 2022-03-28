@@ -21,7 +21,7 @@ public:
         cout << this->a << '/' << this->b << endl;
     }
 
-    RationalFraction &operator= (const RationalFraction &obj)
+    RationalFraction& operator= (const RationalFraction& obj)
     {
         this->a = obj.a;
         this->b = obj.b;
@@ -29,26 +29,27 @@ public:
         return *this;
     }
 
-    RationalFraction &operator* (const RationalFraction &obj)
+    RationalFraction& operator* (const RationalFraction& obj)
     {
-        this->a *= obj.a;
-        this->b *= obj.b;
-        return *this;
+        RationalFraction* fract = new RationalFraction(this->a * obj.a, this->b * obj.b);
+       
+        return *fract;
     }
 
-    RationalFraction &operator+ (const RationalFraction &obj)
+    RationalFraction& operator+ (const RationalFraction& obj)
     {
-        if (this->b = obj.b)
+        RationalFraction* fract;
+        if (this->b == obj.b)
         {
-            this->a += obj.a;
+            fract = new RationalFraction(this->a + obj.a, this->b);
         }
         else
         {
-            this->b *= obj.b;
-            this->a = this->a * obj.b + obj.a * obj.b;
+            fract = new RationalFraction(this->a * obj.b + obj.a * this->b, this->b * obj.b);
+            fract->printFraction();
         }
-        
-        return *this;
+
+        return *fract;
     }
 
 };
@@ -60,7 +61,9 @@ int main()
     RationalFraction fract3;
     fract3 = fract1 * fract2;
     fract3.printFraction();
-    fract3 = fract1 + fract2;
+    fract1.printFraction();
+    fract2.printFraction();
+    fract3 = fract1 + fract2 + fract1;
     fract3.printFraction();
 
     return 0;
