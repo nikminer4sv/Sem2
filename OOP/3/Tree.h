@@ -1,27 +1,30 @@
 #pragma once
 
+
+//
+// ТОЧНО вспомнить что тут происходит и в чем 
+// И не путать лево и
+//
+
 // add copy constructor, find_for_element(getter), delete_element(delete list),
 template <typename T>
 struct Tree
 {
-    T Data;
-    Tree *right;
-    Tree *left;
+    T Data{};
+    Tree *right = nullptr;
+    Tree *left = nullptr;
 
-    Tree()
-    {
-        right = nullptr;
-        left = nullptr;
-    }
+    Tree() = default;
 };
 
 template <typename T>
 class TreeFunction
 {
 private:
-    Tree<T> *Head;
+    Tree<T> *Head = nullptr; //root
 
-    Tree<T> *search(Tree<T> *Head, T Data)
+    //one level upper than target data
+    Tree<T>* search(Tree<T> *Head, const T& Data)
     {
         Tree<T> *pv = Head, *ppv = Head;
 
