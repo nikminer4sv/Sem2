@@ -123,7 +123,7 @@ int main()
         }
         default:
         {
-            cout << "Dolboeb\n";
+            cout << "Noob\n";
             _getch();
             break;
         }

@@ -18,9 +18,9 @@ int main()
     l2 = list;
     l2.PrintList();
 
-    list.Fill(list, n);
+    list.Fill(n);
     list.PrintList();
-    cout << "Sum: " << list.Task(list, n) << endl;
+    cout << "Sum: " << Task(list, n) << endl;
     cout << "Size -> " << list.getSize() << endl;
 
     int idx;
@@ -32,7 +32,7 @@ int main()
     int choose;
     cout << "Enter the data, that you want to get." << endl;
     cin >> choose;
-    cout << list.getDataForData(choose) << endl;
+    cout << list.contains(choose) << endl;
 
     cout << "Enter the index of data, that you want to get." << endl;
     cin >> choose;
