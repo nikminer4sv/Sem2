@@ -108,9 +108,6 @@ private:
         if (index >= cards.size())
             throw invalid_argument("Invalid index");
     }
-    bool CardComporator(const Card& card1, const Card& card2) const {
-        return card1.type == card2.type && card1.suit == card2.suit;
-    }
 
 public:
     Deck() = default;
@@ -135,6 +132,10 @@ public:
 
     }
 
+    friend bool operator== (const Card& c1, const Card& c2) {
+        return (c1.suit == c2.suit && c1.type == c2.type);
+    }
+
     void Print(const Card& card) const { 
 
         if (fPrint == nullptr)
@@ -143,10 +144,10 @@ public:
         fPrint(card); 
     }
 
-    void Add(const Card& card) {
+    void Add(Card& card) {
 
         for (size_t i = 0; i < cards.size(); i++) 
-            if (CardComporator(card, cards[i]))
+            if (card == cards[i])
                 throw runtime_error("Again this fcking card!");
 
         cards.push_back(card);
@@ -162,7 +163,7 @@ public:
 
     }
 
-    Card Get(size_t index) const {
+    Card& Get(size_t index) {
 
         IndexValidation(index);
 
@@ -173,21 +174,19 @@ public:
 
     }
 
-    bool Contain(const Card& card) const {
-
+    bool Contain(Card& card) {
         for (size_t i = 0; i < cards.size(); i++)
-            if (CardComporator(card, cards[i]))
+            if (card == cards[i])
                 return true;
-
         return false;
 
     }
     
-    void Join(const Deck& deck) {
+    void Join(Deck& deck) {
         for (size_t i = 0; i < deck.GetSize(); i++) {
             bool flag = true;
             for (size_t j = 0; j < this->GetSize(); j++) {
-                if (CardComporator(cards[j], deck.Get(i))) {
+                if (cards[j] == deck.Get(i)) {
                     flag = false;
                     break;
                 }
@@ -197,19 +196,19 @@ public:
         }
     }
 
-    void Difference(const Deck& deck) {
+    void Difference(Deck& deck) {
         for (size_t i = 0; i < deck.GetSize(); i++) 
             for (size_t j = 0; j < this->GetSize(); j++) 
-                if (CardComporator(deck.Get(i), this->cards[j])) 
+                if (deck.Get(i) == this->cards[j]) 
                     this->Remove(j);
     }
 
-    void Crossing(const Deck& deck) {
+    /*void Crossing(Deck& deck) {
 
         for (size_t i = 0; i < this->GetSize(); i++) {
             bool flag = true;
             for (size_t j = 0; j < deck.GetSize(); j++) {
-                if (CardComporator(this->cards[i], deck.Get(j))) {
+                if (deck.Get(j) == cards[i]) {
                     flag = false;
                     break;
                 }
@@ -217,7 +216,7 @@ public:
             if (flag)
                 this->Remove(i);
         }
-    }
+    }*/
 
     size_t GetSize() const { return cards.size(); }
 
@@ -241,7 +240,7 @@ int main() {
     deck2.Add(card1);
     deck2.Add(card2);
 
-    deck.Crossing(deck2);
+    //deck.Crossing(deck2);
 
     for (size_t i = 0; i < deck.GetSize(); i++)
         deck.Print(i);
