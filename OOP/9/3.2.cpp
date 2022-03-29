@@ -9,7 +9,6 @@ void t2_1() {
     in.open("test.txt");
     int k = 0;
     vector<int> array(10000);
- 
     if (in.is_open()) {
 
         while (!in.eof()) {
@@ -24,9 +23,13 @@ void t2_1() {
             cout << i - 1 << ' ';    
 }
 
-vector<double> ToSum(vector<double> matrix1, vector<double> matrix2, int size) {
+vector<double> ToSum(const vector<double>& matrix1, const vector<double>& matrix2) {
+    if(matrix1.size() != matrix2.size())
+        throw std::invalid_argument("SHLYAPA");
+        
+    auto size = matrix1.size();
 
-    vector<double> result(size*size);
+    vector<double> result(matrix1.size()*matrix1.size());
 
     for (int i = 0; i < size; i++) 
         for (int j = 0; j < size; j++) 
@@ -36,7 +39,9 @@ vector<double> ToSum(vector<double> matrix1, vector<double> matrix2, int size) {
 
 }
 
-vector<double> ToSquare(vector<double> matrix, int size) {
+vector<double> ToSquare(const vector<double>& matrix) {
+     
+    auto size = matrix.size();
 
     vector<double> result(size*size);
 
@@ -65,7 +70,9 @@ vector<double> ToSquare(vector<double> matrix, int size) {
 
 }
 
-void Print(vector<double> matrix, int size) {
+void Print(const vector<double> &matrix) {
+
+    auto size = matrix.size();
 
     for (int i = 0; i < size; i++) {
 
@@ -78,11 +85,19 @@ void Print(vector<double> matrix, int size) {
 
 }
 
-vector<double> Task(vector<double> matrix, int size) {
+vector<double> Task(const vector<double> & matrix) {
+
+
+
+    auto size = matrix.size();
 
     vector<double> result(size*size);
 
-    result = ToSum(matrix, ToSum(ToSquare(matrix, size), ToSum(ToSquare(ToSquare(matrix, size), size), ToSquare(ToSquare(ToSquare(matrix, size), size), size), size), size), size);
+    auto a_2 = ToSquare(matrix);
+    auto a_4 = ToSquare(a_2);
+    auto a_8 = ToSquare(a_4);
+
+    return ToSum(ToSum(ToSum(matrix, a_2),a_4), a_8);
     return result;
 
 }

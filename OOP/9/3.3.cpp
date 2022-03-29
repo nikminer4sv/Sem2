@@ -9,13 +9,12 @@ void t2_4() {
     list<char> list2{'d', 'e'};
 
     int forSize = list1.size() - list2.size();
-
     for (int i = 0; i < forSize + 1; i++) {
 
         bool exist = true;
 
         for (int j = 0; j < list2.size(); j++) {
-
+            
             auto it1 = next(list1.begin(), i + j);
             auto it2 = next(list2.begin(), j);    
             if (*it1 != *it2) {
@@ -46,20 +45,19 @@ void t2_6() {
 
     list<int> l{2,4,1,3,5,6,2,3,4,10};
     int min = INT_MAX;
+    
     auto left = l.begin();
-    auto right = l.end();
-    right = prev(right, 1);
+    auto right = l.rbegin();
+
     for (int i = 0; i < l.size() / 2; i++) {
-
         int sum = *left + *right;
-
         cout << *left << " " << *right << endl;
 
         if (sum < min)
             min = sum;
 
-        left = next(left, 1);
-        right = prev(right, 1);
+        ++left;
+        ++right;
 
     }
 
@@ -69,6 +67,6 @@ void t2_6() {
 
 int main() {
 
-    t2_4();
+    t2_6();
 
 }

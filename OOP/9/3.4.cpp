@@ -134,14 +134,7 @@ int main() {
 	
 	string inputString;
 	cin >> inputString;
-
     string reversedPolishNotation = GetReversePolishNotation(inputString);
-
-    for (string s : Split(reversedPolishNotation))
-        cout << s << endl;
-
-	cout << reversedPolishNotation << endl;
-
     cout << ComputeReversePolishNotation(reversedPolishNotation) << endl;
 
 }

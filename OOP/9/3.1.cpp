@@ -1,36 +1,30 @@
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
 using namespace std;
 
 string IntToHex(int a) {
-    string tmp("");
-    do {
-        int r(a % 16);
-        if (r > 9)
-            r += (int)'A' - 10;
-        else  
-            r+=(int)'0';
-
-        tmp = (char)r + tmp;
-        a /= 16;
-    } while (a);
-
-    return tmp;
-
+    stringstream s;
+    s << hex << a;
+    return s.str();
 }
 
-bool IsPalindrom(string input) {
+bool IsPalindrom(const string& input) {
+    auto it_1 = input.begin();
+    auto it_2 = input.rbegin();
 
-    string temp = input;
-    reverse(input.begin(), input.end());
+    while(it_1 != input.end() && it_2 != input.rend()){
+        if(*it_1 != *it_2){
+            return false;
+        }
 
-    if (input == temp)
-        return true;
-    else
-        return false;
+        ++it_1;
+        ++it_2;
+    }
 
+    return true;
 }
 
 void t4_1() {
@@ -39,16 +33,15 @@ void t4_1() {
     getline(cin, input);
 
     int pos = 0;
-
     while (true) {
 
         int a = input.find("(", pos);
         int b = input.find(")", pos);
 
-        if (a != -1 && b == -1) {
+        if (a >= 0 && b < 0) {
             input.replace(a, input.size() - a, "");
             break;
-        } else if (a != -1 && b != -1) {
+        } else if (a >= 0 && b >= 0) {
             input.replace(a, b - a + 1, "");
             pos = a + 1;
         } else {
@@ -64,7 +57,6 @@ void t4_1() {
 void t4_2() {
 
     for(size_t i = 0;i < 1000000; i++) {
-
         if (IsPalindrom(to_string(i)) && IsPalindrom(IntToHex(i))) 
             cout << i << " " << IntToHex(i) << endl;
 
@@ -77,7 +69,6 @@ vector<string> Split(const string& input) {
     vector<string> words;
 
     int pos = 0;
-
     while (true) {
 
         int index = input.find(" ", pos);
@@ -105,11 +96,11 @@ void t4_3() {
     vector<string> words = Split(input);
     vector<string> result;
 
-    for (string word : words) {
+    for (const auto& word : words) {
         
         bool flag = true;
         for (size_t i = 0; i < word.size() - 1; i++) {
-            if (word[i] > word[i + 1]) {
+            if (std::tolower(word[i]) > std::tolower(word[i + 1])) {
                 flag = false;
                 break;
             }
@@ -127,26 +118,6 @@ void t4_3() {
 
 int main() {
     
-    //t4_2();
     t4_3();
-
-    /*string input;
-    cin >> input;
-    cout << IsPalindrom(input);*/
-    /*
-    string str;
-    getline(cin, str);
-    regex e("\\([^)]*\\)");
-    str = regex_replace(str, e, "");
-    cout << str << "\n";
-
-     string input;
-    getline(cin, input);
-    regex e("(\\(.*\\))|(\\(.*)");
-    string a = regex_replace(input, e, "");
-
-    cout << a;
-
-    */
 
 }
