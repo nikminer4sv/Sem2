@@ -9,63 +9,55 @@ bool Compare(const string& word)
     for (int i = 0; i < word.size() / 2; i++)
     {
         if (word[i] != word[--size])
-            return false;       
+            return false;
     }
     return true;
 }
 
-void Write(string& currentWord, string& newWord)
-{   
+void Write(const string& currentWord, string& newWord)
+{
     if (currentWord.size() % 2 != 0)
         return;
-    
+
     if (Compare(currentWord))
         return;
 
+    if (newWord.length())
+        newWord += " ";
     newWord += currentWord;
-    newWord += ' ';
 }
 
-void charToString(const char* pch, string& temp)
+void lexem(const string &str, string &res, string delim = " ;,.:!?-()")
 {
-    int size = 0;
-    for (size_t i = 0; pch[i] != '\0'; i++)
-        size++;
-    
-    for (int i = 0; i < size; i++)
-        temp += pch[i];
-}
+    unsigned int wordBegin = 0, wordEnd = 0;
 
-void Task(string& currentText, string& newText)
-{
-    char* hz = new char [currentText.size()];
+    wordBegin = str.find_first_not_of(delim, wordEnd);
+   
+    wordEnd = str.find_first_of(delim, wordBegin);
 
-    for (int i = 0; i < currentText.size(); i++)
-        hz[i] = currentText[i];    
-    hz[currentText.size()] = '\0';
+    if (wordEnd >= str.length())
+        wordEnd = str.length();
 
-    const char seps[] = " ;,.:!?-()";
-
-    char* pch = strtok (hz, seps);
-    while (pch != NULL)                        
+    while (wordBegin < str.length())
     {
-        string temp;
-        charToString(pch, temp);
-        Write(temp, newText);
-        pch = strtok(NULL, seps);
+        string word = str.substr(wordBegin, wordEnd - wordBegin);
+        
+        Write(word, res);
+
+        wordBegin = str.find_first_not_of(delim, wordEnd);
+
+        wordEnd = str.find_first_of(delim, wordBegin);
+        if (wordEnd >= str.length())
+            wordEnd = str.length();
     }
-
-    delete[] hz;
-    delete[] pch;
 }
-
 
 int main()
 {
     string text;
     getline(cin, text);
     string taskText;
-    Task(text, taskText);
+    lexem(text, taskText);
     cout << taskText << endl;
 
     return 0;

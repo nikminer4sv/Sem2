@@ -27,7 +27,7 @@ bool IsLegalNumber(const string str, size_t base, const string base_symbols = k_
     return true;
 }
 
-size_t AnyToDec(const string str, size_t base, const string base_symbols = k_base_symbols)
+size_t AnyToDec(const string& str, size_t base, const string base_symbols = k_base_symbols)
 {
     size_t result = 0;
     size_t string_length = str.length();

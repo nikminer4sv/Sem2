@@ -10,7 +10,7 @@ void deleteOneSymbol(string& obj)
         int quantity = 0;
         string rabbit = obj;
 
-        while (rabbit.find_first_of(constObj[i]) != -1)
+        while (rabbit.find_first_of(constObj[i]) != string::npos)
         {
             rabbit.erase(rabbit.find_first_of(constObj[i]), 1);
             quantity++;
