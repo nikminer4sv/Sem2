@@ -18,7 +18,7 @@ namespace nikminer4sv {
             Vector(const Vector<T>& vector){
                 this->size = vector.size;
                 this->arr = new T[size];
-                std::memcpy(this->arr, vector.arr, sizeof(T)*this->size);
+                memcpy(this->arr, vector.arr, sizeof(T)*this->size);
             }
 
             Vector<T>& operator = (const Vector<T>& vector){
@@ -28,15 +28,15 @@ namespace nikminer4sv {
 
                 this->size = vector.size;
                 this->arr = new T[size];
-                std::memcpy(this->arr, vector.arr, sizeof(T)*this->size);
+                memcpy(this->arr, vector.arr, sizeof(T)*this->size);
 
 
                 return *this;
             }
 
-            ~Vector(){
+            /*~Vector(){
                 delete[] this->arr;
-            }
+            }*/
 
             void SetSize(size_t size) {
                 T* new_arr = new T[size]{};
@@ -59,7 +59,7 @@ namespace nikminer4sv {
                 (*this)[this->size-1] = element;
             }
 
-            int& operator[](int index){
+            T& operator[](int index) {
                 if(index < 0 || index >= size){
                     throw std::invalid_argument("index is out of bounds");
                 }
@@ -67,7 +67,7 @@ namespace nikminer4sv {
                 return this->arr[index];
             }
 
-            int operator[](int index) const {
+            T operator[](int index) const {
                 if(index < 0 || index >= size){
                     throw std::invalid_argument("index is out of bounds");
                 }

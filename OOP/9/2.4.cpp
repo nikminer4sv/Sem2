@@ -37,6 +37,10 @@ struct Card {
     Card() {}
 
     Card(CardType type, CardSuit suit) : type(type), suit(suit) {}
+
+     [[nodiscard]] bool operator== (const Card& c2) const {
+        return (suit == c2.suit && type == c2.type);
+    }
 };
 
 void PrintCard(const Card& card) {
@@ -100,9 +104,6 @@ class Deck {
 private:
     function<void(const Card&)> fPrint = nullptr;
     vector<Card> cards;
-
-public:
-
 private:
     void IndexValidation(const size_t& index) const {
         if (index >= cards.size())
@@ -132,9 +133,7 @@ public:
 
     }
 
-    friend bool operator== (const Card& c1, const Card& c2) {
-        return (c1.suit == c2.suit && c1.type == c2.type);
-    }
+   
 
     void Print(const Card& card) const { 
 
@@ -203,7 +202,7 @@ public:
                     this->Remove(j);
     }
 
-    /*void Crossing(Deck& deck) {
+    void Crossing(Deck& deck) {
 
         for (size_t i = 0; i < this->GetSize(); i++) {
             bool flag = true;
@@ -216,7 +215,7 @@ public:
             if (flag)
                 this->Remove(i);
         }
-    }*/
+    }
 
     size_t GetSize() const { return cards.size(); }
 
@@ -240,7 +239,7 @@ int main() {
     deck2.Add(card1);
     deck2.Add(card2);
 
-    //deck.Crossing(deck2);
+    deck.Crossing(deck2);
 
     for (size_t i = 0; i < deck.GetSize(); i++)
         deck.Print(i);

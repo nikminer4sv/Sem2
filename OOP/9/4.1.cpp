@@ -1,60 +1,95 @@
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
 class Time {
+private:
+    size_t _seconds;
+    size_t _minutes;
+    size_t _hours;
+
 public:
-    size_t seconds;
-    size_t minutes;
-    size_t hours;
 
     Time() = default;
 
-    Time(const size_t& seconds, const size_t& minutes, const size_t& hours) : 
-        seconds(seconds), minutes(minutes), hours(hours) {}
+    Time(const size_t seconds, const size_t minutes, const size_t hours) {
+
+        if (seconds >= 60 || minutes >= 60)
+            throw invalid_argument("invalid time");
+
+        _hours = hours;
+        _minutes = minutes;
+        _seconds = seconds;
+
+    }
+
+    [[nodiscard]] size_t GetSeconds() { return _seconds; }
+    [[nodiscard]] size_t GetMinutes() { return _minutes; }
+    [[nodiscard]] size_t GetHours() { return _hours; }
 
     friend ostream& operator<< (ostream& os, const Time& time) {
-        os << "Time: " << time.seconds << " " << time.minutes << " " << time.hours;
+        os << "Time: " << time._seconds << " " << time._minutes << " " << time._hours;
         return os;
     }
 };
 
-struct Position {
-    float latitude;
-    float longitude;
+class Position {
+private:
+    float _latitude;
+    float _longitude;
 
+public:
     Position() = default;
 
-    Position(const float& latitude, const float& longitude) : 
-        latitude(latitude), longitude(longitude) {}
+    Position(const float latitude, const float longitude) {
+
+        if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180)
+            throw invalid_argument("invalid position");
+
+        _latitude = latitude;
+        _longitude = longitude;
+
+    }
 
     friend ostream& operator<< (ostream& os, const Position& position) {
-        os << "Position: " << position.latitude << " " << position.longitude;
+        os << "Position: " << position._latitude << " " << position._longitude;
         return os;
     }
+
+    [[nodiscard]] float GetLatitude() { return _latitude; }
+    [[nodiscard]] float GetLongitude() { return _longitude; }
+
 };
 
 class Route {
+private:
+    Position _startPoint;
+    Position _endPoint;
+    Time _time;
+
 public:
-    Position startPoint;
-    Position endPoint;
-    Time time;
 
     Route() = default;
 
     Route(const Position& startPoint, const Position& endPoint, const Time& time) : 
-            startPoint(startPoint), endPoint(endPoint), time(time){}
+            _startPoint(startPoint), _endPoint(endPoint), _time(time){}
 
     friend ostream& operator<< (ostream& os, const Route& route) {
-        os << route.startPoint << endl << route.endPoint << endl << route.time;
+        os << route._startPoint << endl << route._endPoint << endl << route._time;
         return os;
     }
+
+    [[nodiscard]] Position GetStartPoint() { return _startPoint; }
+    [[nodiscard]] Position GetEndPoint() { return _endPoint; }
+    [[nodiscard]] Time GetTime() { return _time; }
 
 };
 
 class MovingObject {
 public:
-    Route route;
+
+    virtual ~MovingObject() = default;
 
     virtual void Print(ostream& os) const {
         os << route;
@@ -65,17 +100,25 @@ public:
         return os;
     }
 
+    [[nodiscard]] Route GetRoute() { return route; }
+
+protected:
+    MovingObject() = default;
+    Route route;
+
 };
 
 class Car : public MovingObject {
+protected:
     double rentCost;
     char* rentUrl;
 
+public:
     void Print(ostream& os) const {
         os << "Type: Car" << endl;
         os << rentCost << endl;
         os << rentUrl << endl;
-        os << route << endl;
+        MovingObject::Print(os);
     }
 
 public: 
@@ -91,14 +134,27 @@ public:
 
 class PublicTransport : public MovingObject {
 public:
+    virtual ~PublicTransport() = default;
+
+protected:
+    PublicTransport() = default;
+
+public:
+    
+    void Print(ostream& os) const {
+        os << fare << endl;
+        MovingObject::Print(os);
+    }
+
+protected:
     size_t fare;
+
 };
 
 class Bus : public PublicTransport {
     void Print(ostream& os) const {
         os << "Type: Bus" << endl;
-        os << fare << endl;
-        os << route << endl;
+        PublicTransport::Print(os);
     }
 
 public: 
@@ -113,8 +169,7 @@ public:
 class Trolleybus : public PublicTransport {
     void Print(ostream& os) const {
         os << "Type: Trolleybus" << endl;
-        os << fare << endl;
-        os << route << endl;
+        PublicTransport::Print(os);
     }
 
 public: 
@@ -129,8 +184,7 @@ public:
 class Metro : public PublicTransport {
     void Print(ostream& os) const {
         os << "Type: metro" << endl;
-        os << fare << endl;
-        os << route << endl;
+        PublicTransport::Print(os);
     }
 
 public: 
@@ -145,8 +199,7 @@ public:
 class RouteTaxi : public PublicTransport {
     void Print(ostream& os) const {
         os << "Type: RouteTaxi" << endl;
-        os << fare << endl;
-        os << route << endl;
+        PublicTransport::Print(os);
     }
 
 public:
@@ -158,9 +211,24 @@ public:
     }
 };
 
-int main() {
 
-    Car b(Route(Position(1,1), Position(2,2), Time(3,3,3)), 10, "Hello");
-    cout << b;
+
+int main() {
+    vector<PublicTransport> objects;
+    Bus a(Route(Position(1,1), Position(2,2), Time(3,3,3)), 10);
+    Metro b(Route(Position(10,10), Position(20,20), Time(30,30,30)), 20);
+
+    objects.push_back(a);
+    objects.push_back(b);
+
+    for (auto b : objects) 
+        cout << b;
 
 }   
+
+class Gg {
+public:
+    vector<MovingObject*> a;
+
+    MovingObject get() { a[]}
+}
