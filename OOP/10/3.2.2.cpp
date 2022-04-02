@@ -1,229 +1,114 @@
 #include <iostream>
-#include <conio.h>
+#include <string>
 #include <vector>
 
 using namespace std;
 
-int From2DTo1D(int x, int y, int n);
-int* CreateMatrix(int n);
-int** CreateMatrix2(int n);
-void Fill(int* Matrix, int n);
-void Fill(int** Matrix, int n);
-void PrintMatrix(int * Matrix, int n);
-void PrintMatrix(int ** Matrix, int n);
-vector<int> Maximums(int * Matrix, int n);
-vector<int> Maximums(int ** Matrix, int n);
-void PrintMaximum(vector<int> maximums, int n);
+void Print(vector<vector<int>> Matrix, int n);
+void Fill(vector<vector<int>> &Matrix, int n);
+int Track(vector<vector<int>> Matrix, int n);
+void Task(vector<vector<int>> Matrix, int power, int n);
+vector<vector<int>> Pow(vector<vector<int>> Matrix, int power, int n);
 
-int main() 
+int main()
 {
     system("cls");
-    int n, Choice;
-    cout << "Matrix size: ";
+    int n, power;
+    cout << "Enter the size of the matrix\n";
     cin >> n;
-    cout << "Choose type of matrix:\n1. 1D\n2. 2D\n";
-    cin >> Choice;
-    switch (Choice)
-    {
-        case 1:
-        {
-            int *Matrix1D = CreateMatrix(n);
-            Fill(Matrix1D, n);
-            PrintMatrix(Matrix1D, n);
-            vector<int> Maximum;
-            Maximum = Maximums(Matrix1D, n);
-            PrintMatrix(Matrix1D, n);
-            PrintMaximum(Maximum, n);
-            break;
-        }
-
-        case 2:
-        {
-            int **Matrix2D = CreateMatrix2(n);
-            Fill(Matrix2D, n);
-            vector<int> Maximum;
-            Maximum = Maximums(Matrix2D, n);
-            PrintMatrix(Matrix2D, n);
-            PrintMaximum(Maximum, n);
-            break;
-        }
-        
-        default:
-            cout << "It's not your day";
-            break;
-    }
-}
-
-int From2DTo1D(int x, int y, int n)
-{
-    return x * n + y;
-}
-
-int* CreateMatrix(int n)
-{
-    int* Matrix = new int[n * n];
+    cout << "Enter the power\n";
+    cin >> power;
     system("cls");
-    _sleep(500);
-    cout << "Matrix created\nPress any key to continue.." << endl;
-    getch();
 
-    return Matrix;
-}
-int** CreateMatrix2(int n)
-{
-    int** Matrix = new int*[n];
+    vector<vector<int>> Matrix(n);
 	for (int i = 0; i < n; i++)
 	{
-		Matrix[i] = new int[n];
+        vector<int> temp(n);
+		Matrix[i] = temp;
 	}
-    system("cls");
-    _sleep(500);
-    cout << "Matrix created\nPress any key to continue.." << endl;
-    getch();
 
-    return Matrix;
+    Fill(Matrix, n);
+    Print(Matrix, n);
+    Task(Matrix, power, n);
 }
 
-void Fill(int* Matrix, int n)
-{
-    for (int i = 0; i < n * n; i++)
-	{
-        Matrix[i] = rand() % 100 + 1;
-    }
-    system("cls");
-    _sleep(500);
-    cout << "Matrix filled\nPress any key to continue.." << endl;
-    getch();
-}
-
-void Fill(int** Matrix, int n)
+void Print(vector<vector<int>> Matrix, int n)
 {
     for (int i = 0; i < n; i++)
 	{
 		for (int j = 0; j < n; j++) 
 		{
-			Matrix[i][j] = rand() % 100 + 1;
-		}
-    }
-    system("cls");
-    _sleep(500);
-    cout << "Matrix filled\nPress any key to continue.." << endl;
-    getch();
-}
-
-void PrintMatrix(int *Matrix , int n)
-{
-    system("cls");
-    cout << "Elements of matrix are:\n\n";
-
-    for (int i = 0; i < n; i++)
-	{
-		for (int j = 0; j < n; j++) 
-		{
-			cout << Matrix[From2DTo1D(i, j, n)] << "\t";
+			cout << Matrix[i][j] << "\t";
             _sleep(100);
 		}
 		cout << endl << endl;
     }
-    cout << "Matrix printed" << endl;
 }
 
-void PrintMatrix(int **matrix , int n)
+void Fill(vector<vector<int>> &Matrix, int n)
 {
-    system("cls");
-    cout << "Elements of matrix are:\n\n";
-
+    int count = 0;
     for (int i = 0; i < n; i++)
 	{
 		for (int j = 0; j < n; j++) 
 		{
-			cout << matrix[i][j] << "\t";
-            _sleep(100);
+			Matrix[i][j] = count++;
 		}
-		cout << endl << endl;
     }
-    cout << "Matrix printed" << endl;
 }
 
-vector<int> Maximums(int *Matrix , int n)
+int Track(vector<vector<int>> Matrix, int n)
 {
-    vector<int> maximums;
-    int number = 0;
-
-    for (int i = 1; i <= n; i++) // до главной диагонали
-	{
-        int max = 0;
-		for (int k = 1 , m = i + 1 - k; k < i + 1; k++ , m--) 
-		{
-            if (max < Matrix[From2DTo1D(k - 1, n - m, n)])
-            {
-                max = Matrix[From2DTo1D(k - 1, n - m, n)];
-            }
-		}
-        maximums.push_back(max);
-    }
-
-    for (int i = 1; i < n; i++) // после главной диагонали
-	{
-        int max = 0;
-		for (int k = 0; k < n - i; k++) 
-		{
-            if (max < Matrix[From2DTo1D(i + k, k, n)])
-            {
-                max = Matrix[From2DTo1D(i + k, k, n)];
-            }
-		}
-        maximums.push_back(max);
-    }
-
-    return maximums;
-}
-
-vector<int> Maximums(int **matrix , int n)
-{
-    vector<int> maximums;
-
-    for (int i = 1; i <= n; i++) // до главной диагонали
-	{
-        int max = 0;
-		for (int k = 1 , m = i + 1 - k; k < i + 1; k++ , m--) 
-		{
-            if (max < matrix[k - 1][n - m])
-            {
-                max = matrix[k - 1][n - m];
-            }
-		}
-        maximums.push_back(max);
-    }
-
-    for (int i = 1; i < n; i++) // после главной диагонали
-	{
-        int max = 0;
-		for (int k = 0; k < n - i; k++) 
-		{
-            if (max < matrix[i + k][k])
-            {
-                max = matrix[i + k][k];
-            }
-		}
-        maximums.push_back(max);
-    }
-
-    system("cls");
-    _sleep(500);
-    cout << "Maximums Founded\nPress any key to continue.." << endl;
-    getch();
-
-    return maximums;
-}
-
-void PrintMaximum(vector<int> maximums, int n) 
-{
-    cout << "Maximums in diagonalies are : ";
-
-    for (int i = 0; i < 2 * n - 1; i++) // вывод максимумов
+    size_t i = 0, sum = 0;;
+    while (i < n)
     {
-        cout << maximums[i] << " ";
-        _sleep(100);
+        sum += Matrix[i][i];
+        i++;
     }
+
+    return sum;
+}
+
+void Task(vector<vector<int>> Matrix, int power, int n) 
+{
+    vector<vector<int>> temp = Matrix;
+    size_t i = 1, sum = 0;
+    while (i <= power)
+    {
+        sum += Track(temp, n);
+        temp = Pow(Matrix, ++i, n);
+    }
+    cout << sum << endl;
+}
+
+vector<vector<int>> Pow(vector<vector<int>> Matrix, int power, int n) 
+{
+    vector<vector<int>> copy = Matrix;
+    vector<vector<int>> result(n);
+
+	for (int i = 0; i < n; i++)
+	{
+        vector<int> temp(n);
+		result[i] = temp;
+	}
+
+    for (int f = 0; f < power - 1; f++) 
+    {
+        for (int i = 0; i < n; i++) 
+        {
+            vector<int> temp(n);
+            for (int j = 0; j < n; j++) 
+            {
+                int ElementValue = 0;
+                for (int t = 0; t < n; t++)
+                {
+                    ElementValue += Matrix[i][t] * copy[t][j];
+                }
+                result[i][j] = ElementValue;
+            }
+        }
+        copy = result;
+    }
+
+    return result;
 }
