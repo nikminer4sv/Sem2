@@ -30,7 +30,7 @@ public:
         return *this;
     }
 
-    Vector<T>& operator+(const Vector<T>& obj)
+    Vector<T> operator+(const Vector<T>& obj)
     {
         Vector<T> temp(std::max(this->_Capacity, obj._Capacity));
         size_t i = 0, sum = 0, carry = 0;
@@ -41,22 +41,58 @@ public:
                 sum += this->_Vector[i];
             if (i < obj._Size)
                 sum += obj._Vector[i];
-            
+
             temp.push_back(sum % base);
             carry = sum / base;
             i++;
-        }  
+        }
 
         return temp;
     }
 
-    // ~Vector()
-    // {
-    //    std::cout << "Vector::~Vector() <-" << this << std::endl;
+    Vector<T> operator*(const Vector<T>& obj)
+    {
+        Vector<T> result(this->_Capacity * obj._Capacity);
+        size_t i = 0;
+        T sum = 0;
+        while (i < this->_Size)
+        {
+            Vector<T> temp;
+            /*std::cout << "this" << std::endl;
+            Print(*this);
+            std::cout << std::endl << "obj" << std::endl;
+            Print(obj);
+            std::cout << std::endl;*/
+            sum = this->_Vector[i];
+            if (sum == 0)
+            {
+                sum = base;
+            }
+            temp = smult(obj, sum);
+            for (size_t j = 0; j < i; j++)
+            {
+                temp.push_forward(0);
+            }
+            /*std::cout << "temp" << std::endl;
+            Print(temp);
+            std::cout << std::endl;*/
+            result = result + temp;
+            /*std::cout << "result" << std::endl;
+            Print(result);
+            std::cout << std::endl << "|||||||||||||||||||||||||||||||||" << std::endl;*/
+            i++;
+        }
+
+        return result;
+    }
+
+    //~Vector()
+    //{
+    //    // std::cout << "Vector::~Vector() <-" << this << std::endl;
     //    this->_Capacity = 0;
     //    this->_Size = 0;
     //    delete[] this->_Vector;
-    // }
+    //}
 
 public:
     size_t getCapacity() const
@@ -156,7 +192,7 @@ private:
         return this->_Vector[idx];
     }
 
-    
+
     void copy(const Vector& obj)
     {
         if (this->_Vector)
@@ -220,4 +256,36 @@ std::ostream& operator << (std::ostream& os, const Vector<T>& vector)
     }
 
     return os;
+}
+
+template <typename T>
+Vector<T> smult(Vector<T> a, T b)
+{
+    size_t carry = 0;
+
+    for (size_t i = 0; i < a.getSize() || carry; ++i)
+    {
+
+        if (i == a.getSize())
+            a.push_back(0);
+        size_t cur = carry + a[i] * 1ll * b;
+        a[i] = cur % base;
+        carry = cur / base;
+    }
+
+    while (a.getSize() > 1 && a.back() == 0)
+        a.pop_back();
+
+    return a;
+}
+
+template <typename T>
+void Print(Vector<T> array)
+{
+    int i = 0;
+    while (i < array.getSize())
+    {
+        std::cout << array[i] << std::endl;
+        i++;
+    }
 }
