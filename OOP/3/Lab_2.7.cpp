@@ -6,16 +6,15 @@
 using namespace std;
 
 template<typename T>
-void Task(Matrix<T> &matrix, const size_t &power, Vector<T> &vector)
+Vector<T> Task(Matrix<T> &matrix, const size_t &power, const Vector<T> &vector)
 {
     size_t i = 1, sum = 0;
     while (i < power)
-    {
         matrix = matrix.Pow(++i);
-    }
+
     cout << matrix << endl;
 
-    Vector<T> newVector(vector.getCapacity());
+    Vector<T> newVector(vector.getSize());
 
     for (int i = 0; i < matrix.GetRows(); i++)
     {
@@ -24,9 +23,10 @@ void Task(Matrix<T> &matrix, const size_t &power, Vector<T> &vector)
             sum += matrix[i][j] * vector[j];
         }
         newVector.push_back(sum);
+        sum = 0;
     }
 
-    vector = newVector;
+    return newVector;
 }
 
 int main()
@@ -45,13 +45,12 @@ int main()
     Vector<int> vector(size);
 
     randomFill(vector);
+    cout << vector << endl;
 
     matrix.AscendingFill();
-
-    cout << "Hello" << endl;
-    cout << vector << endl;
+    
     cout << matrix << endl;
 
-    Task(matrix, power, vector);
-    cout << vector << endl;
+    Vector<int> newVector = Task(matrix, power, vector);
+    cout << newVector << endl;
 }

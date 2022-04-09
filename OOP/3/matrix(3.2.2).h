@@ -5,33 +5,35 @@
 using namespace std;
 
 template <typename T>
-void printVector(const vector<T> vectorB, const int n)
+void printVector(const vector<T>& vectorB)
 {
-    for (int i = 0; i < n; i++)
-        cout << vectorB[i] << '\t';
+    for (int i = 0; i < vectorB.size(); i++)
+        std::cout << vectorB[i] << '\t';
 
-    cout << endl << endl;
+    std::cout << std::endl << std::endl;
 }
 
 template <typename T>
-void multiplyingVectorMatrix(const vector<T> &oldMatrix, const vector<T> vectorB, const int n, vector<T> &newVector)
+void multiplyingVectorMatrix(const vector<T> &oldMatrix, const vector<T>& vectorB, vector<T> &newVector, const int n)
 {
+    //newVector.clear();
+
     int sum = 0;
-    for (int i = 0, m = 0; i < n * n; i++)
+    for (int i = 0, m = 0; i < n; i++)
     {
         int sum = 0;
         for (int j = 0; j < n; j++, m++)
             sum += oldMatrix[m] * vectorB[j];
 
         newVector.push_back(sum);
-    }
-        
-        
+    }        
 }
 
 template <typename T>
-void multiplyingVectorMatrix(const vector<vector<T>> &oldMatrix, const vector<T> vectorB, const int n, vector<T> &newVector)
+void multiplyingVectorMatrix(const vector<vector<T>> &oldMatrix, const vector<T>& vectorB, vector<T> &newVector)
 {
+    newVector.clear();
+    int n =  oldMatrix.size();
     for (int i = 0; i < n; i++)
     {
         int sum = 0;
@@ -44,8 +46,15 @@ void multiplyingVectorMatrix(const vector<vector<T>> &oldMatrix, const vector<T>
 }
 
 template <typename T>
-void quadraticMatrix(const vector<vector<T>> &matrix, const int n, vector<vector<T>> &quadratMatrix)
+vector<vector<T>> quadraticMatrix(const vector<vector<T>> &matrix)
 {
+    int n =  matrix.size();
+
+    int i = 0;
+    vector<vector<T>> quadratMatrix(n);
+    for (const auto& el : quadratMatrix)
+        quadratMatrix[i++].resize(n);
+    
     int sum = 0;
 
     for (int i = 0; i < n; i++)
@@ -59,12 +68,14 @@ void quadraticMatrix(const vector<vector<T>> &matrix, const int n, vector<vector
             sum = 0;
         }
     }
+    return quadratMatrix;
+
 }
 
 template <typename T>
-void quadraticMatrix(const vector<T> &matrix, const int n, vector<T> &quadratMatrix)
+vector<T> quadraticMatrix(const vector<T> &matrix, const int& n)
 {
-
+    vector<T> quadratMatrix(n);
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < n; j++)
@@ -76,20 +87,21 @@ void quadraticMatrix(const vector<T> &matrix, const int n, vector<T> &quadratMat
             quadratMatrix[i * n + j] = sum;
         }
     }
+    return quadratMatrix;
 }
 
 template <typename T>
-void printMatrix(const vector<vector<T>> &matrix, const int n)
+void printMatrix(const vector<vector<T>> &matrix)
 {
-
+    int n = matrix[0].size();
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < n; j++)
-            cout << matrix[i][j] << '\t';
+            std::cout << matrix[i][j] << '\t';
 
-        cout << endl;
+        std::cout << std::endl;
     }
-    cout << endl;
+    std::cout << std::endl;
 }
 
 template <typename T>
@@ -98,9 +110,9 @@ void printMatrix(const vector<T> &matrix, const int n)
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < n; j++)
-            cout << matrix[i * n + j] << '\t';
+            std::cout << matrix[i * n + j] << '\t';
 
-        cout << endl;
+        std::cout << std::endl;
     }
-    cout << endl;
+    std::cout << std::endl;
 }

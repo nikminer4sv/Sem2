@@ -5,7 +5,7 @@ using namespace std;
 void fillNumbers(int* numbers, const int n)
 {
     for (int i = 0; i < n; i++)
-        numbers[i] = rand() % (4 * n) - (2 * n);
+        numbers[i] = rand() % ((4 * n) - (2 * n));
 }
 
 void printNumbers(const int* numbers, const int n)
@@ -37,7 +37,9 @@ void findMaxMinFirstMethod(const int* numbers, const int n)
             continue;
         }
         else if (numbers[i + 1] < min)
+        {
             min = numbers[i + 1];
+        }
         minComparison++;
      
     }
@@ -135,7 +137,7 @@ int main()
 
     int* numbers = new int[n];
     fillNumbers(numbers, n);
-    printNumbers(numbers, n);
+   // printNumbers(numbers, n);
     findMaxMinFirstMethod(numbers, n);
     findMaxMinSecondMethod(numbers, n);
 

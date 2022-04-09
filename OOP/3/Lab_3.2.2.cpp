@@ -23,12 +23,7 @@ int main(){
 
             vector<int> matrix;
             for (int i = 0; i < n * n; i++)
-                matrix.push_back(rand() % 20);
-            
-
-            vector<int> quadratMatrix;
-            for (int i = 0; i < n * n; i++)
-                quadratMatrix.push_back(0);
+                matrix.push_back(rand() % 20);        
 
             vector<int> vectorB;
             for (int i = 0; i < n; i++)
@@ -37,7 +32,8 @@ int main(){
             cout << "Matrix:" << endl;
             printMatrix(matrix, n);
 
-            quadraticMatrix(matrix, n, quadratMatrix);
+            vector<int> quadratMatrix;
+            quadratMatrix = quadraticMatrix(matrix, n);
 
             cout << "QuadratMatrix:" << endl;
             printMatrix(quadratMatrix, n);
@@ -45,12 +41,12 @@ int main(){
             vector<int> newVector;
 
             cout << "VectorB:" << endl;
-            printVector(vectorB, n);
+            printVector(vectorB);
 
-            multiplyingVectorMatrix(quadratMatrix, vectorB, n, newVector);
+            multiplyingVectorMatrix(quadratMatrix, vectorB, newVector, n);
 
             cout << "NewVector:" << endl;
-            printVector(newVector, n);
+            printVector(newVector);
 
             break;
         }
@@ -80,24 +76,24 @@ int main(){
             vector<int> vectorB;
             for (int i = 0; i < n; i++)
                 vectorB.push_back(rand() % 20);
-            
-            quadraticMatrix(matrix, n, quadratMatrix);
+
+            quadratMatrix = quadraticMatrix(matrix);
 
             cout << "Matrix:" << endl;
-            printMatrix(matrix, n);
+            printMatrix(matrix);
 
             cout << "QuadratMatrix:" << endl;
-            printMatrix(quadratMatrix, n);
+            printMatrix(quadratMatrix);
 
             vector<int> newVector;
 
             cout << "VectorB:" << endl;
-            printVector(vectorB, n);
+            printVector(vectorB);
 
-            multiplyingVectorMatrix(quadratMatrix, vectorB, n, newVector);
+            multiplyingVectorMatrix(quadratMatrix, vectorB, newVector);
 
             cout << "NewVector:" << endl;
-            printVector(newVector, n);
+            printVector(newVector);
             
             break;
         }
