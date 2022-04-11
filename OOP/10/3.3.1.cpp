@@ -1,35 +1,25 @@
 #include <iostream>
 #include <cstring>
-#include <iterator>
 #include <list>
+#include <algorithm>
 
 using namespace std;
 
-char Get(list<char>& list1, int Index)
-{
-    if (Index > list1.size() - 1 || Index < 0)
-    {
-        throw std::invalid_argument("Invalid index");
-    }
-
-    list<char>::iterator it = list1.begin();
-    advance(it, Index);
-
-    return *it;
-}
-
-bool Search(list<char>& listmain, list<char>& list1, size_t index)
+bool Search(list<char>& listmain, list<char>& list1, auto pos)
 {
     bool Flag = true;
     size_t size = list1.size();
+    auto temp = list1.begin();
 
-    for (int j = 0; j < size; j++)
+    while (temp != list1.end())
     {
-        if (Get(listmain, index + j) != Get(list1, j))
+        if (*temp != *pos)
         {
             Flag = false;
             break;
         }
+        temp++;
+        pos++;
     }
 
     return Flag;
@@ -40,32 +30,27 @@ void Task(list<char>& listmain, list<char>& list1, list<char>& list2)
     if (list1.size() == 0 || listmain.size() < list1.size())
         return;
 
-    int forSize = listmain.size() - list1.size();
     bool Flag = true;
-    int i = 0;
-    list<char>::iterator pos = listmain.begin(), pos1 = listmain.begin();
+    auto temp = list1.begin();
+    auto pos = std::find(listmain.begin(), listmain.end(), *temp);
 
-    for (; i < forSize; i++)
+    while (pos != listmain.end())
     {
-        Flag = Search(listmain, list1, i);
+        Flag = Search(listmain, list1, pos);
         if (Flag)
         {
-            advance(pos, i);
             for (int j = 0; j < list1.size(); j++)
             {
                 pos = listmain.erase(pos);
             }
 
-            int k = i;
-            advance(pos1, k);
-
+            auto temp = list2.begin();
             for (int j = 0; j < list2.size(); j++)
             {
-                listmain.insert(pos1, Get(list2, j));
+                listmain.insert(pos, *temp++);
             }
-
-            forSize = listmain.size() + list2.size() - list1.size();
         }
+        pos = std::find(pos, listmain.end(), *temp);
     }
 }
 

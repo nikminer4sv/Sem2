@@ -78,7 +78,7 @@ void Task(vector<vector<int>> Matrix, int power, int n)
         sum += Track(temp, n);
         temp = Pow(Matrix, ++i, n);
     }
-    cout << sum << endl;
+    cout << "sum -> " << sum << endl;
 }
 
 vector<vector<int>> Pow(vector<vector<int>> Matrix, int power, int n) 
