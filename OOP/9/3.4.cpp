@@ -7,7 +7,7 @@
 
 using namespace std;
 
-string GetReversePolishNotation(string inputString) {
+string GetReversePolishNotation(string& inputString) {
     
     string outputString = "";
 	stack<char> operators;

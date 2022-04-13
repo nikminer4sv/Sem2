@@ -1,6 +1,7 @@
 #include <iostream>
 #include "4.1.cpp"
 #include <vector>
+#include <fstream>
 
 using namespace std;
 
@@ -64,8 +65,22 @@ public:
         return *this;
     }
 
+    size_t GetSize() const { return _collection.size(); }
+
     //std::move
 };
+
+void Save(Collection& collection) {
+
+    ofstream stream;
+    stream.open("collection.txt");
+
+    for (size_t i = 0; i < collection.GetSize(); i++) {
+        Route route = collection[i]->GetRoute();
+        cout << route.GetStartPoint().GetLatitude() << " " << route.GetStartPoint().GetLatitude() << endl;
+    }
+
+}
 
 int main() {
 
@@ -81,8 +96,40 @@ int main() {
     col.Append(&taxi);
     col.Append(&car);
 
-    Collection col2 = std::move(col);
+    Save(col);
 
-    cout << col2;
+}
 
+class MovingObjectFactory{
+    MovingObject* CreateObject(std::string&) = 0;
+}
+
+class CarObjectFactory : MovingObjectFactory{
+    MovingObject* CreateObject(std::string&) override{
+        return new CarObject(...);
+    }
+}
+
+std::map<string, MovingObjectFactory*> factories;
+factories["car"] = new CarFactory();
+factories["bus"] = new BusFactory();
+
+
+void load(Collection c, const char* filename){
+    std::ifstream str(filename);
+
+    std::string type;
+    stream >> type;
+
+    c.Append(factories[type].CreateObject(type));
+}
+stream >> type;
+
+collection.Add(factories[type.CreateObject(stream));
+
+if(type == ...){
+    new Car
+}
+else if(type == ...){
+    new ....
 }

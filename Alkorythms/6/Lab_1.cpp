@@ -72,8 +72,8 @@ int main() {
 
     } else if (choice == 2) {
 
-        sellers = rand() % 105 + 1;
-        buyers = rand() % 105 + 1;
+        sellers = rand() % 5 + 1;
+        buyers = rand() % 5 + 1;
 
         s_costs = new int[sellers];
         b_costs = new int[buyers];
