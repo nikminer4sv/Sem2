@@ -1,5 +1,6 @@
 #pragma once
 
+#include <fstream>
 #include <iostream>
 #include <vector>
 
@@ -32,6 +33,12 @@ public:
 
     }
 
+    Time(ifstream& stream) {
+        stream >> _seconds;
+        stream >> _minutes;
+        stream >> _hours;
+    }
+
     [[nodiscard]] size_t GetSeconds() const { return _seconds; }
     [[nodiscard]] size_t GetMinutes() const { return _minutes; }
     [[nodiscard]] size_t GetHours() const { return _hours; }
@@ -41,7 +48,7 @@ public:
     void SetHours(size_t hours) { _hours = hours; }
 
     friend ostream& operator<< (ostream& os, const Time& time) {
-        os << "Time: " << time._seconds << " " << time._minutes << " " << time._hours;
+        os << time._seconds << " " << time._minutes << " " << time._hours;
         return os;
     }
 };
@@ -64,8 +71,13 @@ public:
 
     }
 
+    Position(ifstream& stream) {
+        stream >> _latitude;
+        stream >> _longitude;
+    }
+
     friend ostream& operator<< (ostream& os, const Position& position) {
-        os << "Position: " << position._latitude << " " << position._longitude;
+        os << position._latitude << " " << position._longitude;
         return os;
     }
 
@@ -109,6 +121,8 @@ class MovingObject {
 public:
 
     virtual ~MovingObject() = default;
+    
+    virtual string GetType() const = 0;
 
     virtual void Print(ostream& os) const {
         os << route << endl;
@@ -134,7 +148,7 @@ protected:
 
 public:
     void Print(ostream& os) const {
-        os << "Type: Car" << endl;
+        os << "car" << endl;
         os << _rentCost << endl;
         os << _rentUrl << endl;
         MovingObject::Print(os);
@@ -150,7 +164,10 @@ public:
     }
 
     double GetRentCost() const { return _rentCost; }
+
     void SetRentCost(double rentCost) { _rentCost = rentCost; }
+
+    string GetType() const { return "Car"; }
 
 };
 
@@ -175,7 +192,7 @@ protected:
 
 class Bus : public PublicTransport {
     void Print(ostream& os) const {
-        os << "Type: Bus" << endl;
+        os << "bus" << endl;
         PublicTransport::Print(os);
     }
 
@@ -186,11 +203,13 @@ public:
         this->fare = fare;
         this->route = route;
     }
+
+    string GetType() const { return "Bus"; }
 };
 
 class Trolleybus : public PublicTransport {
     void Print(ostream& os) const {
-        os << "Type: Trolleybus" << endl;
+        os << "trolleybus" << endl;
         PublicTransport::Print(os);
     }
 
@@ -201,11 +220,13 @@ public:
         this->fare = fare;
         this->route = route;
     }
+
+    string GetType() const { return "Trolleybus"; }
 };
 
 class Metro : public PublicTransport {
     void Print(ostream& os) const {
-        os << "Type: metro" << endl;
+        os << "metro" << endl;
         PublicTransport::Print(os);
     }
 
@@ -216,11 +237,12 @@ public:
         this->fare = fare;
         this->route = route;
     }
+    string GetType() const { return "Metro"; }
 };
 
 class RouteTaxi : public PublicTransport {
     void Print(ostream& os) const {
-        os << "Type: RouteTaxi" << endl;
+        os << "routetaxi" << endl;
         PublicTransport::Print(os);
     }
 
@@ -231,6 +253,7 @@ public:
         this->fare = fare;
         this->route = route;
     }
+    string GetType() const { return "RouteTaxi"; }
 };
 
 
