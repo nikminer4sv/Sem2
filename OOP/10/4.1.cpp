@@ -10,15 +10,7 @@ private:
     int _Y = 0;
 
 public:
-    Position()
-    {
-        system("cls");
-        cout << "Enter position of your object\n"
-            << "X:\t";
-        cin >> _X;
-        cout << "Y:\t";
-        cin >> _Y;
-    }
+    Position() = default;
 
     Position(size_t x, size_t y)
     {
@@ -26,52 +18,76 @@ public:
         this->_Y = y;
     }
 
+    Position(const Position& temp)
+    {
+        _X = temp.GetX();
+        _Y = temp.GetY();
+    }
+
     ~Position() = default;
 
-    // void Write(ofstream &of)
-    // {
-    //     Position Temp(this->_X, this->_Y);
-    //     of.write((char*)&Temp, sizeof(Position));
-    // }
+    Position& operator= (const Position& temp)
+    {
+        _X = temp.GetX();
+        _Y = temp.GetY();
+
+        return *this;
+    }
 
     void SetX(size_t x) { _X = x; }
     void SetY(size_t y) { _Y = y; }
 
     [[nodiscard]] size_t GetX() const { return _X; }
     [[nodiscard]] size_t GetY() const { return _Y; }
-    
 };
 
 class Object
 {
 public:
-    Object()
-    {
-        _Color = new char[255];
-        system("cls");
-        cout << "Enter color of your object\n";
-        cin >> _Color;
-    }
+    Object() = default;
 
-    virtual ~Object() 
+    virtual ~Object()
     {
         delete[] _Color;
     }
 
     virtual void Print(ostream& stream) const
     {
-        stream << "X & Y: " << _Position.GetX() << " " << _Position.GetY() << endl;
+        stream << "X & Y: " << (*_Position).GetX() << " " << (*_Position).GetY() << endl;
         stream << "Color: " << _Color << endl;
     }
 
-    friend ostream& operator<<(ostream& os, const Object& obj) 
+    virtual void Write(ofstream& of) const
+    {
+        of << (*_Position).GetX() << endl
+            << (*_Position).GetY() << endl
+            << _Color << endl;
+    }
+
+    virtual void Add()
+    {
+        int _X, _Y;
+        system("cls");
+        cout << "Enter position of your object\n"
+            << "X:\t";
+        cin >> _X;
+        cout << "Y:\t";
+        cin >> _Y;
+        _Position = new Position(_X, _Y);
+        _Color = new char[255];
+        cout << "Enter color of your object\n";
+        cin >> _Color;
+    }
+
+    friend ostream& operator<<(ostream& os, const Object& obj)
     {
         obj.Print(os);
+
+        return os;
     }
 
 protected:
-
-    Position _Position;
+    Position* _Position;
     char* _Color = nullptr;
 };
 
@@ -82,15 +98,7 @@ protected:
     float _Height = 0;
 
 public:
-    Shape()
-    {
-        system("cls");
-        cout << "Enter size of your object\n"
-            << "Width:\t";
-        cin >> _Width;
-        cout << "Height:\t";
-        cin >> _Height;
-    }
+    Shape() = default;
 
     ~Shape()
     {
@@ -98,66 +106,98 @@ public:
         _Height = 0;
     }
 
-    // void Print(ostream& os) const override 
-    // {
-    //     Object::Print(os);
-    //     os << "width: " << _Width << endl;
-    //     os << "height: " << _Height << endl << endl;
-    // }
+    void Print(ostream& os) const override
+    {
+        Object::Print(os);
+        os << "width: " << _Width << endl;
+        os << "height: " << _Height << endl;
+    }
+
+    void Write(ofstream& of) const override
+    {
+        Object::Write(of);
+        of << _Width << endl
+            << _Height << endl;
+    }
+
+    void Add() override
+    {
+        Object::Add();
+        system("cls");
+        cout << "Enter size of your object\n"
+            << "Width:\t";
+        cin >> _Width;
+        cout << "Height:\t";
+        cin >> _Height;
+    }
 };
 
 class Rectangle : public Shape
 {
-public: 
+public:
     Rectangle() = default;
+
     ~Rectangle() = default;
 
-    Rectangle(Position position, float width, float height, char* color) 
+    Rectangle(const Position& position, float width, float height, char* color)
     {
-        _Position = position;
+        _Position = new Position(position);
         _Width = width;
         _Height = height;
         _Color = color;
     }
 
-    void Print(ostream& os) const override 
+    void Print(ostream& os) const override
     {
         os << "Rectangle" << endl;
         Shape::Print(os);
+        os << endl;
     }
 
-    // void Write(ofstream &of)
-    // {
-    //     Rectangle Temp(this->_Position, this->_Width, this->_Height, this->_Color);
-    //     of.write((char*)&Temp, sizeof(Rectangle));
-    // }
+    void Write(ofstream& of) const override
+    {
+        of << "Rectangle" << endl;
+        Shape::Write(of);
+    }
+
+    void Add() override
+    {
+        Shape::Add();
+    }
 };
 
 class Ellipse : public Shape
 {
 public:
     Ellipse() = default;
+
     ~Ellipse() = default;
 
-    Ellipse(Position position, float width, float height, char* color) 
+    Ellipse(const Position& position, float width, float height, char* color)
     {
-        _Position = position;
+        _Position = new Position(position);
         _Width = width;
         _Height = height;
         _Color = color;
     }
 
-    void Print(ostream& os) const override 
+    void Print(ostream& os) const override
     {
-        cout << "Ellipse" << endl;
+        os << "Ellipse" << endl;
         Shape::Print(os);
+        os << endl;
     }
 
-    // void Write(ofstream &of)
-    // {
-    //     Ellipse Temp(this->_Position, this->_Width, this->_Height, this->_Color);
-    //     of.write((char*)&Temp, sizeof(Ellipse));
-    // }
+    void Write(ofstream& of) const override
+    {
+        of << "Ellipse" << endl;
+        Shape::Write(of);
+    }
+
+    void Add() override
+    {
+        Shape::Add();
+    }
 };
 
 class Star : public Shape
@@ -166,35 +206,40 @@ private:
     int _Peaks = 0;
 
 public:
-    Star()
-    {
-        system("cls");
-        cout << "Enter amount of peaks\n";
-        cin >> _Peaks;
-    }
+    Star() = default;
 
     ~Star() = default;
 
-    Star(Position position, float width, float height, char* color, size_t peaks) 
+    Star(const Position& position, float width, float height, char* color, size_t peaks)
     {
-        _Position = position;
+        _Position = new Position(position);
         _Width = width;
         _Height = height;
         _Color = color;
         _Peaks = peaks;
     }
 
-    void Print(ostream& os) const override 
+    void Print(ostream& os) const override
     {
-        cout << "Star" << endl;
+        os << "Star" << endl;
         Shape::Print(os);
+        os << _Peaks << endl << endl;
     }
 
-    // void Write(ofstream &of)
-    // {
-    //     Star Temp(this->_Position, this->_Width, this->_Height, this->_Color, this->_Peaks);
-    //     of.write((char*)&Temp, sizeof(Star));
-    // }
+    void Write(ofstream& of) const override
+    {
+        of << "Star" << endl;
+        Shape::Write(of);
+        of << _Peaks << endl;
+    }
+
+    void Add() override
+    {
+        Shape::Add();
+        system("cls");
+        cout << "Enter amount of peaks\n";
+        cin >> _Peaks;
+    }
 };
 
 class Polygon : public Shape
@@ -203,35 +248,40 @@ private:
     size_t _Peaks = 0;
 
 public:
-    Polygon()
-    {
-        system("cls");
-        cout << "Enter amount of peaks\n";
-        cin >> _Peaks;
-    }
+    Polygon() = default;
 
     ~Polygon() = default;
 
-    Polygon(Position position, float width, float height, char* color, size_t peaks) 
+    Polygon(const Position& position, float width, float height, char* color, size_t peaks)
     {
-        _Position = position;
+        _Position = new Position(position);
         _Width = width;
         _Height = height;
         _Color = color;
         _Peaks = peaks;
     }
 
-    void Print(ostream& os) const override 
+    void Print(ostream& os) const override
     {
-        cout << "Polygon" << endl;
+        os << "Polygon" << endl;
         Shape::Print(os);
+        os << _Peaks << endl << endl;
     }
 
-    // void Write(ofstream &of)
-    // {
-    //     Polygon Temp(this->_Position, this->_Width, this->_Height, this->_Color, this->_Peaks);
-    //     of.write((char*)&Temp, sizeof(Polygon));
-    // }
+    void Write(ofstream& of) const override
+    {
+        of << "Polygon" << endl;
+        Shape::Write(of);
+        of << _Peaks << endl;
+    }
+
+    void Add() override
+    {
+        Shape::Add();
+        system("cls");
+        cout << "Enter amount of peaks\n";
+        cin >> _Peaks;
+    }
 };
 
 class Text : public Object
@@ -241,25 +291,17 @@ private:
     char* _Text = nullptr;
 
 public:
-    Text()
-    {
-        _Text = new char[255];
-        system("cls");
-        cout << "Enter text\n";
-        cin >> _Text;
-        cout << "Enter size of text\n";
-        cin >> _TextSize;
-    }
+    Text() = default;
 
-    Text(Position position, int textSize, char* text, char* color) 
+    Text(const Position& position, int textSize, char* text, char* color)
     {
-        _Position = position;
+        _Position = new Position(position);
         _TextSize = textSize;
         _Text = text;
         _Color = color;
     }
 
-    ~Text() 
+    ~Text()
     {
         _TextSize = 0;
         delete[] _Text;
@@ -267,25 +309,29 @@ public:
 
     void Print(ostream& os) const override
     {
-        cout << "Text" << endl;
+        os << "Text" << endl;
         Object::Print(os);
         os << "text size: " << _TextSize << endl;
-        os << "text: " << _Text << endl << endl;
+        os << "text: " << _Text << endl
+            << endl;
     }
 
-    // void Write(ofstream &of)
-    // {
-    //     Text Temp(this->_Position, this->_TextSize, this->_Text, this->_Color);
-    //     of.write((char*)&Temp, sizeof(Text));
-    // }
-};
+    void Write(ofstream& of) const override
+    {
+        of << "Text" << endl;
+        Object::Write(of);
+        of << _TextSize << endl
+            << _Text << endl;
+    }
 
-// int main() 
-// {
-//     Rectangle re(Position(112, 113), 66, 88, "Green");
-//     Ellipse el(Position(411, 255), 255, 245, "Red");
-//     Star st(Position(356, 245), 116, 88, "Blue", 5);
-//     Polygon po(Position(653, 542), 611, 88, "Black", 5);
-//     Text txt(Position(1, 2), 14, "3,14zdec", "ebat'");
-//     cout << re << el << st << po << txt;
-// }
+    void Add() override
+    {
+        Object::Add();
+        _Text = new char[255];
+        system("cls");
+        cout << "Enter text\n";
+        cin >> _Text;
+        cout << "Enter size of text\n";
+        cin >> _TextSize;
+    }
+};

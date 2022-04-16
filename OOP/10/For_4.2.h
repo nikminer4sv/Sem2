@@ -22,21 +22,44 @@ public:
         copy(obj);
     }
 
+    Vector(Vector<T>&& obj){
+        this->_Size = obj._Size;
+        this->_Capacity = obj._Capacity;
+        this->_Vector = obj._Vector;
+
+        obj._Vector = nullptr;
+        obj._Size = 0;
+        obj._Capacity = 0;
+    }
+
     Vector<T> &operator=(const Vector<T> &obj)
     {
         copy(obj);
         return *this;
     }
 
+    Vector<T> &operator=(Vector<T> &&obj)
+    {
+        Clear();
+
+        this->_Size = obj._Size;
+        this->_Capacity = obj._Capacity;
+        this->_Vector = obj._Vector;
+
+        obj._Vector = nullptr;
+        obj._Size = 0;
+        obj._Capacity = 0;
+
+        return *this;
+    }
+
     ~Vector()
     {
         // std::cout << "Vector::~Vector() <-" << this << std::endl;
-        this->_Capacity = 0;
-        this->_Size = 0;
-        delete[] this->_Vector;
+        Clear();
     }
 
-    Clear()
+    void Clear()
     {
         this->_Capacity = 0;
         this->_Size = 0;
