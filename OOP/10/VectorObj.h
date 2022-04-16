@@ -31,9 +31,12 @@ public:
     ~Vector()
     {
         // std::cout << "Vector::~Vector() <-" << this << std::endl;
-        this->_Capacity = 0;
-        this->_Size = 0;
-        delete[] this->_Vector;
+        if (this->_Vector)
+        {
+            this->_Capacity = 0;
+            this->_Size = 0;
+            delete[] this->_Vector;
+        }
     }
 
     Clear()

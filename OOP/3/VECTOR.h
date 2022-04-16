@@ -24,9 +24,36 @@ public:
         copy(obj);
     }
 
+    Vector(Vector<T> &&obj)
+    {
+        this->_Capacity = obj._Capacity;
+        this->_Size = obj._Size;
+        this->_Vector = obj._Vector;
+
+        obj._Capacity = 0;
+        obj._Size = 0;
+        obj._Vector = nullptr;
+    }
+
+
     Vector<T>& operator=(const Vector<T>& obj)
     {
         copy(obj);
+        return *this;
+    }
+
+    Vector<T>& operator=(Vector<T>&& obj)
+    {
+        Clear();
+
+        this->_Capacity = obj._Capacity;
+        this->_Size = obj._Size;
+        this->_Vector = obj._Vector;
+
+        obj._Capacity = 0;
+        obj._Size = 0;
+        obj._Vector = nullptr;
+        
         return *this;
     }
 
@@ -76,13 +103,12 @@ public:
         return result;
     }
 
-    //~Vector()
-    //{
-    //    // std::cout << "Vector::~Vector() <-" << this << std::endl;
-    //    this->_Capacity = 0;
-    //    this->_Size = 0;
-    //    delete[] this->_Vector;
-    //}
+    ~Vector()
+    {
+        //std::cout << "Vector::~Vector() <-" << this << std::endl;
+        Clear();
+       
+    }
 
 public:
     size_t getCapacity() const
@@ -111,6 +137,16 @@ public:
     T& operator[](const size_t idx) const
     {
         return at(idx);
+    }
+
+    void Clear()
+    {
+        if (this->_Vector)
+        {
+            this->_Capacity = 0;
+            this->_Size = 0;
+            delete[] this->_Vector;
+        }
     }
 
     void push_back(const T& value)
@@ -150,11 +186,13 @@ public:
 
     void pop_back()
     {
-        for (int i = 0; i < this->_Capacity - this->_Size; i++)
-        {
-            this->_Vector[this->_Size + i - 1] = this->_Vector[this->_Size + i];
-        }
+        std::memcpy(this->_Vector + this->_Size - 1, this->_Vector + this->_Size, sizeof(T));
+        this->_Size--;
+    }
 
+    void erase(const size_t idx)
+    {
+        std::memcpy(this->_Vector + idx - 1, this->_Vector + idx, (this->_Size - idx - 1) * sizeof(T));
         this->_Size--;
     }
 
@@ -268,12 +306,11 @@ Vector<T> smult(Vector<T> a, T b)
 }
 
 template <typename T>
-void Print(Vector<T> array)
+void Print(const Vector<T>& array)
 {
     int i = 0;
     while (i < array.getSize())
     {
-        std::cout << array[i] << std::endl;
-        i++;
+        std::cout << array[i++] << std::endl;
     }
 }

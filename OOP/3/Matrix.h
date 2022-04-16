@@ -30,6 +30,13 @@ private:
 public:
     Matrix() { SetName(); }
 
+    ~Matrix() 
+    { 
+        _name = "";
+        _rows = 0;
+        _cols = 0;
+    }
+
     Matrix(const size_t rows, const size_t cols) {
         SetName();
 
