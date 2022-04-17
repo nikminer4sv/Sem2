@@ -64,6 +64,11 @@ public:
         of << _position.getX() << " " << _position.getY() << " " << _position.getZ() << endl;
     }
 
+    virtual void Print (ostream& os) const
+    {
+        os << _position << endl << endl;
+    }
+
 protected:
     Position _position;  
     char* _name = nullptr;
@@ -75,11 +80,6 @@ protected:
     Object(const Position& pos, const char* name = nullptr) {
         _position = pos;
         _name = _strdup(name);
-    }
-
-    virtual void Print (ostream& os) const
-    {
-        os << _position;
     }
 
     friend ostream& operator<< (ostream& os, const Object& object) {
@@ -108,12 +108,14 @@ protected:
         _speed = speed;
     }
 
-    virtual ~MovableObject() = default;
-
-    virtual void Print (ostream& os) const
+    void Print (ostream& os) const override
     {
-        os << _position << endl << _speed;
+        os << _speed << endl;
+        Object::Print(os);
+        os << endl;
     }
+
+    virtual ~MovableObject() = default;
 
     friend ostream& operator<< (ostream& os, const MovableObject& object) {
         object.Print(os);
@@ -150,7 +152,7 @@ public:
     void Print (ostream& os) const override
     {
         os << "Star: " << "name = " << _name << ", temperature = " <<
-        _temperature << ", solid surface = " << _isSolidSurface << " " << endl;
+        _temperature << ", solid surface = " << _isSolidSurface << " " << endl << endl;
     }
 
     ~Star() override { if (_name != nullptr) delete[] _name; }
@@ -181,6 +183,7 @@ public:
     {
         os << "Asteroid: " << "max size = " << _maxSize << endl;
         MovableObject::Print(os);
+        os << endl;
     }
 };
 
@@ -211,6 +214,7 @@ public:
         << "Ammunition: " << _ammunition << endl
         << "Max speed: " << _maxSpeed << endl;
         MovableObject::Print(os);
+        os << endl;
     }
 
     Spaceship() = default;
@@ -243,6 +247,7 @@ public:
         os << "Explosive power: "<< _explosivePower 
         << " , time fuel reserve: " << _timeFuelReserve << endl;
         MovableObject::Print(os);
+        os << endl;
     }
 };
 
