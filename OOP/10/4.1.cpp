@@ -223,7 +223,7 @@ public:
     {
         os << "Star" << endl;
         Shape::Print(os);
-        os << _Peaks << endl << endl;
+        os << "Peaks: " << _Peaks << endl << endl;
     }
 
     void Write(ofstream& of) const override
@@ -265,7 +265,7 @@ public:
     {
         os << "Polygon" << endl;
         Shape::Print(os);
-        os << _Peaks << endl << endl;
+        os << "Peaks: " << _Peaks << endl << endl;
     }
 
     void Write(ofstream& of) const override
