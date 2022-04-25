@@ -14,15 +14,17 @@ private:
     string OPERATORS = "><=!&|";
     string RESULT_STR = "";
 
-    bool IsOperator(const string &s)
+private:
+    int Priority(const string &str)
     {
-        if (s.length() > 2)
-            return false;
-
-        if (OPERATORS.find_first_of(s, 0) != string::npos)
-            return true;
-
-        return false;
+        if (str == "||" || str == "&&")
+            return 2;
+        else if (str == "==" || str == "!=")
+            return 3;
+        else if (str == ">=" || str == "<=" || str == ">" || str == "<")
+            return 4;
+        else if (str == "(")
+            return 1;
     }
 
     bool ComputeValue(int a, int b, const string &expOperator)
@@ -45,6 +47,17 @@ private:
             return a && b;
     }
 
+    bool IsOperator(const string &s)
+    {
+        if (s.length() > 2)
+            return false;
+
+        if (OPERATORS.find_first_of(s, 0) != string::npos)
+            return true;
+
+        return false;
+    }
+
     vector<string> Split(const string &str)
     {
         vector<string> result;
@@ -52,19 +65,6 @@ private:
         for (string s; iss >> s;)
             result.push_back(s);
         return result;
-    }
-
-private:
-    int Priority(const string &str)
-    {
-        if (str == "||" || str == "&&")
-            return 2;
-        else if (str == "==" || str == "!=")
-            return 3;
-        else if (str == ">=" || str == "<=" || str == ">" || str == "<")
-            return 4;
-        else if (str == "(")
-            return 1;
     }
 
 public:
@@ -204,6 +204,7 @@ public:
         return RESULT_STR;        
     }
 };
+
 int main()
 {
     string inputLine;
