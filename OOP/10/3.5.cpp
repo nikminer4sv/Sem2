@@ -1,69 +1,54 @@
 #include <iostream>
 #include <string>
-#include <algorithm>
-#include <cstring>
+#include <regex>
 #include <vector>
 #include <fstream>
 
 using namespace std;
 
-bool IsFunction(string line, auto pos, auto pos1)
+void Amount(vector<string> program, vector<string>& functions)
 {
-    while (*pos == ' ')
+    for (size_t i = 0; i < functions.size(); i++)
     {
-        ++pos;
-    }
-    if (!isalpha(*pos))
-    {
-        return false;
-    }
-    while (*pos != '(') 
-    {
-        if (*pos == ' ')
+        int count = 0;
+        for (size_t j = 0; j < program.size(); j++)
         {
-            ++pos;
-            continue;
+            auto pos = program[j].find(functions[i]);
+            if (pos != string::npos)
+                count++;
         }
-        if (!(isalnum(*pos) || *pos == '_' || *pos == '*' || *pos == '&')) 
-        {
-            return false;
-        }
+        functions[i] += " -- " + to_string(count);
     }
-    return true;
 }
 
-void Search(string line)
+void Search(string line, vector<string>& functions)
 {
-    auto pos = line.begin();
-    auto pos1 = std::search(pos, line.end(), ";");
-    while (pos1 != line.end())
-    {
-        bool flag = IsFunction(line, pos, pos1);
-        if (flag)
-        {
-            while (pos != pos1)
-            {
-                cout << *pos;
-                ++pos;
-            }
-        }
-        auto pos = std::search(line.begin(), line.end(), ";");
-        auto pos1 = std::search(pos, line.end(), ";");
-    }
-    
+    char text[200];
+    strcpy_s(text, line.c_str());
+    regex str_expr("([\\w*&]*?)\\s?(\\w*?)\\((.*?)\\)");
+    cmatch cm;
+    regex_match(text, cm, str_expr);
+    if (cm.size() > 0)
+    { 
+        functions.push_back(cm[2]);
+    }  
 }
 
 int main()
 {
-    string full = "";
-    ifstream ifs("3.5.cpp");
+    vector<string> program;
+    vector<string> functions;
+    ifstream ifs("FindFunction.cpp");
     while (!ifs.eof())
     {
         string line;
         getline(ifs, line);
-        full += line + " ";
+        program.push_back(line);
+        Search(line, functions);
     }
-    cout << full << endl;
+    Amount(program, functions);
+    for (string temp : functions)
+    {
+        cout << temp << endl;
+    }
 }
-
-void*sos();
