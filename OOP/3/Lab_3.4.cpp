@@ -9,10 +9,10 @@ using namespace std;
 class ReversePolishEntry
 {
 private:
-    stack<string> STACK_OPERATORS;
+    stack<string> stackOperators;
 
-    string OPERATORS = "><=!&|";
-    string RESULT_STR = "";
+    string operators = "><=!&|";
+    string resultStr = "";
 
 private:
     int Priority(const string &str)
@@ -27,7 +27,7 @@ private:
             return 1;
     }
 
-    bool ComputeValue(int a, int b, const string &expOperator)
+    bool ComputeValue(const int a, const int b, const string &expOperator)
     {
         if (expOperator == ">")
             return (a > b);
@@ -52,10 +52,10 @@ private:
         if (s.length() > 2)
             return false;
 
-        if (OPERATORS.find_first_of(s, 0) != string::npos)
-            return true;
+        if (operators.find_first_of(s) == string::npos)
+            return false;
 
-        return false;
+        return true;
     }
 
     vector<string> Split(const string &str)
@@ -90,9 +90,9 @@ public:
         return stoi(resulting.top());
     }
 
-    string convertToRPE2(string &inputLine)
+    string convertToRPE2(const string &inputLine)
     {
-        string TEMP_STR = "";
+        string tempStr = "";
 
         size_t startPosition = 0;
         size_t endPosition = 0;
@@ -101,114 +101,112 @@ public:
 
         while (flag)
         {
-            endPosition = inputLine.find_first_of(OPERATORS, startPosition);
+            endPosition = inputLine.find_first_of(operators, startPosition);
             for (size_t i = startPosition; i < endPosition; i++)
             {
                 if (inputLine[i] == '(')
                 {
-                    STACK_OPERATORS.push("(");
+                    stackOperators.push("(");
                     continue;
                 }
                 else if (inputLine[i] == ')')
                 {
-                    while (STACK_OPERATORS.top() != "(")
+                    while (stackOperators.top() != "(")
                     {
-                        RESULT_STR += STACK_OPERATORS.top();
-                        RESULT_STR += " ";
-                        STACK_OPERATORS.pop();
+                        resultStr += stackOperators.top();
+                        resultStr += " ";
+                        stackOperators.pop();
                     }
-                    STACK_OPERATORS.pop();
+                    stackOperators.pop();
                     continue;
                 }
 
-                RESULT_STR += inputLine[i];
+                resultStr += inputLine[i];
             }
-            RESULT_STR += " ";
+            resultStr += " ";
             startPosition = endPosition;
 
-            endPosition = inputLine.find_first_not_of(OPERATORS, startPosition);
+            endPosition = inputLine.find_first_not_of(operators, startPosition);
             for (size_t i = startPosition; i < endPosition; i++)
-                TEMP_STR += inputLine[i];
+                tempStr += inputLine[i];
             startPosition = endPosition;
 
-            if (STACK_OPERATORS.empty())
+            if (stackOperators.empty())
             {
-                STACK_OPERATORS.push(TEMP_STR);
+                stackOperators.push(tempStr);
             }
-            else if (Priority(STACK_OPERATORS.top()) < Priority(TEMP_STR))
+            else if (Priority(stackOperators.top()) < Priority(tempStr))
             {
-                STACK_OPERATORS.push(TEMP_STR);
+                stackOperators.push(tempStr);
             }
             else
             {
-                while (Priority(STACK_OPERATORS.top()) >= Priority(TEMP_STR))
+                while (Priority(stackOperators.top()) >= Priority(tempStr))
                 {
-                    RESULT_STR += STACK_OPERATORS.top();
-                    RESULT_STR += " ";
-                    STACK_OPERATORS.pop();
+                    resultStr += stackOperators.top();
+                    resultStr += " ";
+                    stackOperators.pop();
 
-                    if (STACK_OPERATORS.empty())
+                    if (stackOperators.empty())
                     {
-                        STACK_OPERATORS.push(TEMP_STR);
-                        TEMP_STR = "";
+                        stackOperators.push(tempStr);
+                        tempStr = "";
                         break;
                     }
                 }
-                STACK_OPERATORS.push(TEMP_STR);
+                stackOperators.push(tempStr);
             }
 
-           /* cout << "Check result = " << RESULT_STR << "; STACK = " << STACK_OPERATORS.top()
-                 << "; TEMP STR = " << TEMP_STR << "; START_POS = " << startPosition
+           /* cout << "Check result = " << resultStr << "; STACK = " << stackOperators.top()
+                 << "; TEMP STR = " << tempStr << "; START_POS = " << startPosition
                  << "; END_POS = " << endPosition << endl
                  << endl;*/
 
-            TEMP_STR = "";
+            tempStr = "";
 
-            if (inputLine.find_first_not_of(OPERATORS, startPosition) == startPosition && inputLine.find_first_of(OPERATORS, startPosition) == string::npos)
+            if (inputLine.find_first_not_of(operators, startPosition) == startPosition && inputLine.find_first_of(operators, startPosition) == string::npos)
             {
-                
                 endPosition = inputLine.size();
 
                 for (size_t i = startPosition; i < endPosition; i++)
                 {
                     if (inputLine[i] == '(')
                     {
-                        STACK_OPERATORS.push("(");
+                        stackOperators.push("(");
                         continue;
                     }
                     else if (inputLine[i] == ')')
                     {
-                        while (STACK_OPERATORS.top() != "(")
+                        while (stackOperators.top() != "(")
                         {
-                            RESULT_STR += " ";
-                            RESULT_STR += STACK_OPERATORS.top();
-                            STACK_OPERATORS.pop();
+                            resultStr += " ";
+                            resultStr += stackOperators.top();
+                            stackOperators.pop();
                         }
-                        RESULT_STR += " ";
-                        STACK_OPERATORS.pop();
+                        resultStr += " ";
+                        stackOperators.pop();
                         continue;
                     }
-                    RESULT_STR += inputLine[i];
+                    resultStr += inputLine[i];
                 }
-                while (!STACK_OPERATORS.empty())
+                while (!stackOperators.empty())
                 {
-                    RESULT_STR += " ";
-                    RESULT_STR += STACK_OPERATORS.top();
-                    STACK_OPERATORS.pop();
+                    resultStr += " ";
+                    resultStr += stackOperators.top();
+                    stackOperators.pop();
                 }
-
-               // cout << "THE END = " << RESULT_STR << endl;
+               // cout << "THE END = " << resultStr << endl;
                 flag = false;
             }
         }
-        return RESULT_STR;        
+        return resultStr;        
     }
 };
 
 int main()
 {
     string inputLine;
-    cout << "Enter the mathemathical example: ";
+    cout << "Enter the logical example: ";
     getline(cin, inputLine);
     ReversePolishEntry obj;
     string RPE = obj.convertToRPE2(inputLine);

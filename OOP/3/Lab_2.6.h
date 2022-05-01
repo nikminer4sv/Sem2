@@ -172,6 +172,12 @@ public:
                         tempAnswer.maxBit[idxBeforeMinus] = '1';
                     else if (tempDigital == 0)
                         tempAnswer.maxBit[idxBeforeMinus] = '0';
+                    else if (tempDigital == -1)
+                    {
+                        tempAnswer.maxBit = "0";
+                        return tempAnswer;
+                    }
+                    
 
                     cout << tempAnswer.maxBit << endl;
                 }
