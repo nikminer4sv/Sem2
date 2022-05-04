@@ -10,11 +10,10 @@ class bit256BinaryNumber
 private:
     const int capacity = 256;
     short size = 0;
-    string result = "0";
     string maxBit = "";
 
 private:
-    void plusOnDigital(string& result, const int digital)
+    void plusOnDigital(string& result, const int digital) const
     {
         int temp2 = 0;
         string temp = "0";
@@ -50,14 +49,7 @@ private:
             throw std::invalid_argument("Invalid index!");
     }
 
-    void clear()
-    {
-        maxBit = "";
-        result = "0";
-        size = 0;
-    }
-
-    void print()
+    void print() const
     {
         cout << maxBit << endl;
     }
@@ -65,7 +57,7 @@ private:
 public:
     bit256BinaryNumber() = default;
 
-    bit256BinaryNumber(string& str)
+    bit256BinaryNumber(const string& str)
     {
         IndexValidation(str.size());
         size = str.size();
@@ -73,25 +65,25 @@ public:
     }
 
     bit256BinaryNumber(const bit256BinaryNumber& object)
-    {
-        clear();
-
-        result = object.result;
+    {   
         size = object.maxBit.size();
-
         maxBit = object.maxBit;
     }
 
     bit256BinaryNumber& operator=(const bit256BinaryNumber& object)
     {
-        this->clear();
-
-        this->result = object.result;
-        this->size = object.maxBit.size();
-
-        this->maxBit = object.maxBit;
+        
+        clear();
+        size = object.maxBit.size();
+        maxBit = object.maxBit;
 
         return *this;
+    }
+
+    void clear()
+    {
+        maxBit = "";
+        size = 0;
     }
 
     char& operator[](const size_t idx)
@@ -110,7 +102,7 @@ public:
     {
         os << "Bits -> " << object.maxBit << endl;
         os << "Capacity -> " << object.capacity << "; size -> " << object.size << endl;
-        os << "Decitimal number (or task) -> " << object.result << endl;
+        os << "Decitimal number (or task) -> " << object.convertToDecimalNumber() << endl;
 
         return os;
     }
@@ -122,13 +114,12 @@ public:
         getline(os, str);
         object.clear();
         object.size = str.size();
-        object.result = "0";
         object.maxBit = str;
 
         return os;
     }
 
-    const bit256BinaryNumber& operator-(const bit256BinaryNumber& object) const
+    bit256BinaryNumber operator-(const bit256BinaryNumber& object) const
     {
         bit256BinaryNumber tempStr2 = object;
         bit256BinaryNumber tempStr1 = *this;
@@ -202,11 +193,14 @@ public:
             }
         }
 
+        tempAnswer.size = tempAnswer.maxBit.size();
         bit256BinaryNumber* newStr = new bit256BinaryNumber(tempAnswer);
+        cout << "SIZE -> " << (*newStr).size << endl;
+        
         return *newStr;
     }
 
-    const bit256BinaryNumber& operator<<(const int& digital) const
+    bit256BinaryNumber operator<<(const int digital) const
     {
         bit256BinaryNumber tempStr;
         tempStr = *this;
@@ -218,7 +212,7 @@ public:
         return *newStr;
     }
 
-    const bit256BinaryNumber& operator>>(const int& digital) const
+    bit256BinaryNumber operator>>(const int digital) const
     {
         bit256BinaryNumber tempStr;
         tempStr = *this;
@@ -231,12 +225,26 @@ public:
         return *newStr;
     }
 
+    bit256BinaryNumber operator/(const int digital) const{
+        bit256BinaryNumber result;
+
+        return result;
+    }
+
+    bit256BinaryNumber operator%(const int digital) const{
+        bit256BinaryNumber result;
+
+        return result;
+    }
+
+
     ~bit256BinaryNumber() { clear(); }
 
 public:
-    string convertToDecimalNumber()
+    string convertToDecimalNumber() const
     {
-        result = "0";
+        string result = "0";
+        
         for (size_t i = 0; i < size; i++)
         {
             int temp2 = 0;
@@ -279,7 +287,7 @@ public:
                 }
             }
         }
-
+        
         return result;
     }
 
@@ -289,7 +297,5 @@ public:
         size = 201;
         for (int i = 1; i < size; i++)
             maxBit += '0';
-
-        convertToDecimalNumber();
     }
 };

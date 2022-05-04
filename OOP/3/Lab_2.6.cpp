@@ -23,7 +23,6 @@ int main()
     cout << task2 << endl << endl;
 
     bit256BinaryNumber testMinus = task - task2;
-    testMinus.convertToDecimalNumber();
     cout << testMinus << endl;
 
     task2.task();

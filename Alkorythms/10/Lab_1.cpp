@@ -31,14 +31,14 @@ public:
         getline(cin, _patronymic);
 
         size_t quantityDaysOfWork = _sizeDays - _weekendDays;
-        cout << "You should be work " << quantityDaysOfWork << " days" << endl;
+        cout << "You must work " << quantityDaysOfWork << " days" << endl;
 
         cout << "Enter the prefer days for work in this month: ";
         for (int i = 0; i < quantityDaysOfWork; i++)
         {
             size_t idxDay;
             cin >> idxDay;
-            if (idxDay > _sizeDays)
+            if (idxDay > _sizeDays || idxDay <= 0)
             {
                 cout << "Invalid! Maximum number of days of month = " << _sizeDays << "! Please try again!" << endl;
                 i--;
@@ -100,7 +100,11 @@ public:
     void printPersons()
     {
         for (size_t i = 0; i < _persons.size(); i++)
+        {
             _persons[i].printAll();
+            cout << endl;
+        }
+            
     }
 
     void sortShedule()
@@ -198,8 +202,11 @@ int main()
     Person person3;
 
     person.printAll();
+    cout << endl;
     person2.printAll();
+    cout << endl;
     person3.printAll();
+    cout << endl;
     cout << "=================================" << endl;
 
     SmartShedule shedule;
@@ -209,6 +216,7 @@ int main()
 
     shedule.sortShedule();
     cout << "=================================" << endl;
+    cout << endl;
     shedule.printPersons();
 
     return 0;
