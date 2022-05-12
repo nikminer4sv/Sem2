@@ -11,40 +11,32 @@ template <typename T>
 class Long
 {
 public:
-    Long() {}
+    Long() = default;
 
-    Long(const size_t& capacity)
-    {
-        this->_Capacity = capacity;
-        this->_Long = new T[this->_Capacity];
+    Long(const size_t& capacity) {
+        this->_capacity = capacity;
+        this->_long = new T[this->_capacity];
     }
 
-    Long(const Long<T>& obj)
-    {
-        copy(obj);
-    }
+    Long(const Long<T>& obj) { copy(obj); }
 
-    Long<T>& operator=(const Long<T>& obj)
-    {
-        if(this != &obj){
+    Long<T>& operator=(const Long<T>& obj) {
+        if(this != &obj)
             copy(obj);
-        }
+        
         return *this;
     }
 
-    Long<T> operator+(const Long<T>& obj)
-    {
-        Long<T> temp(std::max(this->_Capacity, obj._Capacity));
+    Long<T> operator+(const Long<T>& obj) {
+        Long<T> temp(std::max(this->_capacity, obj._capacity));
        
         size_t i = 0, sum = 0, carry = 0;
-        while (i < std::max(this->_Size, obj._Size))
-        {
+        while (i < std::max(this->_size, obj._size)) {
             sum = carry;
-            if (i < this->_Size)
-                sum += this->_Long[i];
-            if (i < obj._Size)
-                sum += obj._Long[i];
-
+            if (i < this->_size)
+                sum += this->_long[i];
+            if (i < obj._size)
+                sum += obj._long[i];
             temp.push_back(sum % base);
             carry = sum / base;
             i++;
@@ -53,24 +45,20 @@ public:
         return temp;
     }
 
-    Long<T> operator*(const Long<T>& obj)
-    {
-        Long<T> result(this->_Capacity * obj._Capacity);
+    Long<T> operator*(const Long<T>& obj) {
+        Long<T> result(this->_capacity * obj._capacity);
         size_t i = 0;
         T sum = 0;
-        while (i < this->_Size)
-        {
+        while (i < this->_size) {
             Long<T> temp;
-            sum = this->_Long[i];
+            sum = this->_long[i];
             if (sum == 0)
-            {
                 sum = base;
-            }
+            
             temp = smult(obj, sum);
             for (size_t j = 0; j < i; j++)
-            {
                 temp.push_forward(0);
-            }
+            
             result = result + temp;
             i++;
         }
@@ -78,28 +66,24 @@ public:
         return result;
     }
 
-    ~Long()
-    {
+    ~Long() {
        // std::cout << "Long::~Long() <-" << this << std::endl;
-       this->_Capacity = 0;
-       this->_Size = 0;
-       delete[] this->_Long;
+       this->_capacity = 0;
+       this->_size = 0;
+       delete[] this->_long;
     }
 
 public:
-    size_t getCapacity() const
-    {
-        return this->_Capacity;
-    }
+    size_t GetCapacity() const { return this->_capacity; }
 
-    size_t getSize() const
+    size_t GetSize() const
     {
-        return this->_Size;
+        return this->_size;
     }
 
     void setSize(const size_t& size_new)
     {
-        if (size_new > this->_Capacity)
+        if (size_new > this->_capacity)
         {
             resize(size_new);
         }
@@ -108,156 +92,147 @@ public:
     T& operator[](const size_t idx)
     {
         return at(idx);
-        //return this->_Long[idx];
+        //return this->_long[idx];
     }
 
     T& operator[](const size_t idx) const
     {
         return at(idx);
-        //return this->_Long[idx];
+        //return this->_long[idx];
     }
 
     void push_back(const T& value)
     {
-        if (this->_Size >= this->_Capacity)
+        if (this->_size >= this->_capacity)
         {
-            // std::cout << "Capacity -> " << this->_Capacity << " Size -> " << this->_Size << std::endl;
-            resize(std::max(this->_Capacity * 2, this->_Size + 1));
+            // std::cout << "Capacity -> " << this->_capacity << " Size -> " << this->_size << std::endl;
+            resize(std::max(this->_capacity * 2, this->_size + 1));
         }
 
-        this->_Long[this->_Size++] = value;
+        this->_long[this->_size++] = value;
     }
 
     void push_forward(const T& value)
     {
-        if (this->_Size >= this->_Capacity)
+        if (this->_size >= this->_capacity)
         {
-            // std::cout << "Capacity -> " << this->_Capacity << " Size -> " << this->_Size << std::endl;
-            resize(std::max(this->_Capacity * 2, this->_Size + 1));
+            // std::cout << "Capacity -> " << this->_capacity << " Size -> " << this->_size << std::endl;
+            resize(std::max(this->_capacity * 2, this->_size + 1));
         }
 
-        T* tempVector = new T[this->_Capacity];
+        T* tempVector = new T[this->_capacity];
 
-        if (this->_Long)
+        if (this->_long)
         {
-            for (int i = 0; i < this->_Capacity - 1; i++)
+            for (int i = 0; i < this->_capacity - 1; i++)
             {
-                tempVector[i + 1] = this->_Long[i];
+                tempVector[i + 1] = this->_long[i];
             }
-            std::memcpy(this->_Long, tempVector, this->_Capacity * sizeof(T));
+            std::memcpy(this->_long, tempVector, this->_capacity * sizeof(T));
             delete[] tempVector;
         }
 
-        this->_Size++;
-        this->_Long[0] = value;
+        this->_size++;
+        this->_long[0] = value;
     }
 
     void pop_back()
     {
-        for (int i = 0; i < this->_Capacity - this->_Size; i++)
+        for (int i = 0; i < this->_capacity - this->_size; i++)
         {
-            this->_Long[this->_Size + i - 1] = this->_Long[this->_Size + i];
+            this->_long[this->_size + i - 1] = this->_long[this->_size + i];
         }
 
-        this->_Size--;
+        this->_size--;
     }
 
     T& back()
     {
-        return this->_Long[this->_Size - 1];
+        return this->_long[this->_size - 1];
     }
 
 private:
     T& at(const size_t idx) const
     {
-        if (idx >= this->_Capacity)
+        if (idx >= this->_capacity)
             throw std::invalid_argument("index is out of bounds");
 
-        return this->_Long[idx];
+        return this->_long[idx];
     }
 
     T& at(const size_t idx)
     {
-        if (idx >= this->_Capacity)
+        if (idx >= this->_capacity)
             throw std::invalid_argument("index is out of bounds");
 
-        return this->_Long[idx];
+        return this->_long[idx];
     }
 
 
-    void copy(const Long& obj)
-    {
-        if (this->_Long)
-        {
-            delete[] this->_Long;
-        }
+    void copy(const Long& obj) {
+        if (this->_long)
+            delete[] this->_long;
+        
 
-        this->_Size = obj._Size;
-        this->_Capacity = obj._Capacity;
-        this->_Long = new T[this->_Capacity];
+        this->_size = obj._size;
+        this->_capacity = obj._capacity;
+        this->_long = new T[this->_capacity];
 
-        std::memcpy(this->_Long, obj._Long, this->_Size * sizeof(T));
+        std::memcpy(this->_long, obj._long, this->_size * sizeof(T));
     }
 
-    void resize(const size_t& capacity_new)
-    {
+    void resize(const size_t& capacity_new) {
         // std::cout << "Long::resize() -> " << capacity_new << std::endl;
 
         T* tempVector = new T[capacity_new]{};
 
-        if (this->_Long)
-        {
-            std::memcpy(tempVector, this->_Long, std::min(capacity_new, this->_Capacity) * sizeof(T));
-            delete[] this->_Long;
+        if (this->_long) {
+            std::memcpy(tempVector, this->_long, std::min(capacity_new, this->_capacity) * sizeof(T));
+            delete[] this->_long;
         }
 
-        this->_Long = tempVector;
-        this->_Capacity = capacity_new;
+        this->_long = tempVector;
+        this->_capacity = capacity_new;
     }
 
 private:
-    size_t _Capacity = 0;
-    size_t _Size = 0;
-    T* _Long = nullptr;
+    size_t _capacity = 0;
+    size_t _size = 0;
+    T* _long = nullptr;
 };
 
 template<typename T>
 std::ostream& operator << (std::ostream& os, const Long<T>& vector)
 {
-    for (size_t i = 0; i < vector.getSize(); i++) {
+    for (size_t i = 0; i < vector.GetSize(); i++) 
         os << vector[i] << " ";
-    }
-
+    
     return os;
 }
 
 template <typename T>
-Long<T> smult(Long<T> a, T b)
-{
+Long<T> smult(Long<T> a, T b) {
     size_t carry = 0;
 
-    for (size_t i = 0; i < a.getSize() || carry; ++i)
-    {
+    for (size_t i = 0; i < a.GetSize() || carry; ++i) {
 
-        if (i == a.getSize())
+        if (i == a.GetSize())
             a.push_back(0);
         size_t cur = carry + a[i] * 1ll * b;
         a[i] = cur % base;
         carry = cur / base;
     }
 
-    while (a.getSize() > 1 && a.back() == 0)
+    while (a.GetSize() > 1 && a.back() == 0)
         a.pop_back();
 
     return a;
 }
 
 template <typename T>
-void Print(Long<T> array)
-{
+void Print(Long<T> array) {
     int i = 0;
-    while (i < array.getSize())
-    {
+    while (i < array.GetSize()) {
         std::cout << array[i] << std::endl;
         i++;
     }

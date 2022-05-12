@@ -11,20 +11,14 @@ public:
 
     virtual MovingObject* CreateObject(ifstream& stream) = 0;
 
-    /*
-
-    virtual MovingObject* CreateObject(string type) {
-
-        MovingObject* object = nullptr;
-
-        if (type == "Bus")
-            object = new Bus(Route(Position(1,1), Position(2,2), Time(1,1,1)), 10);
-
-        return object;
-
+    Route CreateRoute(ifstream& stream) {
+        Position startPoint(stream);
+        Position endPoint(stream);
+        Time time(stream);
+        Route route(startPoint, endPoint, time);
+        return route;
     }
 
-    */
 };
 
 class BusFactory : public MovingObjectFactory {
@@ -32,11 +26,7 @@ public:
     virtual MovingObject* CreateObject(ifstream& stream) {
         int fare;
         stream >> fare;
-        Position startPoint(stream);
-        Position endPoint(stream);
-        Time time(stream);
-        Route route(startPoint, endPoint, time);
-        Bus* object = new Bus(route, fare);
+        Bus* object = new Bus(CreateRoute(stream), fare);
         return object;
     }
 };
@@ -46,11 +36,7 @@ public:
     virtual MovingObject* CreateObject(ifstream& stream) {
         int fare;
         stream >> fare;
-        Position startPoint(stream);
-        Position endPoint(stream);
-        Time time(stream);
-        Route route(startPoint, endPoint, time);
-        Trolleybus* object = new Trolleybus(route, fare);
+        Trolleybus* object = new Trolleybus(CreateRoute(stream), fare);
         return object;
     }
 };
@@ -60,11 +46,7 @@ public:
     virtual MovingObject* CreateObject(ifstream& stream) {
         int fare;
         stream >> fare;
-        Position startPoint(stream);
-        Position endPoint(stream);
-        Time time(stream);
-        Route route(startPoint, endPoint, time);
-        RouteTaxi* object = new RouteTaxi(route, fare);
+        RouteTaxi* object = new RouteTaxi(CreateRoute(stream), fare);
         return object;
     }
 };
@@ -73,11 +55,7 @@ public:
     virtual MovingObject* CreateObject(ifstream& stream) {
         int fare;
         stream >> fare;
-        Position startPoint(stream);
-        Position endPoint(stream);
-        Time time(stream);
-        Route route(startPoint, endPoint, time);
-        Metro* object = new Metro(route, fare);
+        Metro* object = new Metro(CreateRoute(stream), fare);
         return object;
     }
 };
@@ -88,11 +66,7 @@ public:
         char* rentUrl = new char[255];
         stream >> rentCost;
         stream >> rentUrl;
-        Position startPoint(stream);
-        Position endPoint(stream);
-        Time time(stream);
-        Route route(startPoint, endPoint, time);
-        Car* object = new Car(route, rentCost, rentUrl);
+        Car* object = new Car(CreateRoute(stream), rentCost, rentUrl);
         return object;
     }
 };
@@ -203,6 +177,7 @@ int main() {
     //Car car(Route(Position(1,1), Position(2,2), Time(1,1,1)), 10, text);
 
     Collection col("collection.txt", factories);
+    col.Append(&taxi);
 
     //cout << col;
 

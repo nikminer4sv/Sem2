@@ -2,155 +2,226 @@
 
 #include <iostream>
 
-namespace nikminer4sv {
+using namespace std;
 
-    template<class T>
-    class List {
-        public:
-            struct Node
+template <typename T>
+struct Node
+{
+    T Data;
+    Node* Next = nullptr;
+
+    Node() = default;
+
+    ~Node(){
+        delete Data;
+    }
+};
+
+template <typename T>
+class List
+{
+private:
+    Node<T>* Head = nullptr;
+    int Size = 0;
+
+public:
+    List() = default;
+
+    List(const List<T>& obj)
+    {
+        Copy(obj);
+    }
+
+    List(List<T>&& obj)
+    {
+        Size = obj.getSize();
+        Head = obj.Head();
+        obj.Head = nullptr;
+        obj.Size = 0;
+    }
+
+    List<T>& operator= (const List<T>& obj)
+    {
+        Copy(obj);
+
+        return *this;
+    }
+
+    List<T>& operator= (List<T>&& obj)
+    {
+        Size = obj.GetSize();
+        Head = obj.Head;
+        obj.Head = nullptr;
+        obj.Size = 0;
+
+        return *this;
+    }
+
+    T& Get(int Index) const
+    {
+        if (Index > Size - 1 || Index < 0)
+        {
+            throw std::invalid_argument("Invalid index");
+        }
+
+        Node<T>* Temp = Head;
+
+        for (int i = 0; i < Index; i++)
+        {
+            Temp = Temp->Next;
+        }
+
+        return Temp->Data;
+    }
+
+    void Append(const T& value)
+    {
+        Size++;
+
+        Node<T>* NewNode = new Node<T>;
+        NewNode->Data = value;
+
+        if (Head == nullptr)
+        {
+            Head = NewNode;
+        }
+        else
+        {
+            Node<T>* temp = Head;
+
+            while (temp->Next != nullptr)
             {
-                T value {};
-                Node *next = nullptr;
-
-                Node() {}
-
-                Node(const T&val, Node *next = nullptr) 
-                : value(val), next(next) {}
-            };
-            
-        public:
-            List() {}
-
-            List(const List& list) {
-                this->size = list.GetSize();
-
-                Node *node = list.head;
-                while (node != nullptr)
-                {
-                    Append(node->value);
-                    node = node->next;
-                }
+                temp = temp->Next;
             }
 
-            /*~List() {
-                Clear();
+            temp->Next = NewNode;
+        }
+    }
+
+    bool Remove(int Index)
+    {
+        if (Size == 0 || Index > Size - 1 || Index < 0)
+            return false;
+
+        if (Index == 0)
+        {
+            auto* next = Head->Next;
+            delete Head;
+            Head = next;
+        }
+        else
+        {
+            Node<T>* Temp = Head;
+
+            for (int i = 0; i < Index - 1; i++)
+            {
+                Temp = Temp->Next;
             }
 
-            void Clear() {
-                Node* temp = head;
-                while (temp->next != nullptr) {
-                    Node* gg = temp;
-                    temp = temp->next;
-                    delete gg;
-                }
-                this->head = nullptr;
-                this->size = 0;
-            }*/
+            auto* to_delete = Temp->Next;
+            Temp->Next = Temp->Next->Next;
+            delete to_delete;
+        }
 
-            int GetSize() const {
-                return this->size;
+        Size--;
+
+        return true;
+    }
+
+    bool Insert(int Index, const T& value)
+    {
+        if (Index > Size - 1 || Index < 0)
+            return false;
+
+        Node<T>* Temp = new Node<T>;
+        Temp->Data = value;
+
+        if (Index == 0)
+        {
+            Temp->Next = Head;
+            Head = Temp;
+        }
+        else
+        {
+            Node<T>* Temp1 = Head;
+
+            for (int i = 0; i < Index - 1; i++)
+            {
+                Temp1 = Temp1->Next;
             }
 
-            void Append(T element) {
+            Temp->Next = Temp1->Next;
+            Temp1->Next = Temp;
+        }
 
-                this->size += 1;
-                Node* newNode = new Node;
-                newNode->value = element;
+        Size++;
 
-                if (head == nullptr) {
-                    head = newNode;
-                    return;
-                }
+        return true;
+    }
 
-                Node* node = head;
-                while (node->next != nullptr)
-                    node = node->next;
+    ~List()
+    {
+        Clear();
+    }
 
-                node->next = newNode;
-            }
+    void Clear()
+    {
+        Node<T>* current = Head;
 
-            void Remove(const size_t& index) {
-                if(index < 0 || index > size - 1)
-                    throw std::invalid_argument("index is out of bounds");
-                
-                if (index == 0) {
-                    Node* temp = head;
-                    head = head->next;
-                    delete temp;
-                    return;
-                }
+        while (current != nullptr)
+        {
+            Node<T>* next = current->Next;
+            delete current;
+            current = next;
+        }
 
-                Node* temp = head;
-                for (size_t i = 0; i < index - 1; i++) {
-                    temp = temp->next;
-                }
+        Head = nullptr;
+        Size = 0;
+    }
 
-                Node* toremove = temp->next;
-                temp->next = temp->next->next;
-                delete toremove;
+    int GetSize() const
+    {
+        return Size;
+    }
 
-                this->size -= 1;
+    void Print(ostream& os)
+    {
+        Node<T>* Temp = Head;
+        for (int i = 0; i < GetSize(); i++)
+        {
+            (*(Temp->Data)).Print(os);
+            Temp = Temp->Next;
+        }
 
-            }
+        os << std::endl;
+    }
 
-            T& operator[](size_t index) {
+    void Copy(const List<T>& obj)
+    {
+        if (Head)
+        {
+            delete Head;
+        }
+        this->Size = obj.Size;
 
-                if(index < 0 || index > size - 1)
-                    throw std::invalid_argument("index is out of bounds");
+        Node<T>* NewNode = new Node<T>();
+        this->Head = NewNode;
+        Node<T>* Temp = obj.Head;
 
-                Node* temp = head;
-                for(size_t i = 0; i < index; i++)
-                    temp = temp->next;
+        for (size_t i = 0; i < this->Size; i++)
+        {
+            NewNode->Data = Temp->Data;
+            NewNode->Next = new Node<T>();
+            Temp = Temp->Next;
+            NewNode = NewNode->Next;
+        }
+    }
+};
 
-                return temp->value;
+template <typename T>
+std::ostream& operator<<(std::ostream& os, List<T>& list)
+{
+    list.Print(os);
 
-            }
-
-            T operator[](size_t index) const {
-
-                if(index < 0 || index > size - 1)
-                    throw std::invalid_argument("index is out of bounds");
-
-                Node* temp = head;
-                for(size_t i = 0; i < index; i++)
-                    temp = temp->next;
-
-                return temp->value;
-
-            }
-
-            List<T>& operator = (const List<T>& list){
-
-                this->size = list.size;
-                
-                this->Clear();
-                for (size_t i = 0; i < this->size; i++)
-                    this->Append(list[i]);
-
-                return *this;
-            }
-
-            friend std::ostream& operator<< (std::ostream &os, const List<T>& list) {
-
-                if (list.GetSize() == 0)
-                    return os;
-
-                Node* node = list.head;
-                while (node->next != nullptr) {
-                    os << node->value << " ";
-                    node = node->next;
-                }
-
-                os << node->value;
-
-                return os;
-
-            }
-
-
-        private:
-            size_t size = 0;
-            Node* head = nullptr;
-    };
-
+    return os;
 }

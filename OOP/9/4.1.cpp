@@ -120,9 +120,12 @@ public:
 class MovingObject {
 public:
 
-    virtual ~MovingObject() = default;
+    ~MovingObject() {
+
+        cout << "DTOR" << endl;
+    }
     
-    virtual string GetType() const = 0;
+    virtual string GetType() const {return "MovingObject"; }
 
     virtual void Print(ostream& os) const {
         os << route << endl;
@@ -205,6 +208,8 @@ public:
     }
 
     string GetType() const { return "Bus"; }
+
+    ~Bus() {}
 };
 
 class Trolleybus : public PublicTransport {
