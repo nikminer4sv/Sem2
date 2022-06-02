@@ -35,8 +35,8 @@ int main()
     }
     vector<vector<int>> nodes{};
 
-    size_t i = 0; // first node has a way
-
+    size_t i = 0; 
+    
     vector<int> temp_nodes{};
     for (size_t j = 0; j < size; j++)
     {
