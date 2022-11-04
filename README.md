@@ -1,1 +1,1 @@
-# BSU LABS
+# BSU LABS SEM 2
